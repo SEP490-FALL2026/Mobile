@@ -15,7 +15,36 @@ Push notifications, offline mode, biometrics, file downloads, phone usage
 collection, and IT Admin/Finance/Super Admin workflows are outside mobile scope.
 The current committed OpenAPI snapshot has only a System status operation, so
 business screens and authentication cannot be connected until the backend
-contract is supplied. The home screen currently presents the scoped tasks.
+contract is supplied. The client contains local-only login, employee software/request, in-app inbox,
+manager need-approval, and spending-approval prototype screens. Prototype decisions
+are stored only in the current app session and are not submitted to a backend. The
+business API contract is still needed before these workflows can be connected.
+Manager and spending demos have separate direct route entry points; there is no
+in-session role switcher. Production login routing must follow the backend-authenticated
+role once that contract is available.
+The manager demo uses bottom tabs for assigned approvals, department-visible context,
+and the shared in-app inbox. The spending demo uses assigned decisions, session-only
+decision history, and the shared in-app inbox; budget snapshots remain inside the
+relevant request detail and are not a separate tab.
+Approver inbox tabs stay within their respective demo screens and do not display the
+employee's notifications. Prototype events produce role-specific in-app notices.
+Detail screens use a route fallback when opened without navigation history.
+Shared demo request state is owned by `src/entities/demo-requests` and attached at the
+root route layout. Navigation between the separate demo routes shares request status,
+decisions, timelines, and role-scoped notification/read state; reloading or restarting
+resets it. This is not authentication or backend authorization.
+
+The demo advances an approved employee need to awaiting web submission and an approved
+Slack spending decision to awaiting IT. It does not simulate web batch submission,
+Finance review, or IT actions. The manager's DataDog self-request has its need step
+decided by the spending approver, with the result visible in department context;
+subsequent steps are not simulated. Notifications describe historical events, while
+request details show current status. All transitions are prototype assumptions to be
+replaced with the backend contract and enforced authorization.
+The employee software demo filters its current mock items by their expiring flag;
+historical access periods and return workflows are not represented in that demo.
+The canonical employee request list URL is `/my-requests`; unknown request IDs
+redirect there rather than to `/my-requests/index`, which matches a dynamic ID.
 
 ## Runtime view
 
@@ -38,11 +67,23 @@ persistence, jobs, and financial/access decisions.
 app/
   _layout.tsx              root route/provider attachment
   index.tsx                thin route entry
+  inbox.tsx                in-app inbox handoff
+  my-software.tsx          employee software handoff
+  manager.tsx              manager need-approval demo handoff
+  spending-approvals.tsx   spending-approver demo handoff
+  my-requests/             employee request routes
 src/
   providers/               application-wide framework providers
   features/
+    auth/                   local-only login prototype
+    inbox/                  static in-app notifications
+    licenses/               employee software screens and models
+    manager/                department need-approval demo presentation
+    spending-approval/      per-item spending queue and budget snapshots
+    requests/               employee request screens and session mocks
     <capability>/           screens, components, hooks, feature-local tests/models
   entities/
+    demo-requests/          in-memory request, decision, and inbox state
     <domain-concept>/       reusable domain presentation logic, only when needed
   shared/
     api/
