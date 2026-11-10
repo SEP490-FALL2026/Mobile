@@ -3,8 +3,8 @@ import { fireEvent, render, waitFor } from '@testing-library/react-native'
 import type { ReactElement } from 'react'
 
 import { LiveRequestDetailsScreen, LiveRequestsScreen } from '@/features/requests'
-import { accessRequestGet, accessRequestWithdraw } from '@/shared/api/generated/api/access-requests/access-requests'
-import { meAccessRequestList } from '@/shared/api/generated/api/me/me'
+import { accessRequestGet, accessRequestWithdraw } from '@/shared/api/generated/operations/access-requests'
+import { meAccessRequestList } from '@/shared/api/generated/operations/me'
 import { setAppLanguage } from '@/shared/i18n/i18n'
 
 const mockRouter = { push: jest.fn(), replace: jest.fn(), back: jest.fn(), canGoBack: jest.fn(() => false) }
@@ -15,8 +15,8 @@ const mockSession = {
 }
 jest.mock('expo-router', () => ({ Redirect: () => null, useRouter: () => mockRouter }))
 jest.mock('@/shared/api/session-context', () => ({ useSession: () => mockSession }))
-jest.mock('@/shared/api/generated/api/me/me', () => ({ meAccessRequestList: jest.fn() }))
-jest.mock('@/shared/api/generated/api/access-requests/access-requests', () => ({
+jest.mock('@/shared/api/generated/operations/me', () => ({ meAccessRequestList: jest.fn() }))
+jest.mock('@/shared/api/generated/operations/access-requests', () => ({
   accessRequestGet: jest.fn(),
   accessRequestWithdraw: jest.fn()
 }))
@@ -40,91 +40,88 @@ beforeEach(async () => {
   jest.clearAllMocks()
   mockSession.state = 'authenticated'
   jest.mocked(meAccessRequestList).mockResolvedValue({
-    status: 200,
-    headers: new Headers(),
+    success: true,
+    message: 'REQUEST.LISTED',
     data: {
-      success: true,
-      message: 'REQUEST.LISTED',
-      data: {
-        items: [
-          {
-            id,
-            type: 'GRANT',
-            branch: 'PAID_IN_CATALOG',
-            state: 'PENDING',
-            plan: { planId: id, planName: 'Pro', applicationId: id, applicationName: 'Figma' },
-            softwareName: null,
-            beneficiary: null,
-            lineCount: 1,
-            termMonths: 12,
-            submittedAt: '2026-11-09T00:00:00Z',
-            updatedAt: '2026-11-09T00:00:00Z',
-            needStep: { state: 'PENDING', assignee: null, waitingReason: null },
-            spend: null,
-            outcome: null,
-            withdrawal: null,
-            canWithdraw: true
-          }
-        ],
-        pagination: { page: 1, pageSize: 20, totalItems: 1, totalPages: 1 }
-      }
-    }
-  })
-  jest.mocked(accessRequestGet).mockResolvedValue({
-    status: 200,
-    headers: new Headers(),
-    data: {
-      success: true,
-      message: 'REQUEST.RETRIEVED',
-      data: {
-        request: {
+      items: [
+        {
           id,
           type: 'GRANT',
           branch: 'PAID_IN_CATALOG',
           state: 'PENDING',
+          routing: { mode: 'VIA_HEAD', oneStepReason: null },
+          expectedEndDate: null,
+          involvement: 'SENT',
+          myLine: null,
           plan: { planId: id, planName: 'Pro', applicationId: id, applicationName: 'Figma' },
-          proposal: null,
-          department: { id, code: 'IT', name: 'IT' },
-          costCenter: null,
-          requester: { employeeId: id, employeeCode: 'E1', fullName: 'An' },
+          softwareName: null,
           beneficiary: null,
           lineCount: 1,
-          businessReason: 'Thiết kế',
           termMonths: 12,
-          expectedEndDate: null,
-          serviceAccount: null,
-          renewal: null,
-          spend: null,
-          budgetYear: null,
-          pricing: {
-            status: 'NOT_APPLICABLE',
-            missingReason: null,
-            amount: null,
-            unitPrice: null,
-            billingCycle: null,
-            periodCount: null,
-            bindingPeriodCount: null,
-            firstDueOn: null,
-            lastDueOn: null
-          },
-          policy: { version: 1, hasSpendStep: true, slaWorkingDays: 2 },
           submittedAt: '2026-11-09T00:00:00Z',
-          needStep: {
-            id,
-            state: 'PENDING',
-            assignee: null,
-            routingRow: 1,
-            waitingReason: null,
-            samePersonAsSpend: false,
-            slaWorkingDays: 2,
-            createdAt: '2026-11-09T00:00:00Z',
-            assignedAt: null,
-            decidedAt: null
-          },
-          needDecision: null,
+          updatedAt: '2026-11-09T00:00:00Z',
+          needStep: { state: 'PENDING', assignee: null, waitingReason: null },
+          spend: null,
+          outcome: null,
           withdrawal: null,
-          cancellation: null
+          canWithdraw: true
         }
+      ],
+      pagination: { page: 1, pageSize: 20, totalItems: 1, totalPages: 1 }
+    }
+  })
+  jest.mocked(accessRequestGet).mockResolvedValue({
+    success: true,
+    message: 'REQUEST.RETRIEVED',
+    data: {
+      request: {
+        id,
+        type: 'GRANT',
+        branch: 'PAID_IN_CATALOG',
+        state: 'PENDING',
+        routing: { mode: 'VIA_HEAD', oneStepReason: null },
+        flags: { manyPaidSoftware: null },
+        plan: { planId: id, planName: 'Pro', applicationId: id, applicationName: 'Figma' },
+        proposal: null,
+        department: { id, code: 'IT', name: 'IT' },
+        costCenter: null,
+        requester: { employeeId: id, employeeCode: 'E1', fullName: 'An' },
+        beneficiary: null,
+        lineCount: 1,
+        businessReason: 'Thiết kế',
+        termMonths: 12,
+        expectedEndDate: null,
+        serviceAccount: null,
+        renewal: null,
+        spend: null,
+        budgetYear: null,
+        pricing: {
+          status: 'NOT_APPLICABLE',
+          missingReason: null,
+          amount: null,
+          unitPrice: null,
+          billingCycle: null,
+          kind: null,
+          months: null,
+          monthlyPrice: null,
+          nextYearAmount: null
+        },
+        policy: { version: 1, hasSpendStep: true, slaWorkingDays: 2 },
+        submittedAt: '2026-11-09T00:00:00Z',
+        needStep: {
+          id,
+          state: 'PENDING',
+          assignee: null,
+          routingRow: 1,
+          waitingReason: null,
+          slaWorkingDays: 2,
+          createdAt: '2026-11-09T00:00:00Z',
+          assignedAt: null,
+          decidedAt: null
+        },
+        needDecision: null,
+        withdrawal: null,
+        cancellation: null
       }
     }
   })
@@ -135,8 +132,9 @@ test('lists server requests and opens their details', async () => {
   await screen.findByText('Figma')
   screen.getByText('Chờ xử lý')
   expect(meAccessRequestList).toHaveBeenCalledWith(
-    { view: 'open', page: 1, pageSize: 20 },
-    expect.objectContaining({ headers: { Authorization: 'Bearer test-token' } })
+    { view: 'open', involvement: 'SENT', page: 1, pageSize: 20 },
+    expect.objectContaining({ headers: { Authorization: 'Bearer test-token' } }),
+    expect.anything()
   )
   await fireEvent.press(screen.getByRole('tab', { name: 'Mở mục Tạo yêu cầu' }))
   expect(mockRouter.push).toHaveBeenCalledWith('/live-request-create')
@@ -146,12 +144,10 @@ test('lists server requests and opens their details', async () => {
 
 test('confirms withdrawal, sends once and reloads the list', async () => {
   const detail = await jest.mocked(accessRequestGet)(id)
-  if (!detail.data.data || !('request' in detail.data.data)) throw new Error('Expected request')
-  jest.mocked(accessRequestWithdraw).mockResolvedValueOnce({
-    status: 200,
-    headers: new Headers(),
-    data: { success: true, message: 'REQUEST.WITHDRAWN', data: { request: detail.data.data.request } }
-  })
+  if (!detail.data || !('request' in detail.data)) throw new Error('Expected request')
+  jest
+    .mocked(accessRequestWithdraw)
+    .mockResolvedValueOnce({ success: true, message: 'REQUEST.WITHDRAWN', data: { request: detail.data.request } })
   const screen = await renderScreen(<LiveRequestsScreen />)
   await screen.findByText('Figma')
   await fireEvent.press(screen.getByRole('button', { name: 'Rút yêu cầu cho Figma' }))
@@ -182,13 +178,10 @@ test('surfaces uncertain withdrawal and prevents immediate repeat', async () => 
 
 test('does not offer withdrawal when the server does not allow it', async () => {
   const response = await jest.mocked(meAccessRequestList)()
-  if (!response.data.data) throw new Error('Expected list data')
+  if (!response.data) throw new Error('Expected list data')
   jest.mocked(meAccessRequestList).mockResolvedValueOnce({
     ...response,
-    data: {
-      ...response.data,
-      data: { ...response.data.data, items: response.data.data.items.map((item) => ({ ...item, canWithdraw: false })) }
-    }
+    data: { ...response.data, items: response.data.items.map((item) => ({ ...item, canWithdraw: false })) }
   })
   const screen = await renderScreen(<LiveRequestsScreen />)
   await screen.findByText('Figma')
@@ -197,17 +190,14 @@ test('does not offer withdrawal when the server does not allow it', async () => 
 
 test('switches server view, resets page and handles empty results', async () => {
   const response = await jest.mocked(meAccessRequestList)()
-  if (!response.data.data) throw new Error('Expected list data')
-  const data = response.data.data
+  if (!response.data) throw new Error('Expected list data')
+  const data = response.data
   jest.mocked(meAccessRequestList).mockImplementation(async (params) => ({
     ...response,
     data: {
-      ...response.data,
-      data: {
-        ...data,
-        items: params?.view === 'ended' || params?.page === 2 ? [] : data.items,
-        pagination: { ...data.pagination, page: params?.page ?? 1, totalPages: params?.view === 'ended' ? 0 : 2 }
-      }
+      ...data,
+      items: params?.view === 'ended' || params?.page === 2 ? [] : data.items,
+      pagination: { ...data.pagination, page: params?.page ?? 1, totalPages: params?.view === 'ended' ? 0 : 2 }
     }
   }))
   const screen = await renderScreen(<LiveRequestsScreen />)
@@ -216,7 +206,11 @@ test('switches server view, resets page and handles empty results', async () => 
   await screen.findByText('Không có yêu cầu trên trang này.')
   await fireEvent.press(screen.getByRole('button', { name: 'Đã kết thúc' }))
   await screen.findByText('Không có yêu cầu trên trang này.')
-  expect(meAccessRequestList).toHaveBeenLastCalledWith({ view: 'ended', page: 1, pageSize: 20 }, expect.anything())
+  expect(meAccessRequestList).toHaveBeenLastCalledWith(
+    { view: 'ended', involvement: 'SENT', page: 1, pageSize: 20 },
+    expect.anything(),
+    expect.anything()
+  )
 })
 
 test('reports list failures and retries without showing demo requests', async () => {
@@ -238,7 +232,8 @@ test('shows detail from server and handles missing authorization with retry', as
   screen.getByText('12 tháng')
   expect(accessRequestGet).toHaveBeenLastCalledWith(
     id,
-    expect.objectContaining({ headers: { Authorization: 'Bearer test-token' } })
+    expect.objectContaining({ headers: { Authorization: 'Bearer test-token' } }),
+    expect.anything()
   )
   await fireEvent.press(screen.getByRole('button', { name: 'Quay lại yêu cầu' }))
   expect(mockRouter.replace).toHaveBeenCalledWith('/live-requests')
@@ -247,20 +242,16 @@ test('shows detail from server and handles missing authorization with retry', as
 test('handles draft details without displaying invented request information in English', async () => {
   await setAppLanguage('en', false)
   jest.mocked(accessRequestGet).mockResolvedValueOnce({
-    status: 200,
-    headers: new Headers(),
+    success: true,
+    message: 'DRAFT.RETRIEVED',
     data: {
-      success: true,
-      message: 'DRAFT.RETRIEVED',
-      data: {
-        draft: {
-          id,
-          kind: 'INDIVIDUAL',
-          departmentId: id,
-          planId: id,
-          beneficiaryCount: 1,
-          createdAt: '2026-11-09T00:00:00Z'
-        }
+      draft: {
+        id,
+        kind: 'INDIVIDUAL',
+        departmentId: id,
+        planId: id,
+        beneficiaryCount: 1,
+        createdAt: '2026-11-09T00:00:00Z'
       }
     }
   })

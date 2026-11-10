@@ -1,12 +1,14 @@
 import { Feather } from '@expo/vector-icons'
 import { Redirect, useRouter } from 'expo-router'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 import { useSession } from '@/shared/api/session-context'
+import { clampPage } from '@/shared/lib/clamp-page'
 import { mobileColors } from '@/shared/theme/colors'
+import { Pager } from '@/shared/ui/pager'
 import { EmployeeProfileHeader } from '@/shared/ui/employee-profile-header'
 import { MobileTabBar } from '@/shared/ui/mobile-tab-bar'
 
@@ -22,6 +24,10 @@ export function MySoftwareScreen() {
   const [loggingOut, setLoggingOut] = useState(false)
   const [logoutError, setLogoutError] = useState(false)
   const { profile, software, summary } = useMySoftware(page)
+  useEffect(() => {
+    const next = clampPage(page, software.data?.pagination.totalPages)
+    if (next !== page) setPage(next)
+  }, [page, software.data?.pagination.totalPages])
   const items = software.data?.items.filter((item) => filter === 'all' || item.expiringSoon) ?? []
   const expiring = summary.data?.expiringRights
   const expiringCount = expiring?.state === 'COUNTED' && expiring.count !== null ? expiring.count : undefined
@@ -251,27 +257,7 @@ export function MySoftwareScreen() {
                 </View>
               ) : null}
               {software.data.pagination.totalPages > 1 ? (
-                <View style={styles.pagination}>
-                  <Pressable
-                    accessibilityRole='button'
-                    accessibilityState={{ disabled: page <= 1 }}
-                    disabled={page <= 1}
-                    onPress={() => setPage((current) => current - 1)}
-                    style={[styles.button, page <= 1 && styles.disabledButton]}
-                  >
-                    <Text style={styles.buttonText}>{t('licenses.live.previous')}</Text>
-                  </Pressable>
-                  <Text style={styles.subtitle}>{t('licenses.live.page', { page: formatCount(page) })}</Text>
-                  <Pressable
-                    accessibilityRole='button'
-                    accessibilityState={{ disabled: page >= software.data.pagination.totalPages }}
-                    disabled={page >= software.data.pagination.totalPages}
-                    onPress={() => setPage((current) => current + 1)}
-                    style={[styles.button, page >= software.data.pagination.totalPages && styles.disabledButton]}
-                  >
-                    <Text style={styles.buttonText}>{t('licenses.live.next')}</Text>
-                  </Pressable>
-                </View>
+                <Pager onPage={setPage} page={page} totalPages={software.data.pagination.totalPages} />
               ) : null}
             </View>
           ) : null}

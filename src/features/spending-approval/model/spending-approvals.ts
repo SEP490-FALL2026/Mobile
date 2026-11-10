@@ -1,80 +1,56 @@
-export type SpendingStep = 'need' | 'spending'
-export type SpendingStepFilter = 'all' | SpendingStep
+import { apiErrorCodeOf, httpStatusOf } from '@/shared/api/http-error'
 
-export interface SpendingApproval {
-  budgetPlan?: string
-  department: string
-  financeOpinion: 'notProvided' | 'withinBudget'
-  id: string
-  isSelfRequest: boolean
-  overrideRequired: boolean
-  slaHoursRemaining: number
-  softwareName: string
-  step: SpendingStep
-  annualCostVnd?: number
+export interface Money {
+  amount: string
+  currency: string
 }
 
-export interface BudgetSnapshot {
-  availableVnd: number
-  committedVnd: number
-  limitVnd: number
+export type Tone = 'success' | 'warning' | 'danger' | 'neutral'
+
+export const maxReasonLength = 1000
+
+export function formatMoney(value: Money | null | undefined, locale: string): string | undefined {
+  if (!value || !/^[A-Z]{3}$/.test(value.currency) || !/^-?\d{1,12}(\.\d{1,4})?$/.test(value.amount)) return undefined
+  return new Intl.NumberFormat(locale, {
+    style: 'currency',
+    currency: value.currency,
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 2
+  }).format(Number(value.amount))
 }
 
-export const spendingBudgetSnapshot: BudgetSnapshot = {
-  availableVnd: 35000000,
-  committedVnd: 165000000,
-  limitVnd: 200000000
+export function formatDate(value: string | null | undefined, locale: string): string | undefined {
+  if (!value) return undefined
+  const date = new Date(value.length === 10 ? `${value}T00:00:00Z` : value)
+  if (Number.isNaN(date.getTime())) return undefined
+  return new Intl.DateTimeFormat(locale, {
+    dateStyle: 'medium',
+    timeZone: value.length === 10 ? 'UTC' : undefined
+  }).format(date)
 }
 
-export const spendingApprovals: SpendingApproval[] = [
-  {
-    annualCostVnd: 8400000,
-    budgetPlan: 'KH-2026-DEV-04',
-    department: 'CC-TECH',
-    financeOpinion: 'withinBudget',
-    id: 'BM01-2104',
-    isSelfRequest: false,
-    overrideRequired: false,
-    slaHoursRemaining: 6,
-    softwareName: 'Slack Pro',
-    step: 'spending'
-  },
-  {
-    department: 'CC-TECH',
-    financeOpinion: 'notProvided',
-    id: 'BM01-2095',
-    isSelfRequest: false,
-    overrideRequired: true,
-    slaHoursRemaining: 12,
-    softwareName: 'Midjourney',
-    step: 'spending'
-  },
-  {
-    department: 'CC-TECH',
-    financeOpinion: 'notProvided',
-    id: 'BM01-2088',
-    isSelfRequest: true,
-    overrideRequired: false,
-    slaHoursRemaining: 20,
-    softwareName: 'DataDog',
-    step: 'need'
-  }
-]
-
-export function getRemainingBudgetAfterApproval(annualCostVnd?: number) {
-  return annualCostVnd === undefined ? undefined : spendingBudgetSnapshot.availableVnd - annualCostVnd
+export function initialsOf(name: string) {
+  return name.trim().slice(0, 1).toLocaleUpperCase()
 }
 
-export function filterSpendingApprovals(approvals: SpendingApproval[], step: SpendingStepFilter, search: string) {
-  const query = search.trim().toLocaleLowerCase()
+export type BudgetOutcome = 'WITHIN_BASE' | 'USES_RESERVE' | 'BLOCKED'
 
-  return approvals.filter((approval) => {
-    const matchesSearch =
-      !query ||
-      approval.id.toLocaleLowerCase().includes(query) ||
-      approval.softwareName.toLocaleLowerCase().includes(query) ||
-      approval.department.toLocaleLowerCase().includes(query)
+export function outcomeTone(outcome: BudgetOutcome | null | undefined): Tone {
+  if (outcome === 'WITHIN_BASE') return 'success'
+  if (outcome === 'USES_RESERVE') return 'warning'
+  if (outcome === 'BLOCKED') return 'danger'
+  return 'neutral'
+}
 
-    return matchesSearch && (step === 'all' || approval.step === step)
-  })
+export type DecisionErrorKey = 'stale' | 'recheck' | 'sod' | 'forbidden' | 'invalid' | 'uncertain'
+
+export function decisionErrorKey(failure: unknown): DecisionErrorKey {
+  const code = apiErrorCodeOf(failure)
+  const status = httpStatusOf(failure)
+  if (code === 'SPEND.STEP_NOT_PENDING' || code === 'SPEND.NO_SPEND_STEP') return 'stale'
+  if (code?.startsWith('SPEND.RECHECKED') || code === 'SPEND.NOT_CHECKABLE') return 'recheck'
+  if (code === 'SPEND.OWN_REQUEST' || code === 'SPEND.NOT_THE_ASSIGNEE') return 'forbidden'
+  if (code === 'SPEND.REVIEWER_IS_APPROVER') return 'sod'
+  if (status === 422) return 'invalid'
+  return 'uncertain'
 }

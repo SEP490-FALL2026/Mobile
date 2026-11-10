@@ -1,29 +1,24 @@
 import { useTranslation } from 'react-i18next'
-import { StyleSheet, Text } from 'react-native'
 
-import { MyRequestsPageResponseDtoDataItemsItemState } from '@/shared/api/generated/contracts/me'
-import { mobileColors } from '@/shared/theme/colors'
+import { MyRequestsPageResponseDtoDataItemsItemState } from '@/shared/api/generated/model/me'
+import { type BadgeTone, StatusBadge } from '@/shared/ui/status-badge'
+
+const tones: Record<string, BadgeTone> = {
+  COMPLETED: 'success',
+  REJECTED: 'danger',
+  IT_REJECTED: 'danger',
+  FAILED: 'danger',
+  WITHDRAWN: 'neutral',
+  CANCELLED: 'neutral'
+}
 
 export function LiveRequestStatus({ state }: { state: string }) {
   const { t } = useTranslation()
   const known = Object.values(MyRequestsPageResponseDtoDataItemsItemState).find((value) => value === state)
   return (
-    <Text style={styles.status}>
-      {known ? t(`requests.live.states.${known}`) : t('requests.live.unknownState', { state })}
-    </Text>
+    <StatusBadge
+      label={known ? t(`requests.live.states.${known}`) : t('requests.live.unknownState', { state })}
+      tone={tones[state] ?? 'brand'}
+    />
   )
 }
-
-const styles = StyleSheet.create({
-  status: {
-    alignSelf: 'flex-start',
-    color: mobileColors.primaryInk,
-    backgroundColor: mobileColors.primarySoft,
-    overflow: 'hidden',
-    borderRadius: 10,
-    paddingHorizontal: 10,
-    paddingVertical: 5,
-    fontSize: 12,
-    fontWeight: '700'
-  }
-})

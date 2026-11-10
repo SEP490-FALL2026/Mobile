@@ -6,10 +6,11 @@ import {
   accessRequestGet,
   accessRequestNeedDecide,
   accessRequestSimilarSeatList
-} from '@/shared/api/generated/api/access-requests/access-requests'
-import { meGet } from '@/shared/api/generated/api/me/me'
-import { needDecisionList } from '@/shared/api/generated/api/need-decisions/need-decisions'
-import { notificationList, notificationUnreadCount } from '@/shared/api/generated/api/notifications/notifications'
+} from '@/shared/api/generated/operations/access-requests'
+import { meGet } from '@/shared/api/generated/operations/me'
+import { needDecisionList } from '@/shared/api/generated/operations/need-decisions'
+import { notificationList, notificationUnreadCount } from '@/shared/api/generated/operations/notifications'
+import { spendQueueList } from '@/shared/api/generated/operations/spend-submission'
 import { setAppLanguage } from '@/shared/i18n/i18n'
 
 const mockRouter = { replace: jest.fn(), push: jest.fn() }
@@ -28,15 +29,32 @@ jest.mock('expo-router', () => ({
   useRouter: () => mockRouter
 }))
 jest.mock('@/shared/api/session-context', () => ({ useSession: () => mockSession }))
-jest.mock('@/shared/api/generated/api/need-decisions/need-decisions', () => ({ needDecisionList: jest.fn() }))
-jest.mock('@/shared/api/generated/api/me/me', () => ({ meGet: jest.fn() }))
-jest.mock('@/shared/api/generated/api/notifications/notifications', () => ({
+jest.mock('@/shared/api/generated/operations/need-decisions', () => ({ needDecisionList: jest.fn() }))
+jest.mock('@/shared/api/generated/operations/me', () => ({ meGet: jest.fn() }))
+jest.mock('@/shared/api/generated/operations/spend-submission', () => ({
+  spendQueueList: jest.fn(),
+  spendBatchSubmit: jest.fn(),
+  spendBatchItemList: jest.fn()
+}))
+jest.mock('@/shared/api/generated/operations/group-requests', () => ({
+  groupRequestCandidateList: jest
+    .fn()
+    .mockResolvedValue({ data: { items: [], pagination: { page: 1, pageSize: 10, totalItems: 0, totalPages: 0 } } }),
+  groupRequestCheck: jest.fn(),
+  groupRequestSubmit: jest.fn()
+}))
+jest.mock('@/shared/api/generated/operations/requestable-software', () => ({
+  requestablePlanList: jest
+    .fn()
+    .mockResolvedValue({ data: { items: [], pagination: { page: 1, pageSize: 10, totalItems: 0, totalPages: 0 } } })
+}))
+jest.mock('@/shared/api/generated/operations/notifications', () => ({
   notificationList: jest.fn(),
   notificationUnreadCount: jest.fn(),
   notificationMarkRead: jest.fn(),
   notificationMarkAllRead: jest.fn()
 }))
-jest.mock('@/shared/api/generated/api/access-requests/access-requests', () => ({
+jest.mock('@/shared/api/generated/operations/access-requests', () => ({
   accessRequestGet: jest.fn(),
   accessRequestNeedDecide: jest.fn(),
   accessRequestSimilarSeatList: jest.fn()
@@ -57,138 +75,118 @@ beforeEach(async () => {
   jest.clearAllMocks()
   await setAppLanguage('vi', false)
   jest.mocked(notificationList).mockResolvedValue({
-    status: 200,
-    headers: new Headers(),
+    success: true,
+    message: 'NOTIFICATIONS.LISTED',
     data: {
-      success: true,
-      message: 'NOTIFICATIONS.LISTED',
-      data: {
-        items: [],
-        pagination: { page: 1, pageSize: 20, totalItems: 0, totalPages: 0 }
-      }
+      items: [],
+      pagination: { page: 1, pageSize: 20, totalItems: 0, totalPages: 0 }
     }
   })
-  jest.mocked(notificationUnreadCount).mockResolvedValue({
-    status: 200,
-    headers: new Headers(),
-    data: { success: true, message: 'NOTIFICATIONS.COUNTED', data: { unread: 0 } }
-  })
+  jest
+    .mocked(notificationUnreadCount)
+    .mockResolvedValue({ success: true, message: 'NOTIFICATIONS.COUNTED', data: { unread: 0 } })
   jest.mocked(meGet).mockResolvedValue({
-    status: 200,
-    headers: new Headers(),
+    success: true,
+    message: 'ME.RETRIEVED',
     data: {
-      success: true,
-      message: 'ME.RETRIEVED',
-      data: {
-        appUserId: id,
-        loginEmail: 'manager@example.test',
-        roles: ['MANAGER'],
-        employee: { id, employeeCode: 'E1', fullName: 'Manager An', department: null, unplaced: false, jobTitle: null },
-        managerScope: { departmentId: id, departmentCode: 'IT', departmentName: 'Phòng IT' }
-      }
+      appUserId: id,
+      loginEmail: 'manager@example.test',
+      upcomingUnits: [],
+      roles: ['MANAGER'],
+      employee: { id, employeeCode: 'E1', fullName: 'Manager An', department: null, unplaced: false, jobTitle: null },
+      managerScope: { departmentId: id, departmentCode: 'IT', departmentName: 'Phòng IT' }
     }
   })
   jest.mocked(accessRequestSimilarSeatList).mockResolvedValue({
-    status: 200,
-    headers: new Headers(),
+    success: true,
+    message: 'ACCESS_REQUEST.SIMILAR_SEATS_LISTED',
     data: {
-      success: true,
-      message: 'ACCESS_REQUEST.SIMILAR_SEATS_LISTED',
-      data: {
-        items: [],
-        pagination: { page: 1, pageSize: 20, totalItems: 0, totalPages: 0 }
-      }
+      items: [],
+      pagination: { page: 1, pageSize: 20, totalItems: 0, totalPages: 0 }
     }
   })
   jest.mocked(needDecisionList).mockResolvedValue({
-    status: 200,
-    headers: new Headers(),
+    success: true,
+    message: 'NEED.LISTED',
     data: {
-      success: true,
-      message: 'NEED.LISTED',
-      data: {
-        items: [
-          {
-            requestId: id,
-            stepId: id,
-            stepKind: 'NEED',
-            deciderRole: 'MANAGER',
-            type: 'GRANT',
-            openedAt: '2026-11-09T00:00:00Z',
-            assignedAt: null,
-            slaWorkingDays: 2,
-            dueOn: '2026-11-12',
-            plan: { planId: id, planName: 'Pro', applicationName: 'Figma' },
-            softwareName: null,
-            requester: { employeeId: id, employeeCode: 'E1', fullName: 'An' },
-            beneficiary: null,
-            lineCount: 1,
-            department: { id, code: 'IT', name: 'IT' },
-            businessReasonExcerpt: 'Thiết kế',
-            termMonths: 12,
-            pricing: { status: 'NOT_APPLICABLE', amount: null },
-            samePersonAsSpend: false
-          }
-        ],
-        pagination: { page: 1, pageSize: 20, totalItems: 1, totalPages: 1 }
-      }
-    }
-  })
-  jest.mocked(accessRequestGet).mockResolvedValue({
-    status: 200,
-    headers: new Headers(),
-    data: {
-      success: true,
-      message: 'REQUEST.RETRIEVED',
-      data: {
-        request: {
-          id,
+      items: [
+        {
+          requestId: id,
+          stepId: id,
+          stepKind: 'NEED',
+          deciderRole: 'MANAGER',
           type: 'GRANT',
-          branch: 'PAID_IN_CATALOG',
-          state: 'PENDING',
-          plan: { planId: id, planName: 'Pro', applicationId: id, applicationName: 'Figma' },
-          proposal: null,
-          department: { id, code: 'IT', name: 'IT' },
-          costCenter: null,
+          expectedEndDate: null,
+          openedAt: '2026-11-09T00:00:00Z',
+          assignedAt: null,
+          slaWorkingDays: 2,
+          dueOn: '2026-11-12',
+          plan: { planId: id, planName: 'Pro', applicationName: 'Figma' },
+          softwareName: null,
           requester: { employeeId: id, employeeCode: 'E1', fullName: 'An' },
           beneficiary: null,
           lineCount: 1,
-          businessReason: 'Thiết kế',
+          department: { id, code: 'IT', name: 'IT' },
+          businessReasonExcerpt: 'Thiết kế',
           termMonths: 12,
-          expectedEndDate: null,
-          serviceAccount: null,
-          renewal: null,
-          spend: null,
-          budgetYear: null,
-          pricing: {
-            status: 'NOT_APPLICABLE',
-            missingReason: null,
-            amount: null,
-            unitPrice: null,
-            billingCycle: null,
-            periodCount: null,
-            bindingPeriodCount: null,
-            firstDueOn: null,
-            lastDueOn: null
-          },
-          policy: { version: 1, hasSpendStep: true, slaWorkingDays: 2 },
-          submittedAt: '2026-11-09T00:00:00Z',
-          needStep: {
-            id,
-            state: 'PENDING',
-            assignee: null,
-            routingRow: 1,
-            waitingReason: null,
-            samePersonAsSpend: false,
-            slaWorkingDays: 2,
-            createdAt: '2026-11-09T00:00:00Z',
-            assignedAt: null,
-            decidedAt: null
-          },
-          needDecision: null,
-          withdrawal: null,
-          cancellation: null
+          pricing: { status: 'NOT_APPLICABLE', amount: null }
         }
+      ],
+      pagination: { page: 1, pageSize: 20, totalItems: 1, totalPages: 1 }
+    }
+  })
+  jest.mocked(accessRequestGet).mockResolvedValue({
+    success: true,
+    message: 'REQUEST.RETRIEVED',
+    data: {
+      request: {
+        id,
+        type: 'GRANT',
+        branch: 'PAID_IN_CATALOG',
+        state: 'PENDING',
+        routing: { mode: 'VIA_HEAD', oneStepReason: null },
+        flags: { manyPaidSoftware: null },
+        plan: { planId: id, planName: 'Pro', applicationId: id, applicationName: 'Figma' },
+        proposal: null,
+        department: { id, code: 'IT', name: 'IT' },
+        costCenter: null,
+        requester: { employeeId: id, employeeCode: 'E1', fullName: 'An' },
+        beneficiary: null,
+        lineCount: 1,
+        businessReason: 'Thiết kế',
+        termMonths: 12,
+        expectedEndDate: null,
+        serviceAccount: null,
+        renewal: null,
+        spend: null,
+        budgetYear: null,
+        pricing: {
+          status: 'NOT_APPLICABLE',
+          missingReason: null,
+          amount: null,
+          unitPrice: null,
+          billingCycle: null,
+          kind: null,
+          months: null,
+          monthlyPrice: null,
+          nextYearAmount: null
+        },
+        policy: { version: 1, hasSpendStep: true, slaWorkingDays: 2 },
+        submittedAt: '2026-11-09T00:00:00Z',
+        needStep: {
+          id,
+          state: 'PENDING',
+          assignee: null,
+          routingRow: 1,
+          waitingReason: null,
+          slaWorkingDays: 2,
+          createdAt: '2026-11-09T00:00:00Z',
+          assignedAt: null,
+          decidedAt: null
+        },
+        needDecision: null,
+        withdrawal: null,
+        cancellation: null
       }
     }
   })
@@ -201,7 +199,8 @@ test('loads only assigned individual grants and opens real details', async () =>
   screen.getByText('Phòng IT')
   expect(needDecisionList).toHaveBeenCalledWith(
     { type: 'GRANT', page: 1, pageSize: 20 },
-    expect.objectContaining({ headers: { Authorization: 'Bearer test-token' } })
+    expect.objectContaining({ headers: { Authorization: 'Bearer test-token' } }),
+    expect.anything()
   )
   await fireEvent.press(screen.getByRole('button', { name: 'Xem Figma do An yêu cầu' }))
   await screen.findByText('Thiết kế')
@@ -210,11 +209,13 @@ test('loads only assigned individual grants and opens real details', async () =>
   expect(accessRequestSimilarSeatList).toHaveBeenCalledWith(
     id,
     { page: 1, pageSize: 20 },
-    expect.objectContaining({ headers: { Authorization: 'Bearer test-token' } })
+    expect.objectContaining({ headers: { Authorization: 'Bearer test-token' } }),
+    expect.anything()
   )
   expect(accessRequestGet).toHaveBeenCalledWith(
     id,
-    expect.objectContaining({ headers: { Authorization: 'Bearer test-token' } })
+    expect.objectContaining({ headers: { Authorization: 'Bearer test-token' } }),
+    expect.anything()
   )
 })
 
@@ -222,8 +223,15 @@ test('uses manager tabs and links to personal software', async () => {
   const screen = await renderScreen()
   await screen.findByText('Manager An')
   expect(screen.queryByRole('tab', { name: 'Mở mục Phần mềm' })).toBeNull()
-  await fireEvent.press(screen.getByRole('tab', { name: 'Mở mục Đội ngũ phòng' }))
-  screen.getByText('Quản lý đội ngũ thực hiện trên web. Mobile hỗ trợ duyệt nhu cầu được giao.')
+  jest.mocked(spendQueueList).mockResolvedValue({
+    success: true,
+    message: 'SPEND.QUEUE_LISTED',
+    data: { items: [], pagination: { page: 1, pageSize: 20, totalItems: 0, totalPages: 0 } }
+  })
+  await fireEvent.press(screen.getByRole('tab', { name: 'Mở mục Trình chi' }))
+  await screen.findByText('Không có yêu cầu nào chờ trình.')
+  await fireEvent.press(screen.getByRole('tab', { name: 'Mở mục Yêu cầu nhóm' }))
+  screen.getByText('Yêu cầu cho người trong phòng')
   await fireEvent.press(screen.getByRole('button', { name: 'Phần mềm và yêu cầu của tôi' }))
   expect(mockRouter.push).toHaveBeenCalledWith('/my-software')
   await fireEvent.press(screen.getByRole('tab', { name: 'Mở mục Hàng đợi' }))
@@ -237,16 +245,13 @@ test('uses manager tabs and links to personal software', async () => {
 
 test('employee cannot enter the manager workspace or load its queue', async () => {
   const response = await jest.mocked(meGet)()
-  if (!response.data.data) throw new Error('Expected account')
+  if (!response.data) throw new Error('Expected account')
   jest.mocked(meGet).mockResolvedValue({
     ...response,
     data: {
       ...response.data,
-      data: {
-        ...response.data.data,
-        roles: ['EMPLOYEE'],
-        managerScope: null
-      }
+      roles: ['EMPLOYEE'],
+      managerScope: null
     }
   })
 
@@ -257,10 +262,10 @@ test('employee cannot enter the manager workspace or load its queue', async () =
 
 test('explains a missing manager assignment rather than displaying a fabricated queue', async () => {
   const response = await jest.mocked(meGet)()
-  if (!response.data.data) throw new Error('Expected account')
+  if (!response.data) throw new Error('Expected account')
   jest.mocked(meGet).mockResolvedValue({
     ...response,
-    data: { ...response.data, data: { ...response.data.data, managerScope: null } }
+    data: { ...response.data, managerScope: null }
   })
   const screen = await renderScreen()
   await screen.findByText(
@@ -282,22 +287,19 @@ test('allows manager to sign out and reports sign-out failures', async () => {
 
 test('shows similar access returned by the backend and supports pagination', async () => {
   const response = await jest.mocked(accessRequestSimilarSeatList)(id)
-  if (!response.data.data) throw new Error('Expected similar seats')
+  if (!response.data) throw new Error('Expected similar seats')
   jest.mocked(accessRequestSimilarSeatList).mockResolvedValue({
     ...response,
     data: {
-      ...response.data,
-      data: {
-        items: [
-          {
-            assignmentId: id,
-            plan: { planId: id, planName: 'Business', applicationId: id, applicationName: 'Miro' },
-            accountIdentifier: 'private@example.test',
-            heldSince: '2026-01-01'
-          }
-        ],
-        pagination: { page: 1, pageSize: 20, totalItems: 21, totalPages: 2 }
-      }
+      items: [
+        {
+          assignmentId: id,
+          plan: { planId: id, planName: 'Business', applicationId: id, applicationName: 'Miro' },
+          accountIdentifier: 'private@example.test',
+          heldSince: '2026-01-01'
+        }
+      ],
+      pagination: { page: 1, pageSize: 20, totalItems: 21, totalPages: 2 }
     }
   })
   const screen = await renderScreen()
@@ -308,7 +310,12 @@ test('shows similar access returned by the backend and supports pagination', asy
   expect(screen.queryByText('private@example.test')).toBeNull()
   await fireEvent.press(screen.getByRole('button', { name: 'Trang sau' }))
   await waitFor(() =>
-    expect(accessRequestSimilarSeatList).toHaveBeenCalledWith(id, { page: 2, pageSize: 20 }, expect.anything())
+    expect(accessRequestSimilarSeatList).toHaveBeenCalledWith(
+      id,
+      { page: 2, pageSize: 20 },
+      expect.anything(),
+      expect.anything()
+    )
   )
   await screen.findByText('Trang 2')
 })
@@ -335,10 +342,10 @@ test('waits for a verified manager profile before loading assigned approvals', a
 
 test('does not allow a decision if detail identifies a different request', async () => {
   const response = await jest.mocked(accessRequestGet)(id)
-  if (!response.data.data || !('request' in response.data.data)) throw new Error('Expected request')
+  if (!response.data || !('request' in response.data)) throw new Error('Expected request')
   jest.mocked(accessRequestGet).mockResolvedValueOnce({
     ...response,
-    data: { ...response.data, data: { request: { ...response.data.data.request, id: 'another-id' } } }
+    data: { request: { ...response.data.request, id: 'another-id' } }
   })
   const screen = await renderScreen()
   await screen.findByText('Figma')
@@ -350,24 +357,20 @@ test('does not allow a decision if detail identifies a different request', async
 
 test('rejects with a required reason and refreshes the assigned queue', async () => {
   const response = await jest.mocked(accessRequestGet)(id)
-  if (!response.data.data || !('request' in response.data.data)) throw new Error('Expected request')
-  const request = response.data.data.request
+  if (!response.data || !('request' in response.data)) throw new Error('Expected request')
+  const request = response.data.request
   jest.mocked(accessRequestNeedDecide).mockResolvedValueOnce({
-    status: 200,
-    headers: new Headers(),
+    success: true,
+    message: 'NEED.DECIDED',
     data: {
-      success: true,
-      message: 'NEED.DECIDED',
-      data: {
-        request: {
-          ...request,
-          needDecision: {
-            decision: 'REJECTED',
-            decidedBy: request.requester,
-            deciderRole: 'MANAGER',
-            reason: 'Chưa cần',
-            decidedAt: '2026-11-10T00:00:00Z'
-          }
+      request: {
+        ...request,
+        needDecision: {
+          decision: 'REJECTED',
+          decidedBy: request.requester,
+          deciderRole: 'MANAGER',
+          reason: 'Chưa cần',
+          decidedAt: '2026-11-10T00:00:00Z'
         }
       }
     }
@@ -408,24 +411,20 @@ test('does not retry or report success for an uncertain approval', async () => {
 
 test('confirms approval only after confirmation', async () => {
   const response = await jest.mocked(accessRequestGet)(id)
-  if (!response.data.data || !('request' in response.data.data)) throw new Error('Expected request')
-  const request = response.data.data.request
+  if (!response.data || !('request' in response.data)) throw new Error('Expected request')
+  const request = response.data.request
   jest.mocked(accessRequestNeedDecide).mockResolvedValueOnce({
-    status: 200,
-    headers: new Headers(),
+    success: true,
+    message: 'NEED.DECIDED',
     data: {
-      success: true,
-      message: 'NEED.DECIDED',
-      data: {
-        request: {
-          ...request,
-          needDecision: {
-            decision: 'APPROVED',
-            decidedBy: request.requester,
-            deciderRole: 'MANAGER',
-            reason: null,
-            decidedAt: '2026-11-10T00:00:00Z'
-          }
+      request: {
+        ...request,
+        needDecision: {
+          decision: 'APPROVED',
+          decidedBy: request.requester,
+          deciderRole: 'MANAGER',
+          reason: null,
+          decidedAt: '2026-11-10T00:00:00Z'
         }
       }
     }
@@ -449,12 +448,10 @@ test('confirms approval only after confirmation', async () => {
 
 test('rejects inconsistent server responses', async () => {
   const response = await jest.mocked(accessRequestGet)(id)
-  if (!response.data.data || !('request' in response.data.data)) throw new Error('Expected request')
-  jest.mocked(accessRequestNeedDecide).mockResolvedValueOnce({
-    status: 200,
-    headers: new Headers(),
-    data: { success: true, message: 'NEED.DECIDED', data: { request: response.data.data.request } }
-  })
+  if (!response.data || !('request' in response.data)) throw new Error('Expected request')
+  jest
+    .mocked(accessRequestNeedDecide)
+    .mockResolvedValueOnce({ success: true, message: 'NEED.DECIDED', data: { request: response.data.request } })
   const screen = await renderScreen()
   await screen.findByText('Figma')
   await fireEvent.press(screen.getByRole('button', { name: 'Xem Figma do An yêu cầu' }))
@@ -476,17 +473,14 @@ test('rejects inconsistent server responses', async () => {
 test('shows price from the server with an English locale', async () => {
   await setAppLanguage('en', false)
   const response = await jest.mocked(accessRequestGet)(id)
-  if (!response.data.data || !('request' in response.data.data)) throw new Error('Expected request')
-  const request = response.data.data.request
+  if (!response.data || !('request' in response.data)) throw new Error('Expected request')
+  const request = response.data.request
   jest.mocked(accessRequestGet).mockResolvedValueOnce({
     ...response,
     data: {
-      ...response.data,
-      data: {
-        request: {
-          ...request,
-          pricing: { ...request.pricing, status: 'PRICED', amount: { amount: '123.45', currency: 'USD' } }
-        }
+      request: {
+        ...request,
+        pricing: { ...request.pricing, status: 'PRICED', amount: { amount: '123.45', currency: 'USD' } }
       }
     }
   })
@@ -500,28 +494,29 @@ test('shows price from the server with an English locale', async () => {
 
 test('moves to the next page of assigned work', async () => {
   const response = await jest.mocked(needDecisionList)({ type: 'GRANT', page: 1, pageSize: 20 })
-  if (!response.data.data) throw new Error('Expected queue')
+  if (!response.data) throw new Error('Expected queue')
   jest.mocked(needDecisionList).mockResolvedValue({
     ...response,
-    data: {
-      ...response.data,
-      data: { ...response.data.data, pagination: { ...response.data.data.pagination, totalPages: 2 } }
-    }
+    data: { ...response.data, pagination: { ...response.data.pagination, totalPages: 2 } }
   })
   const screen = await renderScreen()
   await screen.findByText('Figma')
   await fireEvent.press(screen.getByRole('button', { name: 'Trang sau' }))
   await waitFor(() =>
-    expect(needDecisionList).toHaveBeenCalledWith({ type: 'GRANT', page: 2, pageSize: 20 }, expect.anything())
+    expect(needDecisionList).toHaveBeenCalledWith(
+      { type: 'GRANT', page: 2, pageSize: 20 },
+      expect.anything(),
+      expect.anything()
+    )
   )
 })
 
 test('prevents approval for a term over 12 months', async () => {
   const response = await jest.mocked(accessRequestGet)(id)
-  if (!response.data.data || !('request' in response.data.data)) throw new Error('Expected request')
+  if (!response.data || !('request' in response.data)) throw new Error('Expected request')
   jest.mocked(accessRequestGet).mockResolvedValueOnce({
     ...response,
-    data: { ...response.data, data: { request: { ...response.data.data.request, termMonths: 18 } } }
+    data: { request: { ...response.data.request, termMonths: 18 } }
   })
   const screen = await renderScreen()
   await screen.findByText('Figma')
@@ -535,16 +530,13 @@ test('prevents approval for a term over 12 months', async () => {
 
 test('rejects stale step and allows retry on failed queue', async () => {
   const response = await jest.mocked(accessRequestGet)(id)
-  if (!response.data.data || !('request' in response.data.data)) throw new Error('Expected request')
+  if (!response.data || !('request' in response.data)) throw new Error('Expected request')
   jest.mocked(accessRequestGet).mockResolvedValueOnce({
     ...response,
     data: {
-      ...response.data,
-      data: {
-        request: {
-          ...response.data.data.request,
-          needStep: { ...response.data.data.request.needStep, state: 'CLOSED' }
-        }
+      request: {
+        ...response.data.request,
+        needStep: { ...response.data.request.needStep, state: 'CLOSED' }
       }
     }
   })

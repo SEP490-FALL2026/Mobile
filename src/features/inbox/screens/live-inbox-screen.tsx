@@ -1,13 +1,16 @@
 import { Feather } from '@expo/vector-icons'
 import { Redirect, useRouter } from 'expo-router'
-import { type ReactNode, useState } from 'react'
+import { type ReactNode, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 import { useSession } from '@/shared/api/session-context'
+import { clampPage } from '@/shared/lib/clamp-page'
 import { goBackOr } from '@/shared/lib/go-back-or'
 import { mobileColors } from '@/shared/theme/colors'
+import { Pager } from '@/shared/ui/pager'
+import { StatusBadge } from '@/shared/ui/status-badge'
 import { MobileTabBar } from '@/shared/ui/mobile-tab-bar'
 
 import { useLiveInbox } from '../hooks/use-live-inbox'
@@ -18,6 +21,10 @@ export function LiveInboxScreen({ navigation }: { navigation?: ReactNode } = {})
   const session = useSession()
   const [page, setPage] = useState(1)
   const { list, count, markRead } = useLiveInbox(page)
+  useEffect(() => {
+    const next = clampPage(page, list.data?.pagination.totalPages)
+    if (next !== page) setPage(next)
+  }, [page, list.data?.pagination.totalPages])
 
   if (session.state === 'anonymous') return <Redirect href='/' />
 
@@ -135,7 +142,10 @@ export function LiveInboxScreen({ navigation }: { navigation?: ReactNode } = {})
                   <Text style={styles.itemTitle}>
                     {code ? t(`inbox.live.codes.${code}`) : t('inbox.live.unknown', { code: item.code })}
                   </Text>
-                  <Text style={styles.muted}>{item.readAt ? t('inbox.live.read') : t('inbox.live.unread')}</Text>
+                  <StatusBadge
+                    label={item.readAt ? t('inbox.live.read') : t('inbox.live.unread')}
+                    tone={item.readAt ? 'neutral' : 'brand'}
+                  />
                 </View>
                 <Text style={styles.muted}>
                   {Number.isNaN(date.getTime())
@@ -173,29 +183,7 @@ export function LiveInboxScreen({ navigation }: { navigation?: ReactNode } = {})
             )
           })}
           {list.data && list.data.pagination.totalPages > 1 ? (
-            <View style={styles.pagination}>
-              <Pressable
-                accessibilityRole='button'
-                accessibilityState={{ disabled: page <= 1 }}
-                disabled={page <= 1}
-                onPress={() => setPage(page - 1)}
-                style={[styles.action, page <= 1 && styles.disabled]}
-              >
-                <Text style={styles.actionText}>{t('licenses.live.previous')}</Text>
-              </Pressable>
-              <Text style={styles.muted}>
-                {t('licenses.live.page', { page: new Intl.NumberFormat(i18n.language).format(page) })}
-              </Text>
-              <Pressable
-                accessibilityRole='button'
-                accessibilityState={{ disabled: page >= list.data.pagination.totalPages }}
-                disabled={page >= list.data.pagination.totalPages}
-                onPress={() => setPage(page + 1)}
-                style={[styles.action, page >= list.data.pagination.totalPages && styles.disabled]}
-              >
-                <Text style={styles.actionText}>{t('licenses.live.next')}</Text>
-              </Pressable>
-            </View>
+            <Pager onPage={setPage} page={page} totalPages={list.data.pagination.totalPages} />
           ) : null}
         </ScrollView>
         {navigation ?? (
@@ -268,14 +256,24 @@ const styles = StyleSheet.create({
     backgroundColor: mobileColors.white,
     borderColor: mobileColors.border,
     borderWidth: 1,
-    borderRadius: 16,
+    borderRadius: 18,
     padding: 16,
-    gap: 8
+    gap: 8,
+    boxShadow: '0px 4px 10px rgba(93, 59, 32, 0.04)'
   },
-  unread: { borderColor: mobileColors.primary, backgroundColor: mobileColors.primarySoft },
+  unread: { borderColor: mobileColors.primary, borderLeftWidth: 4 },
   itemHeader: { flexDirection: 'row', justifyContent: 'space-between', gap: 10 },
   itemTitle: { flex: 1, color: mobileColors.foreground, fontSize: 15, fontWeight: '700' },
-  action: { minHeight: 44, alignSelf: 'flex-start', flexDirection: 'row', alignItems: 'center', gap: 8 },
+  action: {
+    minHeight: 44,
+    alignSelf: 'flex-start',
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    paddingHorizontal: 14,
+    borderRadius: 12,
+    backgroundColor: mobileColors.primarySoft
+  },
   actionText: { color: mobileColors.primaryInk, fontWeight: '700' },
   disabled: { opacity: 0.4 },
   error: { color: mobileColors.danger, fontSize: 13 },

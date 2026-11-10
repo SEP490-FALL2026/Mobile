@@ -1,368 +1,358 @@
 import { Feather } from '@expo/vector-icons'
-import { useMemo, useState } from 'react'
+import { Redirect } from 'expo-router'
+import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native'
+import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
-import { useRequests } from '@/entities/demo-requests'
-import { InboxScreen } from '@/features/inbox'
+import { LiveInboxScreen } from '@/features/inbox'
+import type { NeedQueueResponseDtoDataItemsItem } from '@/shared/api/generated/model/need-decisions'
+import type { ApprovalListResponseDtoDataItemsItem } from '@/shared/api/generated/model/spend-approvals'
+import { useSession } from '@/shared/api/session-context'
+import { useAccountProfile } from '@/shared/api/use-account-profile'
+import { clampPage } from '@/shared/lib/clamp-page'
 import { mobileColors } from '@/shared/theme/colors'
-import { MobileTabBar } from '@/shared/ui/mobile-tab-bar'
 
-import { SpendingApprovalCard } from '../components/spending-approval-card'
-import { SpendingApprovalDetails } from '../components/spending-approval-details'
-import {
-  filterSpendingApprovals,
-  spendingApprovals,
-  type SpendingApproval,
-  type SpendingStepFilter
-} from '../model/spending-approvals'
+import { ApprovalQueueCard } from '../components/approval-queue-card'
+import { QueueSection } from '../components/queue-section'
+import { SpendingTabs, type SpendingTab } from '../components/spending-tabs'
+import { StatusChip } from '../components/status-chip'
+import { useManagerRequestApprovals } from '../hooks/use-manager-request-approvals'
+import { useSpendQueue } from '../hooks/use-spend-approvals'
+import { formatDate, formatMoney, initialsOf, outcomeTone } from '../model/spending-approvals'
+import { ManagerRequestDetail } from './manager-request-detail-screen'
+import { SpendApprovalDetail } from './spend-approval-detail-screen'
 
-interface SpendingDecision {
-  kind: 'approved' | 'override' | 'rejected'
-  reason?: string
-  requestId: string
-}
-
-type SpendingTab = 'queue' | 'history' | 'inbox'
+type Selection =
+  | { kind: 'spend'; item: ApprovalListResponseDtoDataItemsItem }
+  | { kind: 'manager'; item: NeedQueueResponseDtoDataItemsItem }
 
 export function SpendingApprovalsScreen() {
-  const { t } = useTranslation()
-  const [step, setStep] = useState<SpendingStepFilter>('all')
-  const [search, setSearch] = useState('')
-  const [selectedRequestId, setSelectedRequestId] = useState<string>()
-  const [activeTab, setActiveTab] = useState<SpendingTab>('queue')
-  const { requests, spendingDecisions: decisions, decide } = useRequests()
-  const [lastDecision, setLastDecision] = useState<SpendingDecision>()
-  const [decisionError, setDecisionError] = useState(false)
-  const pendingRequests = useMemo(
-    () =>
-      spendingApprovals.filter(
-        (request) =>
-          !decisions[request.id] &&
-          (request.id !== 'BM01-2104' || requests.find((item) => item.id === request.id)?.status === 'spendApproval')
-      ),
-    [decisions, requests]
-  )
-  const filteredRequests = useMemo(
-    () => filterSpendingApprovals(pendingRequests, step, search),
-    [pendingRequests, search, step]
-  )
-  const selectedRequest = pendingRequests.find((request) => request.id === selectedRequestId)
-  const completedRequests = spendingApprovals.filter((request) => decisions[request.id])
-  const filters: { id: SpendingStepFilter; label: string }[] = [
-    { id: 'all', label: t('spending.filters.all') },
-    { id: 'spending', label: t('spending.filters.spending') },
-    { id: 'need', label: t('spending.filters.need') }
-  ]
+  const { i18n, t } = useTranslation()
+  const session = useSession()
+  const profile = useAccountProfile()
+  const [tab, setTab] = useState<SpendingTab>('spend')
+  const [spendPage, setSpendPage] = useState(1)
+  const [managerPage, setManagerPage] = useState(1)
+  const [selection, setSelection] = useState<Selection>()
+  const [loggingOut, setLoggingOut] = useState(false)
+  const [logoutError, setLogoutError] = useState(false)
+  const isApprover = !!profile.data?.roles.includes('SPENDING_APPROVER') && !profile.isError
+  const spend = useSpendQueue(spendPage, isApprover)
+  const manager = useManagerRequestApprovals(managerPage, undefined, isApprover).queue
+  const spendPages = spend.data?.pagination.totalPages
+  const managerPages = manager.data?.pagination.totalPages
+  useEffect(() => {
+    const next = clampPage(spendPage, spendPages)
+    if (next !== spendPage) setSpendPage(next)
+  }, [spendPage, spendPages])
+  useEffect(() => {
+    const next = clampPage(managerPage, managerPages)
+    if (next !== managerPage) setManagerPage(next)
+  }, [managerPage, managerPages])
 
-  function recordDecision(request: SpendingApproval, kind: SpendingDecision['kind'], reason?: string) {
-    if (!decide('spending', { kind, reason, requestId: request.id })) {
-      setDecisionError(true)
-      setSelectedRequestId(undefined)
-      return
+  async function logout() {
+    if (loggingOut) return
+    setLoggingOut(true)
+    setLogoutError(false)
+    try {
+      await session.logout()
+    } catch {
+      setLogoutError(true)
+    } finally {
+      setLoggingOut(false)
     }
-    setDecisionError(false)
-    setLastDecision({ kind, reason, requestId: request.id })
-    setSelectedRequestId(undefined)
+  }
+  function selectTab(next: SpendingTab) {
+    setSelection(undefined)
+    setTab(next)
   }
 
-  if (selectedRequest) {
-    return (
-      <SafeAreaView style={styles.safeArea}>
-        <SpendingApprovalDetails
-          onApprove={(reason) =>
-            recordDecision(selectedRequest, selectedRequest.overrideRequired ? 'override' : 'approved', reason)
-          }
-          onBack={() => setSelectedRequestId(undefined)}
-          onReject={(reason) => recordDecision(selectedRequest, 'rejected', reason)}
-          request={selectedRequest}
-        />
-      </SafeAreaView>
-    )
+  if (session.state === 'anonymous') return <Redirect href='/' />
+  if (profile.data && !profile.isError && !isApprover) {
+    return <Redirect href={profile.data.roles.includes('MANAGER') ? '/live-need-approvals' : '/my-software'} />
   }
 
-  if (activeTab === 'inbox') {
-    return <InboxScreen role='spending' onSelectTab={(tab) => setActiveTab(tab === 'queue' ? 'queue' : 'history')} />
-  }
+  const tabs = <SpendingTabs active={tab} disabled={false} onSelect={selectTab} />
+  if (isApprover && tab === 'inbox') return <LiveInboxScreen navigation={tabs} />
 
-  const needStepCount = pendingRequests.filter((request) => request.step === 'need').length
+  const format = new Intl.NumberFormat(i18n.language)
+  const spendTotal = spend.data?.pagination.totalItems
+  const managerTotal = manager.data?.pagination.totalItems
 
   return (
-    <SafeAreaView style={styles.safeArea}>
+    <SafeAreaView style={styles.safe}>
       <View style={styles.screen}>
         <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps='handled'>
-          <View style={styles.profile}>
-            <View style={styles.profileMark}>
-              <Text style={styles.profileInitials}>{t('spending.approverInitials')}</Text>
+          {!selection && profile.data && isApprover ? (
+            <View style={styles.profile}>
+              <View style={styles.avatar}>
+                <Text style={styles.avatarText}>{initialsOf(profile.data.employee.fullName)}</Text>
+              </View>
+              <View style={styles.profileCopy}>
+                <Text numberOfLines={1} style={styles.name}>
+                  {profile.data.employee.fullName}
+                </Text>
+                <StatusChip label={t('spending.role')} />
+              </View>
+              <Pressable
+                accessibilityLabel={t('navigation.openTab', { tab: t('navigation.inbox') })}
+                accessibilityRole='button'
+                onPress={() => selectTab('inbox')}
+                style={styles.iconButton}
+              >
+                <Feather
+                  accessibilityElementsHidden
+                  color={mobileColors.primaryInk}
+                  importantForAccessibility='no'
+                  name='bell'
+                  size={18}
+                />
+              </Pressable>
+              <Pressable
+                accessibilityLabel={t('licenses.live.logout')}
+                accessibilityRole='button'
+                accessibilityState={{ busy: loggingOut, disabled: loggingOut }}
+                disabled={loggingOut}
+                onPress={() => void logout()}
+                style={styles.iconButton}
+              >
+                <Feather
+                  accessibilityElementsHidden
+                  color={mobileColors.primaryInk}
+                  importantForAccessibility='no'
+                  name='log-out'
+                  size={18}
+                />
+              </Pressable>
             </View>
-            <View style={styles.profileCopy}>
-              <Text style={styles.profileTitle}>{t('spending.approverName')}</Text>
-              <Text style={styles.profileMeta}>{t('spending.approverHeaderMeta')}</Text>
-            </View>
-            <Pressable
-              accessibilityLabel={t('navigation.openTab', { tab: t('navigation.inbox') })}
-              accessibilityRole='button'
-              onPress={() => setActiveTab('inbox')}
-              style={styles.notificationButton}
-            >
-              <Feather
-                accessibilityElementsHidden
-                color={mobileColors.foreground}
-                importantForAccessibility='no'
-                name='bell'
-                size={18}
-              />
-            </Pressable>
-          </View>
-
-          <View style={styles.heading}>
-            <Text style={styles.kicker}>{t('spending.kicker')}</Text>
-            <Text accessibilityRole='header' style={styles.title}>
-              {t('spending.title')}
+          ) : null}
+          {logoutError ? (
+            <Text accessibilityRole='alert' style={styles.error}>
+              {t('licenses.live.logoutError')}
             </Text>
-            <Text style={styles.subtitle}>{t('spending.subtitle')}</Text>
-          </View>
-
-          <View style={styles.metrics}>
-            <View style={styles.metricCard}>
-              <View style={[styles.metricIcon, styles.metricIconPrimary]}>
-                <Feather color={mobileColors.primaryInk} name='credit-card' size={16} />
-              </View>
-              <Text style={styles.metricValue}>{pendingRequests.length}</Text>
-              <Text style={styles.metricLabel}>{t('spending.assignedCount')}</Text>
-            </View>
-            <View style={styles.metricCard}>
-              <View style={[styles.metricIcon, styles.metricIconNeutral]}>
-                <Feather color={mobileColors.success} name='check-circle' size={16} />
-              </View>
-              <Text style={styles.metricValue}>{needStepCount}</Text>
-              <Text style={styles.metricLabel}>{t('spending.needStepCount')}</Text>
-            </View>
-          </View>
-          <Text style={styles.demoNote}>{t('spending.demoNote')}</Text>
-          {decisionError ? <Text accessibilityRole='alert'>{t('common.demoDecisionError')}</Text> : null}
-
-          {lastDecision ? (
-            <View accessibilityRole='alert' style={styles.result}>
-              <Text style={styles.resultTitle}>
-                {t(`spending.results.${lastDecision.kind}`, { id: lastDecision.requestId })}
+          ) : null}
+          {(session.state === 'loading' || profile.isLoading) && !profile.isError ? (
+            <Text accessibilityRole='progressbar' style={styles.muted}>
+              {t('auth.profileLoading')}
+            </Text>
+          ) : null}
+          {profile.isError ? (
+            <View style={styles.errorBox}>
+              <Text accessibilityRole='alert' style={styles.error}>
+                {t('spending.profileError')}
               </Text>
-              {lastDecision.reason ? <Text style={styles.resultReason}>{lastDecision.reason}</Text> : null}
-              <Text style={styles.resultNote}>{t('spending.demoActionNote')}</Text>
+              <Pressable accessibilityRole='button' onPress={() => void profile.refetch()} style={styles.action}>
+                <Text style={styles.actionText}>{t('spending.retry')}</Text>
+              </Pressable>
+              <Pressable accessibilityRole='button' onPress={() => void logout()} style={styles.action}>
+                <Text style={styles.actionText}>{t('licenses.live.logout')}</Text>
+              </Pressable>
             </View>
           ) : null}
 
-          {activeTab === 'queue' ? (
-            <View style={styles.queue}>
-              <View style={styles.queueHeading}>
-                <View style={styles.queueCopy}>
-                  <Text style={styles.sectionTitle}>{t('spending.queueTitle')}</Text>
-                  <Text style={styles.sectionHint}>{t('spending.queueHint')}</Text>
-                </View>
-                <Text style={styles.countBadge}>{pendingRequests.length}</Text>
+          {isApprover && selection?.kind === 'spend' ? (
+            <SpendApprovalDetail item={selection.item} onBack={() => setSelection(undefined)} />
+          ) : null}
+          {isApprover && selection?.kind === 'manager' ? (
+            <ManagerRequestDetail item={selection.item} onBack={() => setSelection(undefined)} />
+          ) : null}
+
+          {isApprover && !selection ? (
+            <>
+              <View style={styles.heading}>
+                <Text style={styles.kicker}>{t('spending.kicker')}</Text>
+                <Text accessibilityRole='header' style={styles.title}>
+                  {t('spending.title')}
+                </Text>
+                <Text style={styles.muted}>{t('spending.subtitle')}</Text>
               </View>
 
-              <View style={styles.search}>
-                <Feather
-                  accessibilityElementsHidden
-                  color={mobileColors.muted}
-                  importantForAccessibility='no'
-                  name='search'
-                  size={17}
+              <View style={styles.summary}>
+                <SummaryCard
+                  active={tab === 'spend'}
+                  icon='credit-card'
+                  label={t('spending.tabs.spend')}
+                  onPress={() => selectTab('spend')}
+                  value={spendTotal === undefined ? '–' : format.format(spendTotal)}
                 />
-                <TextInput
-                  accessibilityLabel={t('spending.searchLabel')}
-                  onChangeText={setSearch}
-                  placeholder={t('spending.searchPlaceholder')}
-                  placeholderTextColor={mobileColors.muted}
-                  returnKeyType='search'
-                  style={styles.searchInput}
-                  value={search}
+                <SummaryCard
+                  active={tab === 'manager'}
+                  icon='users'
+                  label={t('spending.tabs.manager')}
+                  onPress={() => selectTab('manager')}
+                  value={managerTotal === undefined ? '–' : format.format(managerTotal)}
                 />
               </View>
+            </>
+          ) : null}
 
-              <View accessibilityLabel={t('spending.filters.label')} style={styles.filters}>
-                {filters.map((item) => {
-                  const selected = step === item.id
-
-                  return (
-                    <Pressable
-                      accessibilityRole='button'
-                      accessibilityState={{ selected }}
-                      key={item.id}
-                      onPress={() => setStep(item.id)}
-                      style={[styles.filterButton, selected && styles.selectedFilter]}
-                    >
-                      <Text style={[styles.filterLabel, selected && styles.selectedFilterLabel]}>{item.label}</Text>
-                    </Pressable>
-                  )
-                })}
-              </View>
-
-              <View style={styles.list}>
-                {filteredRequests.map((request) => (
-                  <SpendingApprovalCard
-                    key={request.id}
-                    onPress={({ id }) => setSelectedRequestId(id)}
-                    request={request}
+          {isApprover && !selection && tab === 'spend' ? (
+            <QueueSection
+              emptyHint={t('spending.spendQueue.emptyHint')}
+              emptyTitle={t('spending.spendQueue.empty')}
+              errorText={t('spending.spendQueue.error')}
+              hasItems={!!spend.data?.items.length}
+              hint={t('spending.spendQueue.hint')}
+              isError={spend.isError}
+              isLoading={spend.isLoading}
+              onPage={setSpendPage}
+              onRefresh={() => void spend.refetch()}
+              page={spendPage}
+              title={t('spending.spendQueue.title')}
+              totalItems={spendTotal}
+              totalPages={spend.data?.pagination.totalPages}
+            >
+              {spend.data?.items.map((item) => {
+                const name = item.plan?.applicationName ?? item.softwareName ?? t('spending.unnamed')
+                return (
+                  <ApprovalQueueCard
+                    accessibilityLabel={t('spending.card.open', { name, person: item.requester.fullName })}
+                    amount={formatMoney(item.amount, i18n.language)}
+                    chips={
+                      <>
+                        {item.outcome ? (
+                          <StatusChip label={t(`spending.outcome.${item.outcome}`)} tone={outcomeTone(item.outcome)} />
+                        ) : null}
+                        {item.routing.mode === 'ONE_STEP' ? <StatusChip label={t('spending.routing.oneStep')} /> : null}
+                      </>
+                    }
+                    due={t('spending.card.due', {
+                      date: formatDate(item.dueOn, i18n.language) ?? t('spending.dateUnavailable')
+                    })}
+                    key={item.stepId}
+                    onPress={() => setSelection({ kind: 'spend', item })}
+                    person={item.requester.fullName}
+                    personMeta={item.costCenter.code}
+                    plan={item.plan ? t('spending.plan', { plan: item.plan.planName }) : undefined}
+                    title={name}
                   />
-                ))}
-                {filteredRequests.length === 0 ? (
-                  <View style={styles.emptyState}>
-                    <Text style={styles.emptyTitle}>
-                      {t(pendingRequests.length ? 'spending.emptySearch' : 'spending.emptyQueue')}
-                    </Text>
-                    <Text style={styles.emptyHint}>
-                      {t(pendingRequests.length ? 'spending.emptySearchHint' : 'spending.emptyQueueHint')}
-                    </Text>
-                  </View>
-                ) : null}
-              </View>
-            </View>
-          ) : (
-            <View style={styles.historySection}>
-              <View style={styles.queueHeading}>
-                <View style={styles.queueCopy}>
-                  <Text style={styles.sectionTitle}>{t('spending.historyTitle')}</Text>
-                  <Text style={styles.sectionHint}>{t('spending.historyHint')}</Text>
-                </View>
-                <Text style={styles.countBadge}>{completedRequests.length}</Text>
-              </View>
-              {completedRequests.length > 0 ? (
-                <View style={styles.historyList}>
-                  {completedRequests.map((request) => (
-                    <View key={request.id} style={styles.historyCard}>
-                      <View style={styles.historyCopy}>
-                        <Text style={styles.historySoftware}>{request.softwareName}</Text>
-                        <Text style={styles.historyId}>{request.id}</Text>
-                      </View>
-                      <Text style={styles.historyStatus}>
-                        {t(`spending.decisionStatus.${decisions[request.id].kind}`)}
-                      </Text>
-                      {decisions[request.id].reason ? (
-                        <Text style={styles.historyStatus}>{decisions[request.id].reason}</Text>
-                      ) : null}
-                    </View>
-                  ))}
-                </View>
-              ) : (
-                <View style={styles.emptyState}>
-                  <Text style={styles.emptyTitle}>{t('spending.historyEmpty')}</Text>
-                </View>
-              )}
-            </View>
-          )}
+                )
+              })}
+            </QueueSection>
+          ) : null}
+
+          {isApprover && !selection && tab === 'manager' ? (
+            <QueueSection
+              emptyHint={t('spending.managerQueue.emptyHint')}
+              emptyTitle={t('spending.managerQueue.empty')}
+              errorText={t('spending.managerQueue.error')}
+              hasItems={!!manager.data?.items.length}
+              hint={t('spending.managerQueue.hint')}
+              isError={manager.isError}
+              isLoading={manager.isLoading}
+              onPage={setManagerPage}
+              onRefresh={() => void manager.refetch()}
+              page={managerPage}
+              title={t('spending.managerQueue.title')}
+              totalItems={managerTotal}
+              totalPages={manager.data?.pagination.totalPages}
+            >
+              {manager.data?.items.map((item) => {
+                const name = item.plan?.applicationName ?? item.softwareName ?? t('spending.unnamed')
+                return (
+                  <ApprovalQueueCard
+                    accessibilityLabel={t('spending.card.open', { name, person: item.requester.fullName })}
+                    amount={
+                      item.pricing.status === 'PRICED' ? formatMoney(item.pricing.amount, i18n.language) : undefined
+                    }
+                    chips={
+                      <>
+                        <StatusChip label={t('spending.manager.oneStep')} />
+                        {item.termMonths !== null ? (
+                          <StatusChip label={t('spending.months', { count: item.termMonths })} />
+                        ) : null}
+                      </>
+                    }
+                    due={t('spending.card.due', {
+                      date: formatDate(item.dueOn, i18n.language) ?? t('spending.dateUnavailable')
+                    })}
+                    key={item.stepId}
+                    onPress={() => setSelection({ kind: 'manager', item })}
+                    person={item.requester.fullName}
+                    personMeta={item.department.name}
+                    plan={item.plan ? t('spending.plan', { plan: item.plan.planName }) : undefined}
+                    title={name}
+                  />
+                )
+              })}
+            </QueueSection>
+          ) : null}
         </ScrollView>
-        <MobileTabBar
-          accessibilityLabel={t('navigation.tabs')}
-          tabs={[
-            {
-              accessibilityLabel: t('navigation.openTab', { tab: t('spending.tabs.queue') }),
-              icon: 'check-square',
-              id: 'spending-queue',
-              label: t('spending.tabs.queue'),
-              onPress: () => setActiveTab('queue'),
-              selected: activeTab === 'queue'
-            },
-            {
-              accessibilityLabel: t('navigation.openTab', { tab: t('spending.tabs.history') }),
-              icon: 'clock',
-              id: 'spending-history',
-              label: t('spending.tabs.history'),
-              onPress: () => setActiveTab('history'),
-              selected: activeTab === 'history'
-            },
-            {
-              accessibilityLabel: t('navigation.openTab', { tab: t('navigation.inbox') }),
-              icon: 'bell',
-              id: 'spending-inbox',
-              label: t('navigation.inbox'),
-              onPress: () => setActiveTab('inbox'),
-              selected: false
-            }
-          ]}
-        />
+        {isApprover ? tabs : null}
       </View>
     </SafeAreaView>
   )
 }
 
+function SummaryCard({
+  active,
+  icon,
+  label,
+  onPress,
+  value
+}: {
+  active: boolean
+  icon: keyof typeof Feather.glyphMap
+  label: string
+  onPress: () => void
+  value: string
+}) {
+  return (
+    <Pressable
+      accessibilityLabel={`${label}: ${value}`}
+      accessibilityRole='button'
+      accessibilityState={{ selected: active }}
+      onPress={onPress}
+      style={[styles.summaryCard, active && styles.summaryCardActive]}
+    >
+      <View style={[styles.summaryIcon, active && styles.summaryIconActive]}>
+        <Feather
+          accessibilityElementsHidden
+          color={active ? mobileColors.white : mobileColors.primaryInk}
+          importantForAccessibility='no'
+          name={icon}
+          size={16}
+        />
+      </View>
+      <Text style={styles.summaryValue}>{value}</Text>
+      <Text style={styles.summaryLabel}>{label}</Text>
+    </Pressable>
+  )
+}
+
 const styles = StyleSheet.create({
-  content: {
-    gap: 15,
-    padding: 16,
-    paddingBottom: 20
-  },
-  countBadge: {
-    backgroundColor: mobileColors.primarySoft,
-    borderRadius: 10,
-    color: mobileColors.primaryInk,
-    fontSize: 12,
-    fontWeight: '700',
-    minWidth: 29,
-    overflow: 'hidden',
-    paddingHorizontal: 8,
-    paddingVertical: 5,
-    textAlign: 'center'
-  },
-  demoBadge: {
-    backgroundColor: mobileColors.surfaceSubtle,
-    borderRadius: 7,
-    color: mobileColors.muted,
-    fontSize: 10,
-    fontWeight: '600',
-    overflow: 'hidden',
-    paddingHorizontal: 8,
-    paddingVertical: 5
-  },
-  demoNote: {
-    color: mobileColors.muted,
-    fontSize: 11,
-    lineHeight: 16
-  },
-  emptyHint: {
-    color: mobileColors.muted,
-    fontSize: 12,
-    lineHeight: 18,
-    marginTop: 4,
-    textAlign: 'center'
-  },
-  emptyState: {
-    alignItems: 'center',
-    backgroundColor: mobileColors.surfaceSubtle,
-    borderRadius: 12,
-    padding: 18
-  },
-  emptyTitle: {
-    color: mobileColors.foreground,
-    fontSize: 14,
-    fontWeight: '700',
-    textAlign: 'center'
-  },
-  filterButton: {
-    alignItems: 'center',
-    borderColor: 'transparent',
-    borderRadius: 12,
-    borderWidth: 1,
+  action: {
+    minHeight: 44,
+    alignSelf: 'flex-start',
     justifyContent: 'center',
-    minHeight: 36,
-    paddingHorizontal: 12
+    paddingHorizontal: 14,
+    borderRadius: 12,
+    backgroundColor: mobileColors.primarySoft
   },
-  filterLabel: {
-    color: mobileColors.muted,
-    fontSize: 11,
-    fontWeight: '500'
+  actionText: { color: mobileColors.primaryInk, fontWeight: '700' },
+  avatar: {
+    alignItems: 'center',
+    backgroundColor: mobileColors.primarySoft,
+    borderRadius: 22,
+    height: 44,
+    justifyContent: 'center',
+    width: 44
   },
-  filters: {
-    backgroundColor: '#f6eee6',
-    borderRadius: 14,
-    flexDirection: 'row',
-    gap: 3,
-    padding: 4
-  },
-  heading: {
-    gap: 4
+  avatarText: { color: mobileColors.primaryInk, fontSize: 16, fontWeight: '700' },
+  content: { gap: 16, padding: 16, paddingBottom: 28 },
+  error: { color: mobileColors.danger, fontSize: 13, lineHeight: 19 },
+  errorBox: { gap: 4 },
+  heading: { gap: 4 },
+  iconButton: {
+    alignItems: 'center',
+    backgroundColor: mobileColors.white,
+    borderColor: mobileColors.border,
+    borderRadius: 22,
+    borderWidth: 1,
+    height: 44,
+    justifyContent: 'center',
+    width: 44
   },
   kicker: {
     color: mobileColors.primaryInk,
@@ -371,224 +361,35 @@ const styles = StyleSheet.create({
     letterSpacing: 1,
     textTransform: 'uppercase'
   },
-  list: {
-    gap: 10
-  },
-  metricCard: {
+  muted: { color: mobileColors.muted, fontSize: 13, lineHeight: 19 },
+  name: { color: mobileColors.foreground, fontSize: 15, fontWeight: '700' },
+  profile: { alignItems: 'center', flexDirection: 'row', gap: 10 },
+  profileCopy: { flex: 1, gap: 4 },
+  safe: { backgroundColor: mobileColors.background, flex: 1 },
+  screen: { flex: 1 },
+  summary: { flexDirection: 'row', gap: 10 },
+  summaryCard: {
     backgroundColor: mobileColors.white,
     borderColor: mobileColors.border,
-    borderRadius: 17,
+    borderRadius: 18,
     borderWidth: 1,
+    boxShadow: '0px 3px 8px rgba(93, 59, 32, 0.04)',
     flex: 1,
-    gap: 5,
-    padding: 13,
-    boxShadow: '0px 3px 8px rgba(93, 59, 32, 0.04)'
-  },
-  metricIcon: {
-    alignItems: 'center',
-    borderRadius: 12,
-    height: 30,
-    justifyContent: 'center',
-    marginBottom: 2,
-    width: 34
-  },
-  metricIconNeutral: {
-    backgroundColor: '#e5f7ed'
-  },
-  metricIconPrimary: {
-    backgroundColor: mobileColors.primarySoft
-  },
-  metricLabel: {
-    color: mobileColors.muted,
-    fontSize: 11,
-    lineHeight: 16
-  },
-  metricValue: {
-    color: mobileColors.foreground,
-    fontSize: 22,
-    fontWeight: '700'
-  },
-  metrics: {
-    flexDirection: 'row',
-    gap: 9
-  },
-  profile: {
-    alignItems: 'center',
-    flexDirection: 'row',
-    gap: 11,
-    minHeight: 54,
-    paddingHorizontal: 2
-  },
-  profileCopy: {
-    flex: 1,
-    gap: 2
-  },
-  profileMark: {
-    alignItems: 'center',
-    backgroundColor: mobileColors.primarySoft,
-    borderRadius: 20,
-    height: 42,
-    justifyContent: 'center',
-    width: 42
-  },
-  profileMeta: {
-    color: mobileColors.muted,
-    fontSize: 11
-  },
-  profileInitials: {
-    color: mobileColors.primaryInk,
-    fontSize: 13,
-    fontWeight: '700'
-  },
-  profileTitle: {
-    color: mobileColors.foreground,
-    fontSize: 14,
-    fontWeight: '700'
-  },
-  notificationButton: {
-    alignItems: 'center',
-    backgroundColor: mobileColors.white,
-    borderColor: mobileColors.border,
-    borderRadius: 19,
-    borderWidth: 1,
-    height: 38,
-    justifyContent: 'center',
-    width: 38
-  },
-  queue: {
-    backgroundColor: mobileColors.white,
-    borderColor: mobileColors.border,
-    borderRadius: 19,
-    borderWidth: 1,
-    gap: 13,
-    padding: 14,
-    boxShadow: '0px 4px 10px rgba(93, 59, 32, 0.035)'
-  },
-  queueCopy: {
-    flex: 1,
-    gap: 4
-  },
-  queueHeading: {
-    alignItems: 'flex-start',
-    flexDirection: 'row',
-    gap: 8,
-    justifyContent: 'space-between'
-  },
-  result: {
-    backgroundColor: mobileColors.surfaceSubtle,
-    borderColor: mobileColors.border,
-    borderRadius: 13,
-    borderWidth: 1,
-    gap: 5,
-    padding: 13
-  },
-  resultNote: {
-    color: mobileColors.muted,
-    fontSize: 11,
-    lineHeight: 16
-  },
-  resultReason: {
-    color: mobileColors.muted,
-    fontSize: 12,
-    lineHeight: 18
-  },
-  resultTitle: {
-    color: mobileColors.foreground,
-    fontSize: 13,
-    fontWeight: '700'
-  },
-  safeArea: {
-    backgroundColor: mobileColors.background,
-    flex: 1
-  },
-  screen: {
-    flex: 1
-  },
-  historySection: {
-    gap: 13
-  },
-  historyList: {
-    gap: 9
-  },
-  historyCard: {
-    alignItems: 'center',
-    backgroundColor: mobileColors.white,
-    borderColor: mobileColors.border,
-    borderRadius: 15,
-    borderWidth: 1,
-    flexDirection: 'row',
-    gap: 12,
-    justifyContent: 'space-between',
+    gap: 4,
     padding: 14
   },
-  historyCopy: {
-    flex: 1,
-    gap: 4
-  },
-  historyId: {
-    color: mobileColors.muted,
-    fontSize: 11
-  },
-  historySoftware: {
-    color: mobileColors.foreground,
-    fontSize: 14,
-    fontWeight: '700'
-  },
-  historyStatus: {
-    backgroundColor: '#e5f7ed',
-    borderRadius: 9,
-    color: mobileColors.success,
-    fontSize: 10,
-    fontWeight: '700',
-    overflow: 'hidden',
-    paddingHorizontal: 9,
-    paddingVertical: 6
-  },
-  search: {
+  summaryCardActive: { borderColor: mobileColors.primary },
+  summaryIcon: {
     alignItems: 'center',
-    backgroundColor: mobileColors.surface,
-    borderColor: mobileColors.border,
-    borderRadius: 10,
-    borderWidth: 1,
-    flexDirection: 'row',
-    gap: 9,
-    minHeight: 46,
-    paddingHorizontal: 12
+    backgroundColor: mobileColors.primarySoft,
+    borderRadius: 12,
+    height: 32,
+    justifyContent: 'center',
+    marginBottom: 2,
+    width: 36
   },
-  searchInput: {
-    color: mobileColors.foreground,
-    flex: 1,
-    fontSize: 16,
-    minHeight: 44,
-    paddingVertical: 0
-  },
-  sectionHint: {
-    color: mobileColors.muted,
-    fontSize: 11,
-    lineHeight: 16
-  },
-  sectionTitle: {
-    color: mobileColors.foreground,
-    fontSize: 15,
-    fontWeight: '700'
-  },
-  selectedFilter: {
-    backgroundColor: mobileColors.primary,
-    borderColor: mobileColors.primary
-  },
-  selectedFilterLabel: {
-    color: mobileColors.white,
-    fontWeight: '700'
-  },
-  subtitle: {
-    color: mobileColors.muted,
-    fontSize: 13,
-    lineHeight: 19
-  },
-  title: {
-    color: mobileColors.foreground,
-    fontSize: 25,
-    fontWeight: '700',
-    letterSpacing: -0.5
-  }
+  summaryIconActive: { backgroundColor: mobileColors.primary },
+  summaryLabel: { color: mobileColors.muted, fontSize: 12, lineHeight: 16 },
+  summaryValue: { color: mobileColors.foreground, fontSize: 24, fontWeight: '700' },
+  title: { color: mobileColors.foreground, fontSize: 25, fontWeight: '700', letterSpacing: -0.5 }
 })

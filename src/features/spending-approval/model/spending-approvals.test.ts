@@ -1,36 +1,40 @@
-import {
-  filterSpendingApprovals,
-  getRemainingBudgetAfterApproval,
-  spendingApprovals,
-  spendingBudgetSnapshot
-} from './spending-approvals'
+import { AxiosError } from 'axios'
 
-describe('spending approval demo data', () => {
-  test('keeps task step and SoD-4 owner explicit per request', () => {
-    expect(spendingApprovals.map(({ id, step }) => [id, step])).toEqual([
-      ['BM01-2104', 'spending'],
-      ['BM01-2095', 'spending'],
-      ['BM01-2088', 'need']
-    ])
-    expect(spendingApprovals.find(({ id }) => id === 'BM01-2088')?.isSelfRequest).toBe(true)
-    expect(spendingApprovals.some(({ id }) => id === 'BM01-2103')).toBe(false)
+import { decisionErrorKey, formatMoney, outcomeTone } from './spending-approvals'
+
+function apiFailure(status: number, code: string) {
+  return new AxiosError('failed', 'ERR_BAD_REQUEST', undefined, undefined, {
+    status,
+    statusText: '',
+    headers: {},
+    config: { headers: {} } as never,
+    data: { success: false, error: { code } }
+  })
+}
+
+describe('spending approval model', () => {
+  test('formats only well-formed money', () => {
+    expect(formatMoney({ amount: '8400000', currency: 'VND' }, 'en')).toContain('8,400,000')
+    expect(formatMoney({ amount: 'abc', currency: 'VND' }, 'en')).toBeUndefined()
+    expect(formatMoney({ amount: '10', currency: 'vnd' }, 'en')).toBeUndefined()
+    expect(formatMoney(null, 'en')).toBeUndefined()
   })
 
-  test('calculates the read-only Slack snapshot consistently and omits unprovided quotes', () => {
-    const slack = spendingApprovals.find(({ id }) => id === 'BM01-2104')
-    const midjourney = spendingApprovals.find(({ id }) => id === 'BM01-2095')
-
-    expect(spendingBudgetSnapshot.availableVnd).toBe(35000000)
-    expect(getRemainingBudgetAfterApproval(slack?.annualCostVnd)).toBe(26600000)
-    expect(getRemainingBudgetAfterApproval(midjourney?.annualCostVnd)).toBeUndefined()
+  test('classifies budget outcomes', () => {
+    expect(outcomeTone('WITHIN_BASE')).toBe('success')
+    expect(outcomeTone('USES_RESERVE')).toBe('warning')
+    expect(outcomeTone('BLOCKED')).toBe('danger')
+    expect(outcomeTone(null)).toBe('neutral')
   })
 
-  test('filters tasks by approval step or identity', () => {
-    expect(filterSpendingApprovals(spendingApprovals, 'need', '').map(({ id }) => id)).toEqual(['BM01-2088'])
-    expect(filterSpendingApprovals(spendingApprovals, 'spending', '').map(({ id }) => id)).toEqual([
-      'BM01-2104',
-      'BM01-2095'
-    ])
-    expect(filterSpendingApprovals(spendingApprovals, 'all', 'midjourney').map(({ id }) => id)).toEqual(['BM01-2095'])
+  test('maps server error codes to decision messages', () => {
+    const failure = (code: string, status = 409) => apiFailure(status, code)
+    expect(decisionErrorKey(failure('SPEND.STEP_NOT_PENDING'))).toBe('stale')
+    expect(decisionErrorKey(failure('SPEND.RECHECKED_NEEDS_FINANCE_REVIEW'))).toBe('recheck')
+    expect(decisionErrorKey(failure('SPEND.RECHECKED_RETURNED_TO_REQUESTER'))).toBe('recheck')
+    expect(decisionErrorKey(failure('SPEND.OWN_REQUEST', 403))).toBe('forbidden')
+    expect(decisionErrorKey(failure('SPEND.NOT_THE_ASSIGNEE', 403))).toBe('forbidden')
+    expect(decisionErrorKey(failure('VALIDATION_ERROR', 422))).toBe('invalid')
+    expect(decisionErrorKey(new Error('network'))).toBe('uncertain')
   })
 })

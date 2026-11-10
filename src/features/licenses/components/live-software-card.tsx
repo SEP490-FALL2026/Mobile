@@ -2,9 +2,10 @@ import { Feather } from '@expo/vector-icons'
 import { useTranslation } from 'react-i18next'
 import { StyleSheet, Text, View } from 'react-native'
 
-import type { MySoftwarePageResponseDtoDataItemsItem } from '@/shared/api/generated/contracts/me'
-import { MySoftwarePageResponseDtoDataItemsItemStatus } from '@/shared/api/generated/contracts/me'
+import type { MySoftwarePageResponseDtoDataItemsItem } from '@/shared/api/generated/model/me'
+import { MySoftwarePageResponseDtoDataItemsItemStatus } from '@/shared/api/generated/model/me'
 import { mobileColors } from '@/shared/theme/colors'
+import { StatusBadge } from '@/shared/ui/status-badge'
 
 export function LiveSoftwareCard({ item }: { item: MySoftwarePageResponseDtoDataItemsItem }) {
   const { t, i18n } = useTranslation()
@@ -19,77 +20,96 @@ export function LiveSoftwareCard({ item }: { item: MySoftwarePageResponseDtoData
   }
 
   return (
-    <View style={styles.card}>
+    <View style={[styles.card, item.expiringSoon && styles.cardWarning]}>
       <View style={styles.row}>
         <View style={styles.icon}>
-          <Feather
-            accessibilityElementsHidden
-            importantForAccessibility='no'
-            name='box'
-            size={20}
-            color={mobileColors.white}
-          />
+          <Text style={styles.initial}>{item.application.name.trim().slice(0, 1).toLocaleUpperCase()}</Text>
         </View>
         <View style={styles.copy}>
-          <Text style={styles.name}>{item.application.name}</Text>
-          <Text style={styles.secondary}>{t('licenses.live.plan', { plan: item.plan.name })}</Text>
-        </View>
-        <View
-          style={[
-            styles.badge,
-            item.status !== 'ACTIVE' && styles.badgeNeutral,
-            item.expiringSoon && styles.badgeWarning
-          ]}
-        >
-          <Text
-            style={[
-              styles.badgeText,
-              item.status !== 'ACTIVE' && styles.neutralText,
-              item.expiringSoon && styles.warningText
-            ]}
-          >
-            {status}
+          <Text numberOfLines={1} style={styles.name}>
+            {item.application.name}
+          </Text>
+          <Text numberOfLines={1} style={styles.secondary}>
+            {t('licenses.live.plan', { plan: item.plan.name })}
           </Text>
         </View>
+        <StatusBadge
+          label={status}
+          tone={item.expiringSoon ? 'warning' : item.status === 'ACTIVE' ? 'success' : 'neutral'}
+        />
       </View>
       <View style={styles.details}>
-        <Text style={styles.secondary}>{t('licenses.live.provisioning', { type: item.provisioningType })}</Text>
-        <Text style={styles.secondary}>{t('licenses.live.start', { date: formatDate(item.effectiveFrom) })}</Text>
+        <Detail icon='settings' text={t('licenses.live.provisioning', { type: item.provisioningType })} />
+        <Detail icon='play-circle' text={t('licenses.live.start', { date: formatDate(item.effectiveFrom) })} />
         {item.expectedEndDate ? (
-          <Text style={styles.secondary}>{t('licenses.live.end', { date: formatDate(item.expectedEndDate) })}</Text>
+          <Detail icon='flag' text={t('licenses.live.end', { date: formatDate(item.expectedEndDate) })} />
         ) : null}
-        {item.expiringSoon ? <Text style={styles.warningText}>{t('licenses.live.expiringSoon')}</Text> : null}
       </View>
+      {item.expiringSoon ? (
+        <View style={styles.warning}>
+          <Feather
+            accessibilityElementsHidden
+            color={mobileColors.warning}
+            importantForAccessibility='no'
+            name='alert-triangle'
+            size={14}
+          />
+          <Text style={styles.warningText}>{t('licenses.live.expiringSoon')}</Text>
+        </View>
+      ) : null}
+    </View>
+  )
+}
+
+function Detail({ icon, text }: { icon: keyof typeof Feather.glyphMap; text: string }) {
+  return (
+    <View style={styles.detail}>
+      <Feather
+        accessibilityElementsHidden
+        color={mobileColors.muted}
+        importantForAccessibility='no'
+        name={icon}
+        size={13}
+      />
+      <Text style={styles.secondary}>{text}</Text>
     </View>
   )
 }
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: mobileColors.surface,
+    backgroundColor: mobileColors.white,
     borderColor: mobileColors.border,
     borderWidth: 1,
-    borderRadius: 16,
-    padding: 12,
-    gap: 10
+    borderRadius: 18,
+    padding: 14,
+    gap: 12,
+    boxShadow: '0px 4px 10px rgba(93, 59, 32, 0.04)'
   },
-  row: { flexDirection: 'row', alignItems: 'center', gap: 10 },
+  cardWarning: { borderColor: '#f1cf8d' },
+  row: { flexDirection: 'row', alignItems: 'center', gap: 12 },
   icon: {
-    backgroundColor: mobileColors.primary,
+    backgroundColor: mobileColors.primarySoft,
     borderRadius: 14,
-    width: 44,
-    height: 44,
+    width: 46,
+    height: 46,
     alignItems: 'center',
     justifyContent: 'center'
   },
-  copy: { flex: 1, minWidth: 0 },
-  name: { color: mobileColors.foreground, fontSize: 14, fontWeight: '700' },
+  initial: { color: mobileColors.primaryInk, fontSize: 18, fontWeight: '800' },
+  copy: { flex: 1, minWidth: 0, gap: 2 },
+  name: { color: mobileColors.foreground, fontSize: 15, fontWeight: '700' },
   secondary: { color: mobileColors.muted, fontSize: 12, lineHeight: 18 },
-  badge: { backgroundColor: '#e5f7ef', borderRadius: 999, paddingHorizontal: 8, paddingVertical: 5, maxWidth: '36%' },
-  badgeWarning: { backgroundColor: mobileColors.warningBackground },
-  badgeNeutral: { backgroundColor: mobileColors.border },
-  badgeText: { color: mobileColors.success, fontSize: 10, fontWeight: '600' },
-  neutralText: { color: mobileColors.muted },
-  warningText: { color: mobileColors.warning, fontSize: 12 },
-  details: { gap: 2, paddingLeft: 54 }
+  details: { gap: 6, borderTopColor: mobileColors.border, borderTopWidth: 1, paddingTop: 10 },
+  detail: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+  warning: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    backgroundColor: mobileColors.warningBackground,
+    borderRadius: 10,
+    paddingHorizontal: 10,
+    paddingVertical: 8
+  },
+  warningText: { color: mobileColors.warning, fontSize: 12, fontWeight: '600', flex: 1 }
 })

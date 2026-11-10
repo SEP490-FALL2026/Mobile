@@ -2,8 +2,8 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { fireEvent, render, waitFor } from '@testing-library/react-native'
 
 import { MySoftwareScreen } from '@/features/licenses'
-import { employeeDashboardGet } from '@/shared/api/generated/api/dashboards/dashboards'
-import { meGet, meSoftwareRightList } from '@/shared/api/generated/api/me/me'
+import { employeeDashboardGet } from '@/shared/api/generated/operations/dashboards'
+import { meGet, meSoftwareRightList } from '@/shared/api/generated/operations/me'
 import { setAppLanguage } from '@/shared/i18n/i18n'
 
 const mockLogout = jest.fn()
@@ -16,8 +16,8 @@ const mockSession = {
 const mockPush = jest.fn()
 jest.mock('expo-router', () => ({ Redirect: () => null, useRouter: () => ({ push: mockPush }) }))
 jest.mock('@/shared/api/session-context', () => ({ useSession: () => mockSession }))
-jest.mock('@/shared/api/generated/api/me/me', () => ({ meGet: jest.fn(), meSoftwareRightList: jest.fn() }))
-jest.mock('@/shared/api/generated/api/dashboards/dashboards', () => ({ employeeDashboardGet: jest.fn() }))
+jest.mock('@/shared/api/generated/operations/me', () => ({ meGet: jest.fn(), meSoftwareRightList: jest.fn() }))
+jest.mock('@/shared/api/generated/operations/dashboards', () => ({ employeeDashboardGet: jest.fn() }))
 
 function renderScreen() {
   const client = new QueryClient({ defaultOptions: { queries: { retry: false, gcTime: 0 } } })
@@ -34,66 +34,55 @@ beforeEach(async () => {
   mockSession.state = 'authenticated'
   const counted = { state: 'COUNTED' as const, count: 0, sourceOperationId: 'meSoftwareRightList', reason: null }
   jest.mocked(employeeDashboardGet).mockResolvedValue({
-    status: 200,
-    headers: new Headers(),
+    success: true,
+    message: 'DASHBOARD.EMPLOYEE_RETRIEVED',
     data: {
-      success: true,
-      message: 'DASHBOARD.EMPLOYEE_RETRIEVED',
-      data: {
-        asOf: '2026-11-09',
-        sections: { softwareRights: counted, expiringRights: counted, requests: counted, saasIssues: counted }
-      }
+      asOf: '2026-11-09',
+      sections: { softwareRights: counted, expiringRights: counted, requests: counted, saasIssues: counted }
     }
   })
   jest.mocked(meGet).mockResolvedValue({
-    status: 200,
-    headers: new Headers(),
+    success: true,
+    message: 'ME.RETRIEVED',
     data: {
-      success: true,
-      message: 'ME.RETRIEVED',
-      data: {
-        appUserId: 'user-id',
-        loginEmail: 'person@example.test',
-        employee: {
-          id: 'employee-id',
-          employeeCode: 'E1',
-          fullName: 'Nguyễn An',
-          department: null,
-          unplaced: true,
-          jobTitle: null
-        },
-        roles: ['EMPLOYEE'],
-        managerScope: null
-      }
+      appUserId: 'user-id',
+      loginEmail: 'person@example.test',
+      upcomingUnits: [],
+      employee: {
+        id: 'employee-id',
+        employeeCode: 'E1',
+        fullName: 'Nguyễn An',
+        department: null,
+        unplaced: true,
+        jobTitle: null
+      },
+      roles: ['EMPLOYEE'],
+      managerScope: null
     }
   })
   jest.mocked(meSoftwareRightList).mockResolvedValue({
-    status: 200,
-    headers: new Headers(),
+    success: true,
+    message: 'ME.SOFTWARE_RIGHTS_LISTED',
     data: {
-      success: true,
-      message: 'ME.SOFTWARE_RIGHTS_LISTED',
-      data: {
-        asOf: '2026-11-09',
-        view: 'current',
-        items: [
-          {
-            assignmentId: 'assignment-id',
-            application: { id: 'application-id', name: 'Figma' },
-            plan: { id: 'plan-id', name: 'Professional' },
-            provisioningType: 'K4',
-            status: 'ACTIVE',
-            effectiveFrom: '2026-01-01',
-            grantedOn: null,
-            effectiveFromLabel: null,
-            expectedEndDate: null,
-            expiringSoon: false,
-            validUntil: null,
-            successorAssignmentId: null
-          }
-        ],
-        pagination: { page: 1, pageSize: 20, totalItems: 1, totalPages: 1 }
-      }
+      asOf: '2026-11-09',
+      view: 'current',
+      items: [
+        {
+          assignmentId: 'assignment-id',
+          application: { id: 'application-id', name: 'Figma' },
+          plan: { id: 'plan-id', name: 'Professional' },
+          provisioningType: 'K4',
+          status: 'ACTIVE',
+          effectiveFrom: '2026-01-01',
+          grantedOn: null,
+          effectiveFromLabel: null,
+          expectedEndDate: null,
+          expiringSoon: false,
+          validUntil: null,
+          successorAssignmentId: null
+        }
+      ],
+      pagination: { page: 1, pageSize: 20, totalItems: 1, totalPages: 1 }
     }
   })
 })
@@ -116,22 +105,20 @@ test('shows only server account and rights, without invented license keys', asyn
   expect(screen.queryByText(/FIG-PRO/)).toBeNull()
   expect(meSoftwareRightList).toHaveBeenCalledWith(
     { view: 'current', page: 1, pageSize: 20 },
-    expect.objectContaining({ headers: { Authorization: 'Bearer test-token' } })
+    expect.objectContaining({ headers: { Authorization: 'Bearer test-token' } }),
+    expect.anything()
   )
 })
 
 test('allows an active manager to return to the manager workspace', async () => {
   const response = await jest.mocked(meGet)()
-  if (!response.data.data) throw new Error('Expected account')
+  if (!response.data) throw new Error('Expected account')
   jest.mocked(meGet).mockResolvedValue({
     ...response,
     data: {
       ...response.data,
-      data: {
-        ...response.data.data,
-        roles: ['MANAGER'],
-        managerScope: { departmentId: 'department-id', departmentCode: 'IT', departmentName: 'IT' }
-      }
+      roles: ['MANAGER'],
+      managerScope: { departmentId: 'department-id', departmentCode: 'IT', departmentName: 'IT' }
     }
   })
   const screen = await renderScreen()
@@ -163,17 +150,14 @@ test('shows unavailable rather than a fabricated total when the dashboard fails'
 
 test('does not present an unavailable dashboard section as zero', async () => {
   const response = await jest.mocked(employeeDashboardGet)()
-  if (!response.data.data) throw new Error('Expected dashboard data')
+  if (!response.data) throw new Error('Expected dashboard data')
   jest.mocked(employeeDashboardGet).mockResolvedValue({
     ...response,
     data: {
       ...response.data,
-      data: {
-        ...response.data.data,
-        sections: {
-          ...response.data.data.sections,
-          expiringRights: { state: 'NOT_AVAILABLE', count: null, sourceOperationId: null, reason: 'NO_DATA_SOURCE' }
-        }
+      sections: {
+        ...response.data.sections,
+        expiringRights: { state: 'NOT_AVAILABLE', count: null, sourceOperationId: null, reason: 'NO_DATA_SOURCE' }
       }
     }
   })
@@ -203,23 +187,17 @@ test('shows errors and retries without falling back to mock data', async () => {
 
 test('loads subsequent pages from the server', async () => {
   const first = await jest.mocked(meSoftwareRightList)()
-  if (!first.data.data) throw new Error('Expected software page')
+  if (!first.data) throw new Error('Expected software page')
   const firstPage = {
     ...first,
-    data: {
-      ...first.data,
-      data: { ...first.data.data, pagination: { page: 1, pageSize: 20, totalItems: 21, totalPages: 2 } }
-    }
+    data: { ...first.data, pagination: { page: 1, pageSize: 20, totalItems: 21, totalPages: 2 } }
   }
   const secondPage = {
     ...firstPage,
     data: {
       ...firstPage.data,
-      data: {
-        ...firstPage.data.data,
-        items: [],
-        pagination: { page: 2, pageSize: 20, totalItems: 21, totalPages: 2 }
-      }
+      items: [],
+      pagination: { page: 2, pageSize: 20, totalItems: 21, totalPages: 2 }
     }
   }
   jest.mocked(meSoftwareRightList).mockResolvedValueOnce(firstPage).mockResolvedValueOnce(secondPage)
@@ -227,7 +205,11 @@ test('loads subsequent pages from the server', async () => {
   await screen.findByText('Figma')
   await fireEvent.press(screen.getByRole('button', { name: 'Trang sau' }))
   await screen.findByText('Không có quyền phần mềm trên trang này.')
-  expect(meSoftwareRightList).toHaveBeenLastCalledWith({ view: 'current', page: 2, pageSize: 20 }, expect.anything())
+  expect(meSoftwareRightList).toHaveBeenLastCalledWith(
+    { view: 'current', page: 2, pageSize: 20 },
+    expect.anything(),
+    expect.anything()
+  )
 })
 
 test('reports failed server logout without claiming success', async () => {

@@ -5,6 +5,7 @@ import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 import { useSession } from '@/shared/api/session-context'
+import { httpStatusOf } from '@/shared/api/http-error'
 import { InvalidApiOriginError } from '@/shared/api/secure-origin'
 import { useAccountProfile } from '@/shared/api/use-account-profile'
 
@@ -20,7 +21,14 @@ export function LoginScreen() {
 
   useEffect(() => {
     if (session.state === 'authenticated' && profile.data && !profile.isError) {
-      router.replace(profile.data.roles.includes('MANAGER') ? '/live-need-approvals' : '/my-software')
+      const { roles } = profile.data
+      router.replace(
+        roles.includes('SPENDING_APPROVER')
+          ? '/spending-approvals'
+          : roles.includes('MANAGER')
+            ? '/live-need-approvals'
+            : '/my-software'
+      )
     }
   }, [router, session.state, profile.data, profile.isError])
 
@@ -36,7 +44,7 @@ export function LoginScreen() {
       await session.login(email.trim(), password)
       setPassword('')
     } catch (failure) {
-      const status = typeof failure === 'object' && failure !== null && 'status' in failure ? failure.status : undefined
+      const status = httpStatusOf(failure)
       setError(
         failure instanceof InvalidApiOriginError
           ? 'configuration'

@@ -81,3 +81,10 @@ test('does not guess a role when account loading fails', async () => {
   await fireEvent.press(screen.getByRole('button', { name: 'Thử lại' }))
   expect(mockProfile.refetch).toHaveBeenCalled()
 })
+
+test('opens the approvals workspace for a spending approver', async () => {
+  mockSession.state = 'authenticated'
+  mockProfile.data = { roles: ['SPENDING_APPROVER'], managerScope: null }
+  await render(<LoginScreen />)
+  await waitFor(() => expect(mockReplace).toHaveBeenCalledWith('/spending-approvals'))
+})

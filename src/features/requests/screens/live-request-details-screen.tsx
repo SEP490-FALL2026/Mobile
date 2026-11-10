@@ -4,11 +4,14 @@ import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 import { useSession } from '@/shared/api/session-context'
+import { formatApiDate } from '@/shared/lib/format-date'
 import { goBackOr } from '@/shared/lib/go-back-or'
 import { mobileColors } from '@/shared/theme/colors'
 
 import { LiveRequestStatus } from '../components/live-request-status'
 import { LiveRequestType } from '../components/live-request-type'
+import { RequestProgress } from '../components/request-progress'
+import { buildRequestProgress } from '../model/request-progress'
 import { useLiveRequest } from '../hooks/use-live-requests'
 
 export function LiveRequestDetailsScreen({ requestId }: { requestId: string }) {
@@ -20,6 +23,14 @@ export function LiveRequestDetailsScreen({ requestId }: { requestId: string }) {
   const request = data && 'request' in data ? data.request : undefined
   const draft = data && 'draft' in data ? data.draft : undefined
   const submitted = request ? new Date(request.submittedAt) : null
+  const cost =
+    request?.pricing.amount && /^[A-Z]{3}$/.test(request.pricing.amount.currency)
+      ? new Intl.NumberFormat(i18n.language, {
+          style: 'currency',
+          currency: request.pricing.amount.currency,
+          maximumFractionDigits: 2
+        }).format(Number(request.pricing.amount.amount))
+      : undefined
 
   if (session.state === 'anonymous') return <Redirect href='/' />
   return (
@@ -65,12 +76,56 @@ export function LiveRequestDetailsScreen({ requestId }: { requestId: string }) {
               </Text>
             ) : null}
             <Text style={styles.muted}>{t('requests.live.reference', { id: request.id })}</Text>
+            <Text accessibilityRole='header' style={styles.section}>
+              {t('requests.live.progress.title')}
+            </Text>
+            <RequestProgress
+              steps={buildRequestProgress({
+                state: request.state,
+                hasSpendStep: request.policy.hasSpendStep,
+                needState: request.needStep.state,
+                needDecision: request.needDecision?.decision ?? null,
+                needWaitingReason: request.needStep.waitingReason,
+                spendStage: request.spend?.stage ?? null
+              })}
+            />
+            {request.routing.mode === 'ONE_STEP' ? (
+              <Text style={styles.muted}>
+                {t(`requests.live.routing.${request.routing.oneStepReason ?? 'DEFAULT'}`)}
+              </Text>
+            ) : null}
+            {request.spend &&
+            request.spend.stage !== 'NOT_SUBMITTED' &&
+            request.spend.stage !== 'WAITING_SPEND_DECISION' ? (
+              <Text style={request.spend.stage === 'REFUSED' ? styles.error : styles.muted}>
+                {t(`requests.live.spendStages.${request.spend.stage}`)}
+              </Text>
+            ) : null}
+            {request.state === 'AWAITING_REQUESTER_REVISION' ? (
+              <Text style={styles.error}>{t('requests.live.reviseOnWeb')}</Text>
+            ) : null}
+            {request.flags.manyPaidSoftware ? (
+              <>
+                <Text style={styles.label}>
+                  {t('requests.live.manyPaid', { count: request.flags.manyPaidSoftware.count })}
+                </Text>
+                <Text style={styles.value}>{request.flags.manyPaidSoftware.reason}</Text>
+              </>
+            ) : null}
             <Text style={styles.label}>{t('requests.live.reason')}</Text>
             <Text style={styles.value}>{request.businessReason}</Text>
             <Text style={styles.label}>{t('requests.live.term')}</Text>
             <Text style={styles.value}>
-              {t('requests.live.months', { months: new Intl.NumberFormat(i18n.language).format(request.termMonths) })}
+              {request.termMonths !== null
+                ? t('requests.live.months', { months: new Intl.NumberFormat(i18n.language).format(request.termMonths) })
+                : (formatApiDate(request.expectedEndDate, i18n.language) ?? t('requests.live.noTerm'))}
             </Text>
+            {request.pricing.status === 'PRICED' && cost ? (
+              <>
+                <Text style={styles.label}>{t('requests.live.cost')}</Text>
+                <Text style={styles.value}>{cost}</Text>
+              </>
+            ) : null}
             <Text style={styles.label}>{t('requests.live.requester')}</Text>
             <Text style={styles.value}>{request.requester.fullName}</Text>
             {request.beneficiary ? (
@@ -124,7 +179,14 @@ export function LiveRequestDetailsScreen({ requestId }: { requestId: string }) {
 const styles = StyleSheet.create({
   safe: { flex: 1, backgroundColor: mobileColors.background },
   content: { padding: 16, paddingBottom: 24, gap: 14 },
-  action: { minHeight: 44, alignSelf: 'flex-start', justifyContent: 'center' },
+  action: {
+    minHeight: 44,
+    alignSelf: 'flex-start',
+    justifyContent: 'center',
+    paddingHorizontal: 14,
+    borderRadius: 12,
+    backgroundColor: mobileColors.primarySoft
+  },
   actionText: { color: mobileColors.primaryInk, fontWeight: '700' },
   title: { color: mobileColors.foreground, fontSize: 25, fontWeight: '700' },
   card: {
@@ -139,5 +201,14 @@ const styles = StyleSheet.create({
   label: { color: mobileColors.muted, fontSize: 12, marginTop: 6 },
   value: { color: mobileColors.foreground, fontSize: 14, lineHeight: 20 },
   muted: { color: mobileColors.muted, fontSize: 13, lineHeight: 19 },
-  error: { color: mobileColors.danger, fontSize: 13 }
+  error: { color: mobileColors.danger, fontSize: 13 },
+  section: {
+    color: mobileColors.foreground,
+    fontSize: 15,
+    fontWeight: '700',
+    marginTop: 10,
+    paddingTop: 12,
+    borderTopWidth: 1,
+    borderTopColor: mobileColors.border
+  }
 })
