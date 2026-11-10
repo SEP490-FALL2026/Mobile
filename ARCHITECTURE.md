@@ -13,15 +13,53 @@ Mobile shares backend business rules, authorization, and separation of duties.
 
 Push notifications, offline mode, biometrics, file downloads, phone usage
 collection, and IT Admin/Finance/Super Admin workflows are outside mobile scope.
-The current committed OpenAPI snapshot has only a System status operation, so
-business screens and authentication cannot be connected until the backend
-contract is supplied. The client contains local-only login, employee software/request, in-app inbox,
-manager need-approval, and spending-approval prototype screens. Prototype decisions
-are stored only in the current app session and are not submitted to a backend. The
-business API contract is still needed before these workflows can be connected.
+The committed OpenAPI snapshot contains the backend's business operations. Login,
+the signed-in account, personal software, inbox and employee requests use the backend.
+The live need-approval workspace supports assigned individual grants; spending-approval
+and the original manager demo screens remain prototypes. Prototype decisions are stored only in the current app session
+and are not submitted to a backend. Contract availability alone does not resolve
+the differences between the current backend and newer proposed business decisions.
 Manager and spending demos have separate direct route entry points; there is no
-in-session role switcher. Production login routing must follow the backend-authenticated
-role once that contract is available.
+in-session role switcher. The authenticated landing loads `/me` before routing:
+accounts with the MANAGER role enter the live Manager workspace, while others enter
+personal software. If the account cannot be loaded, the user can retry or sign out;
+the app does not guess the role. The personal software screen links Manager accounts
+back to the workspace but does not show that entry for employees. The live
+screen links to live request flows instead of opening the demo, to
+avoid presenting demo data as the signed-in user's data. The live inbox at `/live-inbox`
+uses the authenticated notification API; the prototype inbox remains separate. Live
+request list and detail routes are `/live-requests` and `/live-requests/[requestId]`.
+The list contains requests sent by the caller, while notification detail access is
+authorized by the backend. Individual catalog requests use `/live-request-create`:
+the caller chooses a requestable plan and must receive a current successful preview
+before submitting. The list offers withdrawal only when the server indicates it is
+available, and displays the returned status rather than assuming immediate withdrawal.
+Writes are never automatically retried; an uncertain result requires checking the list
+before trying again. The backend has no client-provided idempotency key in this contract,
+so this cannot guarantee prevention of duplicate submissions across navigation/restarts.
+The Manager landing is `/live-need-approvals`; it shows the authenticated account,
+department, assigned-work count, and a Manager-specific queue/team/inbox tab bar.
+The inbox uses the live notification feature; the team tab explains that department
+management is web-only, and the header links to personal self-service. A Manager without an active
+`managerScope` sees an explicit unavailable state rather than a fabricated queue.
+The queue is filtered by the backend to the caller's assigned GRANT steps; it is not an
+authorization check or a department-wide request list. This workspace is currently
+restricted to MANAGER accounts; Spending Approver and fallback-decider workflows have
+not yet been connected to role-specific navigation. The request detail queries the
+assignee-only similar seats endpoint separately, with pagination and explicit
+loading/error states. The contract supplies a due date but no exact deadline or
+all-queue urgent count; the UI does not invent an hourly SLA countdown.
+Group, renewal, service-account and department-wide views are not implemented. Decisions
+are confirmed explicitly, rejection requires a reason, and approvals for terms over
+12 months are blocked because the documented confirmation is absent from the payload.
+Backend authorization and stale-state checks remain authoritative. Failed or uncertain
+decisions are never retried automatically and require checking the refreshed queue.
+Manager group request creation and spend-batch submission remain web-only; a GH-3 flag
+is not shown because the current detail contract does not expose it. The mobile app
+does not assume the newer proposed one-step manager-self-request routing has been
+implemented by the backend.
+Password recovery on the login screen directs the
+user to web until the real reset-link flow is implemented.
 The manager demo uses bottom tabs for assigned approvals, department-visible context,
 and the shared in-app inbox. The spending demo uses assigned decisions, session-only
 decision history, and the shared in-app inbox; budget snapshots remain inside the
@@ -41,8 +79,11 @@ decided by the spending approver, with the result visible in department context;
 subsequent steps are not simulated. Notifications describe historical events, while
 request details show current status. All transitions are prototype assumptions to be
 replaced with the backend contract and enforced authorization.
-The employee software demo filters its current mock items by their expiring flag;
-historical access periods and return workflows are not represented in that demo.
+The authenticated software list is paginated and displays the backend's seven-day
+expiring flag. The dashboard supplies the overall expiring count; the filter explicitly
+applies only to the current page. The old mock details route redirects to the list; it must not expose
+invented accounts or keys as real data. Historical access, an all-pages expiring
+filter, and return workflows are not provided in this first live slice.
 The canonical employee request list URL is `/my-requests`; unknown request IDs
 redirect there rather than to `/my-requests/index`, which matches a dynamic ID.
 
@@ -67,7 +108,12 @@ persistence, jobs, and financial/access decisions.
 app/
   _layout.tsx              root route/provider attachment
   index.tsx                thin route entry
-  inbox.tsx                in-app inbox handoff
+  inbox.tsx                prototype inbox handoff
+  live-inbox.tsx           authenticated inbox handoff
+  live-requests.tsx        authenticated request list handoff
+  live-request-create.tsx  authenticated individual request handoff
+  live-need-approvals.tsx  authenticated need approval handoff
+  live-requests/           authenticated request detail handoff
   my-software.tsx          employee software handoff
   manager.tsx              manager need-approval demo handoff
   spending-approvals.tsx   spending-approver demo handoff
@@ -75,8 +121,8 @@ app/
 src/
   providers/               application-wide framework providers
   features/
-    auth/                   local-only login prototype
-    inbox/                  static in-app notifications
+    auth/                   backend login and prototype password recovery
+    inbox/                  authenticated and prototype in-app notifications
     licenses/               employee software screens and models
     manager/                department need-approval demo presentation
     spending-approval/      per-item spending queue and budget snapshots
@@ -124,6 +170,25 @@ that a real advantage.
 - Form and ephemeral UI state: local to the feature until broader ownership is real.
 - Authentication and permissions: returned by and enforced by the backend.
 
+The session boundary uses the generated login, refresh and logout operations. The
+refresh token is stored using Expo SecureStore on native, with device-only iOS
+accessibility; the access token stays in memory. Web keeps both tokens in memory,
+so a page reload ends the local web session. SecureStore may retain iOS Keychain
+items across reinstall; logout explicitly removes the token after server revocation.
+Concurrent reads share one refresh. The old refresh token is removed before rotation:
+if its result is lost, the app asks the user to sign in again rather than retrying a
+potentially consumed token. A failed server logout keeps the current session so the
+user can retry; successful logout clears the query cache and local token. The read
+boundary retries a 401 only for reads, not business mutations. Authenticated writes
+refresh an already expired token before sending, but never retry a sent operation.
+Inbox read updates invalidate both list and count even after an uncertain failure.
+
+Use an HTTPS API origin without credentials or a path in release builds. HTTP is
+allowed only in development for local emulators/devices; traffic and credentials
+on such connections are not protected. Do not use real credentials over HTTP. A
+native build containing `expo-secure-store` needs device verification, including
+storage failures, restart, backup and logout. No biometric prompt is requested.
+
 `AppProviders` creates one `QueryClient` per application lifetime. On native
 platforms it connects React Native `AppState` to TanStack Query's `focusManager`, so
 background/foreground changes have browser-like focus semantics. Online-state
@@ -155,6 +220,25 @@ contracts root. The runtime base expression is
 `env.API_BASE_URL`. The built-in fetch generator preserves typed response data/status
 and throws for non-success HTTP responses so TanStack Query receives error states.
 Generated source is committed and reviewed with the contract, but never hand-edited.
+The generated fetch functions do not attach authentication automatically. The live
+personal-software screen calls them through the session's authenticated read
+boundary. Other protected operations must not bypass that boundary or assume that
+it supports safe mutation retries.
+
+The initial business snapshot was imported from the backend OpenAPI export reviewed
+on 2026-11-09 (SHA-256
+`8bc889bce6d092a25173c6eeb9e31da44847a4de1e7f024e08ab0a288672bda0`).
+The import adds missing top-level tag declarations and request/response aliases
+to satisfy the mobile naming conventions without renaming the backend DTOs. It also
+adds the already-inherited string type to example-only `message` overlays, and
+extracts one inline group-line schema through a reference; these preserve the
+contract's constraints while allowing Orval to generate type-correct Faker mocks.
+Alias collisions and missing source schemas fail the import. Import tests cover
+these transformations. Generated Faker data is test-only and may still need overrides
+for specific business scenarios; it is not evidence that a workflow is valid.
+Generation removes the generated mocks directory before Orval runs because Orval's
+output cleanup does not remove obsolete mock files when a tag disappears. Restart
+`api:watch` after removing a tag so that this cleanup runs again.
 
 Faker works in the Node/Jest development environment and is useful for factories and
 fixtures. It is deliberately a development dependency and must not enter a native
@@ -168,10 +252,10 @@ mocking across simulator/device builds, prefer a separately deployed mock server
 explicit development-only interceptor; never ship a hidden device-side mock switch.
 
 Backend Swagger tags and component names are architecture inputs. Every operation has
-one stable business tag such as `Users` or `Licenses`; request bodies use
-`CreateUserRequest`-style names, success wrappers use `UserResponse`/
-`UsersPageResponse`, and reusable inner models use semantic `*Dto`/enum names. This
-is what keeps generated folders understandable as the API grows.
+one stable business tag; the imported snapshot declares the tags and adds
+`*Request` and `*Response` aliases while retaining the backend's `*BodyDto` and
+`*ResponseDto` definitions. This keeps generated folders understandable without
+requiring the backend to rename its models.
 
 ## Reusable production architecture
 
@@ -510,9 +594,12 @@ platform, OS, app state, and route context needed to reproduce failures.
 
 Contract update workflow:
 
-1. Export and review the backend OpenAPI document.
-2. Replace `openapi/openapi.yaml` in both clients that consume the changed API.
-3. Run `pnpm api:generate` in each affected client.
+1. Export and review the backend OpenAPI document, including its provenance and
+   business changes.
+2. Run `node scripts/import-openapi.mjs <reviewed-backend-export>` to normalize and
+   write the mobile snapshot. Review the resulting diff and update its provenance.
+3. Run `pnpm api:generate` in the mobile client; follow the web client's own
+   contract-update process separately.
 4. Update feature code against generated types, never generated output itself.
 5. Run typecheck, tests, lint, and the relevant platform export/smoke check.
 
@@ -521,7 +608,9 @@ Contract update workflow:
 `EXPO_PUBLIC_API_BASE_URL` is statically referenced so Expo can inline it. It defaults
 to `http://localhost:3000` for local web/iOS-simulator development. Android emulators
 usually need `http://10.0.2.2:3000`; physical devices need a host address they can
-reach.
+reach. For the supplied deployed server set the origin to
+`https://wdp.novaproj.site` (without `/api/v1`); the generated operations already
+include that prefix. Release authentication rejects a non-HTTPS base URL.
 
 All `EXPO_PUBLIC_*` values are visible in the compiled application. Tokens and secrets
 must use an approved authentication/secure-storage design, not public environment

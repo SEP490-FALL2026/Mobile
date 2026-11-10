@@ -1,14 +1,93 @@
 import { useRouter } from 'expo-router'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
+
+import { useSession } from '@/shared/api/session-context'
+import { InvalidApiOriginError } from '@/shared/api/secure-origin'
+import { useAccountProfile } from '@/shared/api/use-account-profile'
 
 export function LoginScreen() {
   const { t } = useTranslation()
   const router = useRouter()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [busy, setBusy] = useState(false)
+  const [error, setError] = useState<'credentials' | 'rateLimit' | 'general' | 'configuration'>()
+  const session = useSession()
+  const profile = useAccountProfile()
+
+  useEffect(() => {
+    if (session.state === 'authenticated' && profile.data && !profile.isError) {
+      router.replace(profile.data.roles.includes('MANAGER') ? '/live-need-approvals' : '/my-software')
+    }
+  }, [router, session.state, profile.data, profile.isError])
+
+  async function submit() {
+    if (busy) return
+    setError(undefined)
+    if (!email.trim() || !password) {
+      setError('credentials')
+      return
+    }
+    setBusy(true)
+    try {
+      await session.login(email.trim(), password)
+      setPassword('')
+    } catch (failure) {
+      const status = typeof failure === 'object' && failure !== null && 'status' in failure ? failure.status : undefined
+      setError(
+        failure instanceof InvalidApiOriginError
+          ? 'configuration'
+          : status === 401 || status === 422
+            ? 'credentials'
+            : status === 429
+              ? 'rateLimit'
+              : 'general'
+      )
+    } finally {
+      setBusy(false)
+    }
+  }
+
+  if (session.state === 'authenticated') {
+    return (
+      <SafeAreaView style={styles.safeArea}>
+        <View style={styles.content}>
+          <Text accessibilityRole={profile.isError ? 'alert' : 'progressbar'} style={styles.forgotLabel}>
+            {profile.isError ? t('auth.profileError') : t('auth.profileLoading')}
+          </Text>
+          {profile.isError ? (
+            <Pressable accessibilityRole='button' onPress={() => void profile.refetch()} style={styles.loginButton}>
+              <Text style={styles.loginLabel}>{t('licenses.live.retry')}</Text>
+            </Pressable>
+          ) : null}
+          <Pressable
+            accessibilityRole='button'
+            disabled={busy}
+            accessibilityState={{ disabled: busy, busy }}
+            onPress={() => {
+              setBusy(true)
+              setError(undefined)
+              void session
+                .logout()
+                .catch(() => setError('general'))
+                .finally(() => setBusy(false))
+            }}
+            style={styles.loginButton}
+          >
+            <Text style={styles.loginLabel}>{t('licenses.live.logout')}</Text>
+          </Pressable>
+          {error ? (
+            <Text accessibilityRole='alert' style={styles.forgotLabel}>
+              {t('licenses.live.logoutError')}
+            </Text>
+          ) : null}
+        </View>
+      </SafeAreaView>
+    )
+  }
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -50,20 +129,25 @@ export function LoginScreen() {
             />
           </View>
 
-          <Pressable accessibilityRole='link' onPress={() => router.push('/forgot-password')} style={styles.forgotLink}>
-            <Text style={styles.forgotLabel}>{t('auth.forgotPassword')}</Text>
-          </Pressable>
+          <Text style={styles.forgotLabel}>{t('auth.recoveryUnavailable')}</Text>
+          {error || session.restoreFailed ? (
+            <Text accessibilityRole='alert' style={styles.forgotLabel}>
+              {error ? t(`auth.errors.${error}`) : t('auth.errors.restore')}
+            </Text>
+          ) : null}
 
           <Pressable
             accessibilityRole='button'
-            onPress={() => router.replace('/my-software')}
+            accessibilityState={{ disabled: busy || session.state === 'loading', busy }}
+            disabled={busy || session.state === 'loading'}
+            onPress={() => void submit()}
             style={styles.loginButton}
           >
-            <Text style={styles.loginLabel}>{t('auth.login')}</Text>
+            <Text style={styles.loginLabel}>
+              {busy || session.state === 'loading' ? t('auth.loading') : t('auth.login')}
+            </Text>
           </Pressable>
         </View>
-
-        <Text style={styles.demoNote}>{t('auth.demoNote')}</Text>
       </ScrollView>
     </SafeAreaView>
   )
@@ -98,13 +182,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 26,
     paddingVertical: 36
   },
-  demoNote: {
-    color: '#8a786a',
-    fontSize: 12,
-    lineHeight: 18,
-    marginTop: 26,
-    textAlign: 'center'
-  },
   field: {
     gap: 8
   },
@@ -112,10 +189,6 @@ const styles = StyleSheet.create({
     color: '#a33700',
     fontSize: 13,
     fontWeight: '600'
-  },
-  forgotLink: {
-    alignSelf: 'flex-end',
-    paddingVertical: 4
   },
   form: {
     gap: 18,
