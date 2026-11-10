@@ -1,22 +1,25 @@
 import { useQuery } from '@tanstack/react-query'
 
-import { accessRequestGet } from '@/shared/api/generated/api/access-requests/access-requests'
-import { meAccessRequestList } from '@/shared/api/generated/api/me/me'
+import { accessRequestGet } from '@/shared/api/generated/operations/access-requests'
+import { meAccessRequestList } from '@/shared/api/generated/operations/me'
 import { useSession } from '@/shared/api/session-context'
 
-export function useLiveRequests(view: 'open' | 'ended', page: number) {
+export type RequestInvolvement = 'SENT' | 'FOR_ME'
+
+export function useLiveRequests(view: 'open' | 'ended', page: number, involvement: RequestInvolvement = 'SENT') {
   const session = useSession()
   return useQuery({
-    queryKey: ['session', 'requests', view, page],
+    queryKey: ['session', 'requests', view, involvement, page],
     enabled: session.state === 'authenticated',
     queryFn: ({ signal }) =>
       session.read(async (token) => {
         const result = await meAccessRequestList(
-          { view, page, pageSize: 20 },
-          { signal, headers: { Authorization: `Bearer ${token}` } }
+          { view, involvement, page, pageSize: 20 },
+          { headers: { Authorization: `Bearer ${token}` } },
+          signal
         )
-        if (!result.data.data) throw new Error('Missing request list')
-        return result.data.data
+        if (!result.data) throw new Error('Missing request list')
+        return result.data
       })
   })
 }
@@ -28,9 +31,9 @@ export function useLiveRequest(requestId: string) {
     enabled: session.state === 'authenticated',
     queryFn: ({ signal }) =>
       session.read(async (token) => {
-        const result = await accessRequestGet(requestId, { signal, headers: { Authorization: `Bearer ${token}` } })
-        if (!result.data.data) throw new Error('Missing request details')
-        return result.data.data
+        const result = await accessRequestGet(requestId, { headers: { Authorization: `Bearer ${token}` } }, signal)
+        if (!result.data) throw new Error('Missing request details')
+        return result.data
       })
   })
 }

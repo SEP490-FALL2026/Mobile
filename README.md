@@ -7,10 +7,9 @@ in-app inbox. Web remains the full capability surface.
 
 The current source includes navigation/provider boundaries, typed Vietnamese
 and English copy, TanStack Query setup, and an Orval-generated API client.
-Login, account profile, personal software, employee requests, the in-app inbox
-and assigned manager need approvals use the backend. The original manager and
-spending-approval demos remain session-only prototypes; spending approval is
-not yet connected to the backend. See ARCHITECTURE.md for scope and limitations.
+Every screen uses the backend: login, account profile, personal software, employee
+requests, the in-app inbox, manager approvals, spend-queue submission and group
+requests, and spending approvals. No static or demo data remains. See ARCHITECTURE.md for scope and limitations.
 
 ## Setup
 

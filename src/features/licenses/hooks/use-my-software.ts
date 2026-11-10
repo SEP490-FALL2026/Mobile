@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 
-import { employeeDashboardGet } from '@/shared/api/generated/api/dashboards/dashboards'
-import { meSoftwareRightList } from '@/shared/api/generated/api/me/me'
+import { employeeDashboardGet } from '@/shared/api/generated/operations/dashboards'
+import { meSoftwareRightList } from '@/shared/api/generated/operations/me'
 import { useSession } from '@/shared/api/session-context'
 import { useAccountProfile } from '@/shared/api/use-account-profile'
 
@@ -16,10 +16,11 @@ export function useMySoftware(page: number) {
       session.read(async (token) => {
         const result = await meSoftwareRightList(
           { view: 'current', page, pageSize: 20 },
-          { signal, headers: { Authorization: `Bearer ${token}` } }
+          { headers: { Authorization: `Bearer ${token}` } },
+          signal
         )
-        if (!result.data.data) throw new Error('Missing software response data')
-        return result.data.data
+        if (!result.data) throw new Error('Missing software response data')
+        return result.data
       })
   })
   const summary = useQuery({
@@ -27,9 +28,9 @@ export function useMySoftware(page: number) {
     enabled,
     queryFn: ({ signal }) =>
       session.read(async (token) => {
-        const result = await employeeDashboardGet({ signal, headers: { Authorization: `Bearer ${token}` } })
-        if (!result.data.data) throw new Error('Missing dashboard response data')
-        return result.data.data.sections
+        const result = await employeeDashboardGet({ headers: { Authorization: `Bearer ${token}` } }, signal)
+        if (!result.data) throw new Error('Missing dashboard response data')
+        return result.data.sections
       })
   })
 

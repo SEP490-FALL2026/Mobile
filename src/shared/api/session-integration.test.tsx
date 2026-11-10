@@ -1,11 +1,38 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import type { InternalAxiosRequestConfig } from 'axios'
 import { fireEvent, render, waitFor } from '@testing-library/react-native'
 
 import { LoginScreen } from '@/features/auth'
 import { MySoftwareScreen } from '@/features/licenses'
 import { setAppLanguage } from '@/shared/i18n/i18n'
 
+import { apiClient } from './axios-client'
 import { SessionProvider, useSession } from './session-context'
+
+/** Routes every Axios request to `handler` and turns its Response into an Axios response. */
+function mockApi(handler: (url: string, options: { headers: { Authorization?: string } }) => Promise<Response>) {
+  const original = apiClient.defaults.adapter
+  const adapter = jest.fn(async (config: InternalAxiosRequestConfig) => {
+    const authorization = config.headers.get('Authorization')?.toString()
+    const response = await handler(String(config.url), {
+      headers: authorization ? { Authorization: authorization } : {}
+    })
+    const text = response.status === 204 ? '' : await response.text()
+    return {
+      config,
+      data: text ? JSON.parse(text) : undefined,
+      headers: {},
+      status: response.status,
+      statusText: ''
+    }
+  })
+  apiClient.defaults.adapter = adapter
+  return Object.assign(adapter, {
+    restore: () => {
+      apiClient.defaults.adapter = original
+    }
+  })
+}
 
 let mockStoredToken: string | null = null
 const mockRouter = { replace: jest.fn() }
@@ -33,8 +60,7 @@ test('signs in, loads account rights with bearer auth, and logs out', async () =
   await setAppLanguage('vi', false)
   mockStoredToken = null
   const client = new QueryClient({ defaultOptions: { queries: { retry: false, gcTime: 0 } } })
-  const fetchMock = jest.spyOn(globalThis, 'fetch').mockImplementation(async (input, options) => {
-    const url = String(input)
+  const fetchMock = mockApi(async (url, options) => {
     if (url.endsWith('/auth/login')) {
       return new Response(
         JSON.stringify({
@@ -134,5 +160,5 @@ test('signs in, loads account rights with bearer auth, and logs out', async () =
   expect(fetchMock).toHaveBeenCalledTimes(5)
   screen.unmount()
   client.clear()
-  fetchMock.mockRestore()
+  fetchMock.restore()
 })

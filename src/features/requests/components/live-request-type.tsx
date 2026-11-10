@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next'
 import { StyleSheet, Text } from 'react-native'
 
-import { MyRequestsPageResponseDtoDataItemsItemType } from '@/shared/api/generated/contracts/me'
+import { MyRequestsPageResponseDtoDataItemsItemType } from '@/shared/api/generated/model/me'
 import { mobileColors } from '@/shared/theme/colors'
 
 export function LiveRequestType({ type }: { type: string }) {

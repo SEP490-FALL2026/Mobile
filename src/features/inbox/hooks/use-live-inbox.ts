@@ -5,7 +5,7 @@ import {
   notificationMarkAllRead,
   notificationMarkRead,
   notificationUnreadCount
-} from '@/shared/api/generated/api/notifications/notifications'
+} from '@/shared/api/generated/operations/notifications'
 import { useSession } from '@/shared/api/session-context'
 
 export function useLiveInbox(page: number) {
@@ -19,10 +19,11 @@ export function useLiveInbox(page: number) {
       session.read(async (token) => {
         const result = await notificationList(
           { page, pageSize: 20 },
-          { signal, headers: { Authorization: `Bearer ${token}` } }
+          { headers: { Authorization: `Bearer ${token}` } },
+          signal
         )
-        if (!result.data.data) throw new Error('Missing notification list')
-        return result.data.data
+        if (!result.data) throw new Error('Missing notification list')
+        return result.data
       })
   })
   const count = useQuery({
@@ -30,9 +31,9 @@ export function useLiveInbox(page: number) {
     enabled,
     queryFn: ({ signal }) =>
       session.read(async (token) => {
-        const result = await notificationUnreadCount({ signal, headers: { Authorization: `Bearer ${token}` } })
-        if (!result.data.data) throw new Error('Missing notification count')
-        return result.data.data.unread
+        const result = await notificationUnreadCount({ headers: { Authorization: `Bearer ${token}` } }, signal)
+        if (!result.data) throw new Error('Missing notification count')
+        return result.data.unread
       })
   })
   const markRead = useMutation({

@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next'
 
 import { MobileTabBar } from '@/shared/ui/mobile-tab-bar'
 
-type ManagerTab = 'queue' | 'team' | 'inbox'
+type ManagerTab = 'queue' | 'spend' | 'group' | 'inbox'
 
 export function ManagerLiveTabs({
   active,
@@ -28,13 +28,22 @@ export function ManagerLiveTabs({
           accessibilityLabel: t('navigation.openTab', { tab: t('manager.tabs.queue') })
         },
         {
-          id: 'team',
-          label: t('manager.live.teamTab'),
-          icon: 'users',
-          selected: active === 'team',
+          id: 'spend',
+          label: t('manager.live.spendTab'),
+          icon: 'send',
+          selected: active === 'spend',
           disabled,
-          onPress: () => onSelect('team'),
-          accessibilityLabel: t('navigation.openTab', { tab: t('manager.live.teamTab') })
+          onPress: () => onSelect('spend'),
+          accessibilityLabel: t('navigation.openTab', { tab: t('manager.live.spendTab') })
+        },
+        {
+          id: 'group',
+          label: t('manager.live.groupTab'),
+          icon: 'users',
+          selected: active === 'group',
+          disabled,
+          onPress: () => onSelect('group'),
+          accessibilityLabel: t('navigation.openTab', { tab: t('manager.live.groupTab') })
         },
         {
           id: 'inbox',

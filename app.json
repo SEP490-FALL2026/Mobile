@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "software-license-management-mobile",
+    "name": "SaaS-Sentry",
     "slug": "software-license-management-mobile",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -8,7 +8,13 @@
     "scheme": "softwarelicensemanagementmobile",
     "userInterfaceStyle": "automatic",
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "infoPlist": {
+        "CFBundleLocalizations": [
+          "en",
+          "vi"
+        ]
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -17,7 +23,8 @@
         "backgroundImage": "./assets/images/android-icon-background.png",
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
       },
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "package": "com.saassentry.mobile"
     },
     "web": {
       "output": "static",
@@ -43,8 +50,14 @@
         "expo-localization",
         {
           "supportedLocales": {
-            "ios": ["en", "vi"],
-            "android": ["en", "vi"]
+            "ios": [
+              "en",
+              "vi"
+            ],
+            "android": [
+              "en",
+              "vi"
+            ]
           }
         }
       ]
@@ -52,6 +65,13 @@
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
-    }
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "fbc71161-6fb2-4336-80b9-9a7d7d1ff046"
+      }
+    },
+    "owner": "dang37"
   }
 }

@@ -1,19 +1,24 @@
 import { Feather } from '@expo/vector-icons'
 import { Redirect, useRouter } from 'expo-router'
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 import { LiveInboxScreen } from '@/features/inbox'
-import type { NeedQueueResponseDtoDataItemsItem } from '@/shared/api/generated/contracts/need-decisions'
+import type { NeedQueueResponseDtoDataItemsItem } from '@/shared/api/generated/model/need-decisions'
 import { useSession } from '@/shared/api/session-context'
 import { useAccountProfile } from '@/shared/api/use-account-profile'
 import { mobileColors } from '@/shared/theme/colors'
+import { Pager } from '@/shared/ui/pager'
 
 import { ManagerLiveTabs } from '../components/manager-live-tabs'
 import { SimilarSeats } from '../components/similar-seats'
 import { useLiveNeedApprovals } from '../hooks/use-live-need-approvals'
+import { clampPage } from '@/shared/lib/clamp-page'
+import { formatApiDate } from '@/shared/lib/format-date'
+import { GroupRequestPanel } from './group-request-screen'
+import { SpendQueuePanel } from './spend-queue-screen'
 
 export function LiveNeedApprovalsScreen() {
   const { t, i18n } = useTranslation()
@@ -24,7 +29,7 @@ export function LiveNeedApprovalsScreen() {
   const [choice, setChoice] = useState<'APPROVE' | 'REJECT'>()
   const [reason, setReason] = useState('')
   const [validation, setValidation] = useState(false)
-  const [activeTab, setActiveTab] = useState<'queue' | 'team' | 'inbox'>('queue')
+  const [activeTab, setActiveTab] = useState<'queue' | 'spend' | 'group' | 'inbox'>('queue')
   const [loggingOut, setLoggingOut] = useState(false)
   const [logoutError, setLogoutError] = useState(false)
   const sent = useRef(false)
@@ -33,6 +38,12 @@ export function LiveNeedApprovalsScreen() {
   const hasScope = isManager && !!profile.data?.managerScope
   const { queue, detail, decision } = useLiveNeedApprovals(page, selected?.requestId, hasScope)
   const request = detail.data
+  const longTerm = (request?.termMonths ?? 0) > 12
+  const totalPages = queue.data?.pagination.totalPages
+  useEffect(() => {
+    const next = clampPage(page, totalPages)
+    if (next !== page) setPage(next)
+  }, [page, totalPages])
   const canDecide =
     hasScope &&
     !!selected &&
@@ -56,7 +67,7 @@ export function LiveNeedApprovalsScreen() {
   }
   function confirm() {
     if (!selected || !choice || !canDecide || locked || sent.current) return
-    if (choice === 'APPROVE' && request && request.termMonths > 12) return
+    if (choice === 'APPROVE' && longTerm) return
     if (choice === 'REJECT' && (reason.trim().length < 1 || reason.trim().length > 1000)) {
       setValidation(true)
       return
@@ -80,7 +91,7 @@ export function LiveNeedApprovalsScreen() {
       setLoggingOut(false)
     }
   }
-  function selectTab(tab: 'queue' | 'team' | 'inbox') {
+  function selectTab(tab: 'queue' | 'spend' | 'group' | 'inbox') {
     if (decision.isPending) return
     if (selected) closeDetails()
     setActiveTab(tab)
@@ -195,12 +206,13 @@ export function LiveNeedApprovalsScreen() {
               <Text style={styles.link}>{t('manager.live.backQueue')}</Text>
             </Pressable>
           ) : null}
-          {isManager && activeTab === 'team' ? (
+          {hasScope && activeTab === 'spend' ? <SpendQueuePanel permitted={hasScope} /> : null}
+          {hasScope && activeTab === 'group' ? <GroupRequestPanel /> : null}
+          {isManager && !hasScope && (activeTab === 'spend' || activeTab === 'group') ? (
             <View style={styles.card}>
-              <Text accessibilityRole='header' style={styles.name}>
-                {t('manager.live.teamTitle')}
+              <Text accessibilityRole='alert' style={styles.error}>
+                {t('manager.live.noScope')}
               </Text>
-              <Text style={styles.muted}>{t('manager.live.teamWebOnly')}</Text>
             </View>
           ) : null}
           {isManager && activeTab === 'queue' ? (
@@ -333,29 +345,7 @@ export function LiveNeedApprovalsScreen() {
                   )
                 })}
               {hasScope && queue.data && queue.data.pagination.totalPages > 1 ? (
-                <View style={styles.pagination}>
-                  <Pressable
-                    accessibilityRole='button'
-                    accessibilityState={{ disabled: page <= 1 }}
-                    disabled={page <= 1}
-                    onPress={() => setPage(page - 1)}
-                    style={[styles.action, page <= 1 && styles.disabled]}
-                  >
-                    <Text style={styles.link}>{t('licenses.live.previous')}</Text>
-                  </Pressable>
-                  <Text style={styles.muted}>
-                    {t('licenses.live.page', { page: new Intl.NumberFormat(i18n.language).format(page) })}
-                  </Text>
-                  <Pressable
-                    accessibilityRole='button'
-                    accessibilityState={{ disabled: page >= queue.data.pagination.totalPages }}
-                    disabled={page >= queue.data.pagination.totalPages}
-                    onPress={() => setPage(page + 1)}
-                    style={[styles.action, page >= queue.data.pagination.totalPages && styles.disabled]}
-                  >
-                    <Text style={styles.link}>{t('licenses.live.next')}</Text>
-                  </Pressable>
-                </View>
+                <Pager onPage={setPage} page={page} totalPages={queue.data.pagination.totalPages} />
               ) : null}
             </>
           ) : hasScope && activeTab === 'queue' && selected ? (
@@ -408,9 +398,11 @@ export function LiveNeedApprovalsScreen() {
                   <Text style={styles.value}>{request.businessReason}</Text>
                   <Text style={styles.label}>{t('requests.live.term')}</Text>
                   <Text style={styles.value}>
-                    {t('requests.live.months', {
-                      months: new Intl.NumberFormat(i18n.language).format(request.termMonths)
-                    })}
+                    {request.termMonths !== null
+                      ? t('requests.live.months', {
+                          months: new Intl.NumberFormat(i18n.language).format(request.termMonths)
+                        })
+                      : (formatApiDate(request.expectedEndDate, i18n.language) ?? t('requests.live.noTerm'))}
                   </Text>
                   <SimilarSeats requestId={request.id} />
                   <Text style={styles.label}>{t('manager.live.cost')}</Text>
@@ -421,9 +413,7 @@ export function LiveNeedApprovalsScreen() {
                         ? t('manager.live.costMissing')
                         : (formatCost(request.pricing.amount, i18n.language) ?? t('manager.live.costUnavailable'))}
                   </Text>
-                  {request.termMonths > 12 ? (
-                    <Text style={styles.error}>{t('manager.live.longTermBlocked')}</Text>
-                  ) : null}
+                  {longTerm ? <Text style={styles.error}>{t('manager.live.longTermBlocked')}</Text> : null}
                   {!canDecide && !locked && !detail.isError ? (
                     <Text accessibilityRole='alert' style={styles.error}>
                       {t('manager.live.stale')}
@@ -436,10 +426,10 @@ export function LiveNeedApprovalsScreen() {
                       </Pressable>
                       <Pressable
                         accessibilityRole='button'
-                        accessibilityState={{ disabled: request.termMonths > 12 }}
-                        disabled={request.termMonths > 12}
+                        accessibilityState={{ disabled: longTerm }}
+                        disabled={longTerm}
                         onPress={() => setChoice('APPROVE')}
-                        style={[styles.primary, request.termMonths > 12 && styles.disabled]}
+                        style={[styles.primary, longTerm && styles.disabled]}
                       >
                         <Text style={styles.primaryText}>{t('manager.live.approve')}</Text>
                       </Pressable>
@@ -549,7 +539,14 @@ const styles = StyleSheet.create({
   reviewRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end', gap: 5 },
   summaryRow: { flexDirection: 'row', gap: 10 },
   content: { padding: 16, paddingBottom: 30, gap: 14 },
-  action: { minHeight: 44, alignSelf: 'flex-start', justifyContent: 'center' },
+  action: {
+    minHeight: 44,
+    alignSelf: 'flex-start',
+    justifyContent: 'center',
+    paddingHorizontal: 14,
+    borderRadius: 12,
+    backgroundColor: mobileColors.primarySoft
+  },
   link: { color: mobileColors.primaryInk, fontWeight: '700' },
   heading: { flexDirection: 'row', alignItems: 'center', gap: 12 },
   headingCopy: { flex: 1, gap: 5 },

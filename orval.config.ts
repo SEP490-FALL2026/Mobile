@@ -3,7 +3,7 @@ import { defineConfig } from 'orval'
 export default defineConfig({
   api: {
     input: {
-      target: './openapi/openapi.yaml'
+      target: process.env.ORVAL_OPENAPI_SOURCE ?? './openapi/openapi.yaml'
     },
     output: {
       baseUrl: {
@@ -18,33 +18,20 @@ export default defineConfig({
       clean: true,
       client: 'react-query',
       formatter: 'prettier',
-      httpClient: 'fetch',
-      mode: 'tags-split',
-      commonTypesFileName: 'transport-types.ts',
+      httpClient: 'axios',
+      mode: 'tags-operations',
       indexFiles: true,
-      mock: {
-        indexMockFiles: true,
-        path: './src/shared/api/generated/mocks',
-        generators: [
-          {
-            type: 'faker',
-            arrayItems: true,
-            schemas: true,
-            useExamples: true
-          }
-        ]
-      },
       override: {
-        fetch: {
-          forceSuccessResponse: true
+        mutator: {
+          path: './src/shared/api/mutator/custom-axios.ts',
+          name: 'customAxios'
         }
       },
       schemas: {
-        path: './src/shared/api/generated/contracts',
+        path: './src/shared/api/generated/model',
         splitByTags: true
       },
-      tagsSplitDeduplication: true,
-      target: './src/shared/api/generated/api'
+      target: './src/shared/api/generated/operations'
     }
   }
 })

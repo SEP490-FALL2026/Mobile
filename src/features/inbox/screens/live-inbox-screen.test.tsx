@@ -7,7 +7,7 @@ import {
   notificationMarkAllRead,
   notificationMarkRead,
   notificationUnreadCount
-} from '@/shared/api/generated/api/notifications/notifications'
+} from '@/shared/api/generated/operations/notifications'
 import { setAppLanguage } from '@/shared/i18n/i18n'
 
 const mockRouter = { replace: jest.fn(), push: jest.fn(), back: jest.fn(), canGoBack: jest.fn(() => true) }
@@ -18,7 +18,7 @@ const mockSession = {
 }
 jest.mock('expo-router', () => ({ Redirect: () => null, useRouter: () => mockRouter }))
 jest.mock('@/shared/api/session-context', () => ({ useSession: () => mockSession }))
-jest.mock('@/shared/api/generated/api/notifications/notifications', () => ({
+jest.mock('@/shared/api/generated/operations/notifications', () => ({
   notificationList: jest.fn(),
   notificationUnreadCount: jest.fn(),
   notificationMarkRead: jest.fn(),
@@ -47,41 +47,29 @@ beforeEach(async () => {
   jest.clearAllMocks()
   mockSession.state = 'authenticated'
   jest.mocked(notificationList).mockResolvedValue({
-    status: 200,
-    headers: new Headers(),
+    success: true,
+    message: 'NOTIFICATIONS.LISTED',
     data: {
-      success: true,
-      message: 'NOTIFICATIONS.LISTED',
-      data: {
-        items: [
-          {
-            id: 'notice-1',
-            code: 'REQUEST_GRANTED',
-            subject: null,
-            params: { requestId: '01234567-89ab-cdef-0123-456789abcdef' },
-            createdAt: '2026-11-09T00:00:00Z',
-            readAt: null
-          }
-        ],
-        pagination: { page: 1, pageSize: 20, totalItems: 1, totalPages: 1 }
-      }
+      items: [
+        {
+          id: 'notice-1',
+          code: 'REQUEST_GRANTED',
+          subject: null,
+          params: { requestId: '01234567-89ab-cdef-0123-456789abcdef' },
+          createdAt: '2026-11-09T00:00:00Z',
+          readAt: null
+        }
+      ],
+      pagination: { page: 1, pageSize: 20, totalItems: 1, totalPages: 1 }
     }
   })
-  jest.mocked(notificationUnreadCount).mockResolvedValue({
-    status: 200,
-    headers: new Headers(),
-    data: { success: true, message: 'NOTIFICATIONS.COUNTED', data: { unread: 1 } }
-  })
-  jest.mocked(notificationMarkRead).mockResolvedValue({
-    status: 200,
-    headers: new Headers(),
-    data: { success: true, message: 'NOTIFICATIONS.READ', data: null }
-  })
-  jest.mocked(notificationMarkAllRead).mockResolvedValue({
-    status: 200,
-    headers: new Headers(),
-    data: { success: true, message: 'NOTIFICATIONS.READ', data: { updated: 1 } }
-  })
+  jest
+    .mocked(notificationUnreadCount)
+    .mockResolvedValue({ success: true, message: 'NOTIFICATIONS.COUNTED', data: { unread: 1 } })
+  jest.mocked(notificationMarkRead).mockResolvedValue({ success: true, message: 'NOTIFICATIONS.READ', data: null })
+  jest
+    .mocked(notificationMarkAllRead)
+    .mockResolvedValue({ success: true, message: 'NOTIFICATIONS.READ', data: { updated: 1 } })
 })
 
 test('shows real notifications and updates one using authenticated API', async () => {
@@ -91,7 +79,8 @@ test('shows real notifications and updates one using authenticated API', async (
   screen.getByText('1 thông báo chưa đọc')
   expect(notificationList).toHaveBeenCalledWith(
     { page: 1, pageSize: 20 },
-    expect.objectContaining({ headers: { Authorization: 'Bearer test-token' } })
+    expect.objectContaining({ headers: { Authorization: 'Bearer test-token' } }),
+    expect.anything()
   )
   await fireEvent.press(screen.getByRole('button', { name: 'Đánh dấu đã đọc: Đã cấp quyền sử dụng' }))
   await waitFor(() =>
@@ -133,32 +122,29 @@ test('shows load failure and retries', async () => {
 
 test('shows unknown codes rather than inventing a notification meaning', async () => {
   const response = await jest.mocked(notificationList)()
-  if (!response.data.data) throw new Error('Expected notification data')
-  response.data.data.items[0].code = 'NEW_CODE'
+  if (!response.data) throw new Error('Expected notification data')
+  response.data.items[0].code = 'NEW_CODE'
   const screen = await renderScreen()
   await screen.findByText('Cập nhật khác (NEW_CODE)')
 })
 
 test('loads subsequent pages and shows an empty page', async () => {
   const response = await jest.mocked(notificationList)()
-  if (!response.data.data) throw new Error('Expected notification data')
-  const data = response.data.data
+  if (!response.data) throw new Error('Expected notification data')
+  const data = response.data
   jest.mocked(notificationList).mockImplementation(async (params) => ({
     ...response,
     data: {
-      ...response.data,
-      data: {
-        ...data,
-        items: params?.page === 2 ? [] : data.items,
-        pagination: { ...data.pagination, page: params?.page ?? 1, totalItems: 21, totalPages: 2 }
-      }
+      ...data,
+      items: params?.page === 2 ? [] : data.items,
+      pagination: { ...data.pagination, page: params?.page ?? 1, totalItems: 21, totalPages: 2 }
     }
   }))
   const screen = await renderScreen()
   await screen.findByText('Đã cấp quyền sử dụng')
   await fireEvent.press(screen.getByRole('button', { name: 'Trang sau' }))
   await screen.findByText('Không có thông báo trên trang này.')
-  expect(notificationList).toHaveBeenLastCalledWith({ page: 2, pageSize: 20 }, expect.anything())
+  expect(notificationList).toHaveBeenLastCalledWith({ page: 2, pageSize: 20 }, expect.anything(), expect.anything())
 })
 
 test('supports English and marks all notifications as read', async () => {
