@@ -2,9 +2,10 @@ import { Feather } from '@expo/vector-icons'
 import { Redirect, useRouter } from 'expo-router'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
+import { ScrollView, StyleSheet, Text, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
+import { PressableFeedback } from '@/shared/ui/pressable-feedback'
 import { useSession } from '@/shared/api/session-context'
 import type { MobileColors } from '@/shared/theme/colors'
 import { useMobileTheme } from '@/shared/theme/theme-provider'
@@ -90,12 +91,16 @@ export function MySoftwareScreen() {
             </View>
           </View>
           {summary.isError ? (
-            <Pressable accessibilityRole='button' onPress={() => void summary.refetch()} style={styles.retryInline}>
+            <PressableFeedback
+              accessibilityRole='button'
+              onPress={() => void summary.refetch()}
+              style={styles.retryInline}
+            >
               <Text accessibilityRole='alert' style={styles.subtitle}>
                 {t('licenses.live.summaryError')}
               </Text>
               <Text style={styles.buttonText}>{t('licenses.live.retry')}</Text>
-            </Pressable>
+            </PressableFeedback>
           ) : null}
 
           <View style={styles.sectionHeading}>
@@ -105,7 +110,7 @@ export function MySoftwareScreen() {
           </View>
           <View style={styles.filters}>
             {(['current', 'ended'] as const).map((value) => (
-              <Pressable
+              <PressableFeedback
                 key={value}
                 accessibilityRole='button'
                 accessibilityState={{ selected: view === value }}
@@ -119,13 +124,13 @@ export function MySoftwareScreen() {
                 <Text style={[styles.filterText, view === value && styles.filterTextSelected]}>
                   {t(`licenses.live.views.${value}`)}
                 </Text>
-              </Pressable>
+              </PressableFeedback>
             ))}
           </View>
           {view === 'current' ? (
             <View accessibilityLabel={t('licenses.filterLabel')} style={styles.filters}>
               {(['all', 'expiring'] as const).map((value) => (
-                <Pressable
+                <PressableFeedback
                   key={value}
                   accessibilityRole='button'
                   accessibilityState={{ selected: filter === value }}
@@ -139,7 +144,7 @@ export function MySoftwareScreen() {
                   <Text style={[styles.filterText, filter === value && styles.filterTextSelected]}>
                     {t(`licenses.listFilters.${value}`)}
                   </Text>
-                </Pressable>
+                </PressableFeedback>
               ))}
             </View>
           ) : null}
@@ -154,7 +159,7 @@ export function MySoftwareScreen() {
               <Text accessibilityRole='alert' style={styles.subtitle}>
                 {t('licenses.live.error')}
               </Text>
-              <Pressable
+              <PressableFeedback
                 accessibilityRole='button'
                 onPress={() => {
                   if (profile.isError) void profile.refetch()
@@ -163,15 +168,15 @@ export function MySoftwareScreen() {
                 style={styles.button}
               >
                 <Text style={styles.buttonText}>{t('licenses.live.retry')}</Text>
-              </Pressable>
+              </PressableFeedback>
               {page > 1 && software.isError ? (
-                <Pressable
+                <PressableFeedback
                   accessibilityRole='button'
                   onPress={() => setPage((current) => current - 1)}
                   style={styles.button}
                 >
                   <Text style={styles.buttonText}>{t('licenses.live.previous')}</Text>
-                </Pressable>
+                </PressableFeedback>
               ) : null}
             </View>
           ) : null}
@@ -213,7 +218,7 @@ export function MySoftwareScreen() {
               ) : null}
               {software.data.pagination.totalPages > 1 ? (
                 <View style={styles.pagination}>
-                  <Pressable
+                  <PressableFeedback
                     accessibilityRole='button'
                     accessibilityState={{ disabled: page <= 1 }}
                     disabled={page <= 1}
@@ -221,9 +226,9 @@ export function MySoftwareScreen() {
                     style={[styles.button, page <= 1 && styles.disabledButton]}
                   >
                     <Text style={styles.buttonText}>{t('licenses.live.previous')}</Text>
-                  </Pressable>
+                  </PressableFeedback>
                   <Text style={styles.subtitle}>{t('licenses.live.page', { page: formatCount(page) })}</Text>
-                  <Pressable
+                  <PressableFeedback
                     accessibilityRole='button'
                     accessibilityState={{ disabled: page >= software.data.pagination.totalPages }}
                     disabled={page >= software.data.pagination.totalPages}
@@ -231,7 +236,7 @@ export function MySoftwareScreen() {
                     style={[styles.button, page >= software.data.pagination.totalPages && styles.disabledButton]}
                   >
                     <Text style={styles.buttonText}>{t('licenses.live.next')}</Text>
-                  </Pressable>
+                  </PressableFeedback>
                 </View>
               ) : null}
             </View>

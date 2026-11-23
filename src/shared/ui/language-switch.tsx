@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next'
-import { Pressable, StyleSheet, Text } from 'react-native'
+import { StyleSheet, Text } from 'react-native'
 
+import { PressableFeedback } from '@/shared/ui/pressable-feedback'
 import { setAppLanguage, type SupportedLanguage } from '@/shared/i18n/i18n'
 import type { MobileColors } from '@/shared/theme/colors'
 import { useMobileTheme } from '@/shared/theme/theme-provider'
@@ -14,7 +15,7 @@ export function LanguageSwitch() {
   const nextName = t(next === 'vi' ? 'common.language.vietnamese' : 'common.language.english')
 
   return (
-    <Pressable
+    <PressableFeedback
       accessibilityLabel={t('common.language.switchTo', { language: nextName })}
       accessibilityRole='button'
       onPress={() => void setAppLanguage(next)}
@@ -23,7 +24,7 @@ export function LanguageSwitch() {
       <Text style={styles.label}>
         {t(current === 'vi' ? 'common.language.vietnameseShort' : 'common.language.englishShort')}
       </Text>
-    </Pressable>
+    </PressableFeedback>
   )
 }
 

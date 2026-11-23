@@ -1,7 +1,8 @@
 import { Feather } from '@expo/vector-icons'
 import { useTranslation } from 'react-i18next'
-import { Pressable, StyleSheet, Text, View } from 'react-native'
+import { StyleSheet, Text, View } from 'react-native'
 
+import { PressableFeedback } from '@/shared/ui/pressable-feedback'
 import type { MobileColors } from '@/shared/theme/colors'
 import { useMobileTheme } from '@/shared/theme/theme-provider'
 
@@ -26,7 +27,7 @@ export function EmployeeProfileHeader({
 
   return (
     <View style={styles.container}>
-      <Pressable
+      <PressableFeedback
         accessibilityLabel={onOpenProfile ? t('account.openProfile', { name }) : undefined}
         accessibilityRole={onOpenProfile ? 'button' : undefined}
         disabled={!onOpenProfile}
@@ -53,9 +54,9 @@ export function EmployeeProfileHeader({
             size={16}
           />
         ) : null}
-      </Pressable>
+      </PressableFeedback>
       {onOpenInbox ? (
-        <Pressable
+        <PressableFeedback
           accessibilityLabel={t('navigation.openTab', { tab: t('navigation.inbox') })}
           accessibilityRole='button'
           onPress={onOpenInbox}
@@ -68,7 +69,7 @@ export function EmployeeProfileHeader({
             name='bell'
             size={18}
           />
-        </Pressable>
+        </PressableFeedback>
       ) : null}
     </View>
   )

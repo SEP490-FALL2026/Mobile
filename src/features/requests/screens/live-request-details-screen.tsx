@@ -1,9 +1,10 @@
 import { Redirect, useRouter } from 'expo-router'
 import { useTranslation } from 'react-i18next'
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
+import { ScrollView, StyleSheet, Text, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 import { SoftwareIcon } from '@/entities/software'
+import { PressableFeedback } from '@/shared/ui/pressable-feedback'
 import { mayCreateRequest } from '@/shared/api/request-eligibility'
 import { useSession } from '@/shared/api/session-context'
 import { useAccountProfile } from '@/shared/api/use-account-profile'
@@ -40,9 +41,13 @@ export function LiveRequestDetailsScreen({ requestId }: { requestId: string }) {
   return (
     <SafeAreaView style={styles.safe}>
       <ScrollView contentContainerStyle={styles.content}>
-        <Pressable accessibilityRole='button' onPress={() => goBackOr(router, '/live-requests')} style={styles.action}>
+        <PressableFeedback
+          accessibilityRole='button'
+          onPress={() => goBackOr(router, '/live-requests')}
+          style={styles.action}
+        >
           <Text style={styles.actionText}>{t('common.back')}</Text>
-        </Pressable>
+        </PressableFeedback>
         <Text accessibilityRole='header' style={styles.title}>
           {t('requests.live.detailsTitle')}
         </Text>
@@ -56,9 +61,9 @@ export function LiveRequestDetailsScreen({ requestId }: { requestId: string }) {
             <Text accessibilityRole='alert' style={styles.error}>
               {t(notFound ? 'requests.live.detailNotFound' : 'requests.live.detailError')}
             </Text>
-            <Pressable accessibilityRole='button' onPress={() => void query.refetch()} style={styles.action}>
+            <PressableFeedback accessibilityRole='button' onPress={() => void query.refetch()} style={styles.action}>
               <Text style={styles.actionText}>{t('licenses.live.retry')}</Text>
-            </Pressable>
+            </PressableFeedback>
           </View>
         ) : null}
         {request ? (
@@ -150,7 +155,7 @@ export function LiveRequestDetailsScreen({ requestId }: { requestId: string }) {
               <RequestWithdrawPanel requestId={request.id} />
             ) : null}
             {canRequestAgain(request) && request.plan && mayCreateRequest(profile.data) ? (
-              <Pressable
+              <PressableFeedback
                 accessibilityRole='button'
                 accessibilityLabel={t('requests.live.requestAgainNamed', { name })}
                 onPress={() =>
@@ -165,7 +170,7 @@ export function LiveRequestDetailsScreen({ requestId }: { requestId: string }) {
                 style={styles.action}
               >
                 <Text style={styles.actionText}>{t('requests.live.requestAgain')}</Text>
-              </Pressable>
+              </PressableFeedback>
             ) : null}
             <RequestTimeline key={request.id} requestId={request.id} />
           </>

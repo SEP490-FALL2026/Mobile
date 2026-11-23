@@ -1,8 +1,9 @@
 import { type PropsWithChildren, useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { BackHandler, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
+import { BackHandler, ScrollView, StyleSheet, Text, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
+import { PressableFeedback } from '@/shared/ui/pressable-feedback'
 import { useSession } from '@/shared/api/session-context'
 import { useAccountProfile } from '@/shared/api/use-account-profile'
 import type { MobileColors } from '@/shared/theme/colors'
@@ -99,9 +100,13 @@ export function PolicyGate({ children }: PropsWithChildren) {
                   {profile.isError ? t('account.error') : t('account.loading')}
                 </Text>
                 {profile.isError ? (
-                  <Pressable accessibilityRole='button' onPress={() => void profile.refetch()} style={styles.secondary}>
+                  <PressableFeedback
+                    accessibilityRole='button'
+                    onPress={() => void profile.refetch()}
+                    style={styles.secondary}
+                  >
                     <Text style={styles.link}>{t('account.retry')}</Text>
-                  </Pressable>
+                  </PressableFeedback>
                 ) : null}
               </>
             ) : (
@@ -127,20 +132,20 @@ export function PolicyGate({ children }: PropsWithChildren) {
                     <Text accessibilityRole='alert' style={styles.error}>
                       {t('policy.loadError')}
                     </Text>
-                    <Pressable
+                    <PressableFeedback
                       accessibilityRole='button'
                       onPress={() => void policy.refetch()}
                       style={styles.secondary}
                     >
                       <Text style={styles.link}>{t('account.retry')}</Text>
-                    </Pressable>
-                    <Pressable
+                    </PressableFeedback>
+                    <PressableFeedback
                       accessibilityRole='button'
                       onPress={() => void profile.refetch()}
                       style={styles.secondary}
                     >
                       <Text style={styles.link}>{t('policy.refreshAccount')}</Text>
-                    </Pressable>
+                    </PressableFeedback>
                   </View>
                 ) : null}
                 {content ? (
@@ -183,7 +188,7 @@ export function PolicyGate({ children }: PropsWithChildren) {
                         ))}
                       </View>
                     ))}
-                    <Pressable
+                    <PressableFeedback
                       accessibilityRole='button'
                       accessibilityState={{
                         disabled: acknowledge.isPending || policy.isFetching,
@@ -194,7 +199,7 @@ export function PolicyGate({ children }: PropsWithChildren) {
                       style={styles.primary}
                     >
                       <Text style={styles.primaryText}>{t('policy.confirm')}</Text>
-                    </Pressable>
+                    </PressableFeedback>
                   </View>
                 ) : null}
               </>
@@ -203,22 +208,22 @@ export function PolicyGate({ children }: PropsWithChildren) {
               <View style={styles.card}>
                 <Text style={styles.heading}>{t('account.logoutTitle')}</Text>
                 <Text style={styles.text}>{t('account.logoutMessage')}</Text>
-                <Pressable
+                <PressableFeedback
                   accessibilityRole='button'
                   disabled={logoutBusy}
                   onPress={() => setConfirmLogout(false)}
                   style={styles.secondary}
                 >
                   <Text style={styles.link}>{t('account.logoutCancel')}</Text>
-                </Pressable>
-                <Pressable
+                </PressableFeedback>
+                <PressableFeedback
                   accessibilityRole='button'
                   disabled={logoutBusy}
                   onPress={() => void logout()}
                   style={styles.secondary}
                 >
                   <Text style={styles.link}>{t('account.logoutConfirm')}</Text>
-                </Pressable>
+                </PressableFeedback>
                 {logoutError ? (
                   <Text accessibilityRole='alert' style={styles.error}>
                     {t('licenses.live.logoutError')}
@@ -226,14 +231,14 @@ export function PolicyGate({ children }: PropsWithChildren) {
                 ) : null}
               </View>
             ) : (
-              <Pressable
+              <PressableFeedback
                 accessibilityRole='button'
                 disabled={acknowledge.isPending}
                 onPress={() => setConfirmLogout(true)}
                 style={styles.secondary}
               >
                 <Text style={styles.link}>{t('licenses.live.logout')}</Text>
-              </Pressable>
+              </PressableFeedback>
             )}
           </ScrollView>
         </SafeAreaView>

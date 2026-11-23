@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next'
-import { Pressable, StyleSheet, Text, View } from 'react-native'
+import { StyleSheet, Text, View } from 'react-native'
 
+import { PressableFeedback } from '@/shared/ui/pressable-feedback'
 import type { PreviewResponseDtoDataPreview } from '@/shared/api/generated/contracts/access-requests'
 import type { MobileColors } from '@/shared/theme/colors'
 import { useMobileTheme } from '@/shared/theme/theme-provider'
@@ -181,14 +182,18 @@ export function RequestPreview({
         {t('requests.createLive.expectedDays', { days: number(preview.totalExpectedWorkingDays) })}
       </Text>
       {assignmentId && validId(assignmentId) ? (
-        <Pressable accessibilityRole='button' onPress={() => onOpenAccess(assignmentId)} style={styles.action}>
+        <PressableFeedback accessibilityRole='button' onPress={() => onOpenAccess(assignmentId)} style={styles.action}>
           <Text style={styles.link}>{t('requests.createLive.reviewDetails.openAccess')}</Text>
-        </Pressable>
+        </PressableFeedback>
       ) : null}
       {preview.limits.refusal === 'HAS_OPEN_REQUEST' && openRequestId && validId(openRequestId) ? (
-        <Pressable accessibilityRole='button' onPress={() => onOpenRequest(openRequestId)} style={styles.action}>
+        <PressableFeedback
+          accessibilityRole='button'
+          onPress={() => onOpenRequest(openRequestId)}
+          style={styles.action}
+        >
           <Text style={styles.link}>{t('requests.createLive.reviewDetails.openRequest')}</Text>
-        </Pressable>
+        </PressableFeedback>
       ) : null}
     </View>
   )

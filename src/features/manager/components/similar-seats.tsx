@@ -1,7 +1,8 @@
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Pressable, StyleSheet, Text, View } from 'react-native'
+import { StyleSheet, Text, View } from 'react-native'
 
+import { PressableFeedback } from '@/shared/ui/pressable-feedback'
 import type { MobileColors } from '@/shared/theme/colors'
 import { useMobileTheme } from '@/shared/theme/theme-provider'
 
@@ -19,12 +20,12 @@ export function SimilarSeats({ requestId }: { requestId: string }) {
       <Text style={styles.title}>{t('manager.live.similarTitle')}</Text>
       {seats.isLoading ? <Text style={styles.muted}>{t('manager.live.similarLoading')}</Text> : null}
       {seats.isError ? (
-        <Pressable accessibilityRole='button' onPress={() => void seats.refetch()} style={styles.action}>
+        <PressableFeedback accessibilityRole='button' onPress={() => void seats.refetch()} style={styles.action}>
           <Text accessibilityRole='alert' style={styles.error}>
             {t('manager.live.similarError')}
           </Text>
           <Text style={styles.link}>{t('licenses.live.retry')}</Text>
-        </Pressable>
+        </PressableFeedback>
       ) : null}
       {!seats.isError && seats.data?.items.length === 0 ? (
         <Text style={styles.muted}>{t('manager.live.similarEmpty')}</Text>
@@ -39,7 +40,7 @@ export function SimilarSeats({ requestId }: { requestId: string }) {
         : null}
       {seats.data && seats.data.pagination.totalPages > 1 ? (
         <View style={styles.pagination}>
-          <Pressable
+          <PressableFeedback
             accessibilityRole='button'
             accessibilityState={{ disabled: page <= 1 }}
             disabled={page <= 1}
@@ -47,11 +48,11 @@ export function SimilarSeats({ requestId }: { requestId: string }) {
             style={[styles.action, page <= 1 && styles.disabled]}
           >
             <Text style={styles.link}>{t('licenses.live.previous')}</Text>
-          </Pressable>
+          </PressableFeedback>
           <Text style={styles.muted}>
             {t('licenses.live.page', { page: new Intl.NumberFormat(i18n.language).format(page) })}
           </Text>
-          <Pressable
+          <PressableFeedback
             accessibilityRole='button'
             accessibilityState={{ disabled: page >= seats.data.pagination.totalPages }}
             disabled={page >= seats.data.pagination.totalPages}
@@ -59,7 +60,7 @@ export function SimilarSeats({ requestId }: { requestId: string }) {
             style={[styles.action, page >= seats.data.pagination.totalPages && styles.disabled]}
           >
             <Text style={styles.link}>{t('licenses.live.next')}</Text>
-          </Pressable>
+          </PressableFeedback>
         </View>
       ) : null}
     </View>

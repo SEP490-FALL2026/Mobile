@@ -1,9 +1,10 @@
 import { Feather } from '@expo/vector-icons'
 import { Redirect, useRouter } from 'expo-router'
 import { useTranslation } from 'react-i18next'
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
+import { ScrollView, StyleSheet, Text, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
+import { PressableFeedback } from '@/shared/ui/pressable-feedback'
 import { useUnreadCount } from '@/shared/api/use-unread-count'
 import { mayCreateRequest } from '@/shared/api/request-eligibility'
 import { useSession } from '@/shared/api/session-context'
@@ -50,7 +51,7 @@ export function LiveHomeScreen() {
               </View>
             </View>
             {manager ? (
-              <Pressable
+              <PressableFeedback
                 accessibilityRole='button'
                 accessibilityLabel={t('manager.live.openQueue')}
                 onPress={() => router.push('/live-need-approvals')}
@@ -64,7 +65,7 @@ export function LiveHomeScreen() {
                   <Text style={styles.cardDescription}>{t('home.live.approvalsDescription')}</Text>
                 </View>
                 <Feather name='chevron-right' size={20} color={colors.muted} />
-              </Pressable>
+              </PressableFeedback>
             ) : null}
             {role === 'MANAGER' && !account.managerScope ? (
               <Text accessibilityRole='alert' style={styles.notice}>
@@ -72,7 +73,7 @@ export function LiveHomeScreen() {
               </Text>
             ) : null}
             {role === 'SPENDING_APPROVER' ? (
-              <Pressable
+              <PressableFeedback
                 accessibilityRole='button'
                 accessibilityLabel={t('spending.live.openQueue')}
                 onPress={() => router.push('/spending-approvals')}
@@ -86,21 +87,25 @@ export function LiveHomeScreen() {
                   <Text style={styles.cardDescription}>{t('home.live.spendingDescription')}</Text>
                 </View>
                 <Feather name='chevron-right' size={20} color={colors.muted} />
-              </Pressable>
+              </PressableFeedback>
             ) : null}
             <Text accessibilityRole='header' style={styles.sectionTitle}>
               {t('home.live.actions')}
             </Text>
             <View style={styles.grid}>
-              <Pressable accessibilityRole='button' onPress={() => router.push('/my-software')} style={styles.card}>
+              <PressableFeedback
+                accessibilityRole='button'
+                onPress={() => router.push('/my-software')}
+                style={styles.card}
+              >
                 <View style={styles.cardIcon}>
                   <Feather name='grid' size={21} color={colors.primaryInk} />
                 </View>
                 <Text style={styles.cardTitle}>{t('home.live.software')}</Text>
                 <Text style={styles.cardDescription}>{t('home.live.softwareDescription')}</Text>
-              </Pressable>
+              </PressableFeedback>
               {mayRequest ? (
-                <Pressable
+                <PressableFeedback
                   accessibilityRole='button'
                   onPress={() => router.push('/live-request-create')}
                   style={styles.card}
@@ -110,16 +115,24 @@ export function LiveHomeScreen() {
                   </View>
                   <Text style={styles.cardTitle}>{t('navigation.createRequest')}</Text>
                   <Text style={styles.cardDescription}>{t('home.live.createDescription')}</Text>
-                </Pressable>
+                </PressableFeedback>
               ) : null}
-              <Pressable accessibilityRole='button' onPress={() => router.push('/live-requests')} style={styles.card}>
+              <PressableFeedback
+                accessibilityRole='button'
+                onPress={() => router.push('/live-requests')}
+                style={styles.card}
+              >
                 <View style={styles.cardIcon}>
                   <Feather name='file-text' size={21} color={colors.primaryInk} />
                 </View>
                 <Text style={styles.cardTitle}>{t('home.live.requests')}</Text>
                 <Text style={styles.cardDescription}>{t('home.live.requestsDescription')}</Text>
-              </Pressable>
-              <Pressable accessibilityRole='button' onPress={() => router.push('/live-inbox')} style={styles.card}>
+              </PressableFeedback>
+              <PressableFeedback
+                accessibilityRole='button'
+                onPress={() => router.push('/live-inbox')}
+                style={styles.card}
+              >
                 <View style={styles.cardIcon}>
                   <Feather name='bell' size={21} color={colors.primaryInk} />
                 </View>
@@ -134,7 +147,7 @@ export function LiveHomeScreen() {
                       ? t('home.live.countError')
                       : t('home.live.countLoading')}
                 </Text>
-              </Pressable>
+              </PressableFeedback>
             </View>
           </>
         ) : profile.isError || (account && !role) ? (
@@ -142,9 +155,9 @@ export function LiveHomeScreen() {
             <Text accessibilityRole='alert' style={styles.cardDescription}>
               {t('account.error')}
             </Text>
-            <Pressable accessibilityRole='button' onPress={() => void profile.refetch()}>
+            <PressableFeedback accessibilityRole='button' onPress={() => void profile.refetch()}>
               <Text style={styles.link}>{t('account.retry')}</Text>
-            </Pressable>
+            </PressableFeedback>
           </View>
         ) : (
           <Text accessibilityRole='progressbar' style={styles.subtitle}>

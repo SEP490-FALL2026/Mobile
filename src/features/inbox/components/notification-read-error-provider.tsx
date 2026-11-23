@@ -1,8 +1,9 @@
 import { createContext, type PropsWithChildren, useContext, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Pressable, StyleSheet, Text, View } from 'react-native'
+import { StyleSheet, Text, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
+import { PressableFeedback } from '@/shared/ui/pressable-feedback'
 import { useSession } from '@/shared/api/session-context'
 import type { MobileColors } from '@/shared/theme/colors'
 import { useMobileTheme } from '@/shared/theme/theme-provider'
@@ -36,9 +37,9 @@ export function NotificationReadErrorProvider({ children }: PropsWithChildren) {
               <Text accessibilityRole='alert' accessibilityLiveRegion='assertive' style={styles.message}>
                 {t('inbox.live.writeError')}
               </Text>
-              <Pressable accessibilityRole='button' onPress={() => setVisible(false)} style={styles.dismiss}>
+              <PressableFeedback accessibilityRole='button' onPress={() => setVisible(false)} style={styles.dismiss}>
                 <Text style={styles.dismissText}>{t('inbox.live.dismiss')}</Text>
-              </Pressable>
+              </PressableFeedback>
             </View>
           </SafeAreaView>
         ) : null}

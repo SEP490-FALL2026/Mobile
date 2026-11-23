@@ -2,9 +2,10 @@ import { Feather } from '@expo/vector-icons'
 import { Redirect, useRouter } from 'expo-router'
 import { useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Modal, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
+import { Modal, ScrollView, StyleSheet, Text, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
+import { PressableFeedback } from '@/shared/ui/pressable-feedback'
 import { useSession } from '@/shared/api/session-context'
 import { useAccountProfile } from '@/shared/api/use-account-profile'
 import type { MobileColors } from '@/shared/theme/colors'
@@ -72,9 +73,9 @@ export function AccountProfileScreen() {
             <Text accessibilityRole='alert' style={styles.error}>
               {t('account.error')}
             </Text>
-            <Pressable accessibilityRole='button' onPress={() => void profile.refetch()} style={styles.retry}>
+            <PressableFeedback accessibilityRole='button' onPress={() => void profile.refetch()} style={styles.retry}>
               <Text style={styles.retryText}>{t('account.retry')}</Text>
-            </Pressable>
+            </PressableFeedback>
           </View>
         ) : null}
         {account ? (
@@ -106,7 +107,7 @@ export function AccountProfileScreen() {
                 <PreferenceSwitches />
               </View>
             </View>
-            <Pressable
+            <PressableFeedback
               accessibilityRole='button'
               accessibilityLabel={t('account.changePassword')}
               onPress={() => router.push('/change-password')}
@@ -120,11 +121,11 @@ export function AccountProfileScreen() {
                 color={colors.primaryInk}
               />
               <Text style={styles.changePasswordText}>{t('account.changePassword')}</Text>
-            </Pressable>
+            </PressableFeedback>
           </>
         ) : null}
         {session.state === 'authenticated' ? (
-          <Pressable
+          <PressableFeedback
             accessibilityRole='button'
             accessibilityLabel={t('licenses.live.logout')}
             onPress={() => {
@@ -141,7 +142,7 @@ export function AccountProfileScreen() {
               color={colors.danger}
             />
             <Text style={styles.logoutText}>{t('licenses.live.logout')}</Text>
-          </Pressable>
+          </PressableFeedback>
         ) : null}
       </ScrollView>
       <Modal
@@ -163,7 +164,7 @@ export function AccountProfileScreen() {
                 {t('licenses.live.logoutError')}
               </Text>
             ) : null}
-            <Pressable
+            <PressableFeedback
               accessibilityRole='button'
               disabled={loggingOut}
               accessibilityState={{ disabled: loggingOut, busy: loggingOut }}
@@ -171,8 +172,8 @@ export function AccountProfileScreen() {
               style={[styles.confirmButton, loggingOut && styles.disabled]}
             >
               <Text style={styles.confirmText}>{loggingOut ? t('auth.loading') : t('account.logoutConfirm')}</Text>
-            </Pressable>
-            <Pressable
+            </PressableFeedback>
+            <PressableFeedback
               accessibilityRole='button'
               disabled={loggingOut}
               accessibilityState={{ disabled: loggingOut }}
@@ -180,7 +181,7 @@ export function AccountProfileScreen() {
               style={[styles.cancelButton, loggingOut && styles.disabled]}
             >
               <Text style={styles.cancelText}>{t('account.logoutCancel')}</Text>
-            </Pressable>
+            </PressableFeedback>
           </View>
         </View>
       </Modal>

@@ -2,9 +2,10 @@ import { Feather } from '@expo/vector-icons'
 import { useRouter } from 'expo-router'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { KeyboardAvoidingView, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native'
+import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
+import { PressableFeedback } from '@/shared/ui/pressable-feedback'
 import { useSession } from '@/shared/api/session-context'
 import { InvalidApiOriginError } from '@/shared/api/secure-origin'
 import { useAccountProfile } from '@/shared/api/use-account-profile'
@@ -66,11 +67,15 @@ export function LoginScreen() {
             {profile.isError ? t('auth.profileError') : t('auth.profileLoading')}
           </Text>
           {profile.isError ? (
-            <Pressable accessibilityRole='button' onPress={() => void profile.refetch()} style={styles.loginButton}>
+            <PressableFeedback
+              accessibilityRole='button'
+              onPress={() => void profile.refetch()}
+              style={styles.loginButton}
+            >
               <Text style={styles.loginLabel}>{t('licenses.live.retry')}</Text>
-            </Pressable>
+            </PressableFeedback>
           ) : null}
-          <Pressable
+          <PressableFeedback
             accessibilityRole='button'
             disabled={busy}
             accessibilityState={{ disabled: busy, busy }}
@@ -85,7 +90,7 @@ export function LoginScreen() {
             style={styles.loginButton}
           >
             <Text style={styles.loginLabel}>{t('licenses.live.logout')}</Text>
-          </Pressable>
+          </PressableFeedback>
           {error ? (
             <Text accessibilityRole='alert' style={styles.forgotLabel}>
               {t('licenses.live.logoutError')}
@@ -160,7 +165,7 @@ export function LoginScreen() {
                   style={styles.input}
                   value={password}
                 />
-                <Pressable
+                <PressableFeedback
                   accessibilityLabel={t(passwordVisible ? 'auth.hidePassword' : 'auth.showPassword')}
                   accessibilityRole='button'
                   accessibilityState={{ checked: passwordVisible }}
@@ -174,20 +179,24 @@ export function LoginScreen() {
                     name={passwordVisible ? 'eye-off' : 'eye'}
                     size={20}
                   />
-                </Pressable>
+                </PressableFeedback>
               </View>
             </View>
 
-            <Pressable accessibilityRole='button' onPress={() => router.push('/forgot-password')} style={styles.forgot}>
+            <PressableFeedback
+              accessibilityRole='button'
+              onPress={() => router.push('/forgot-password')}
+              style={styles.forgot}
+            >
               <Text style={styles.forgotLabel}>{t('auth.forgotPassword')}</Text>
-            </Pressable>
+            </PressableFeedback>
             {error || session.restoreFailed ? (
               <Text accessibilityRole='alert' style={styles.errorText}>
                 {error ? t(`auth.errors.${error}`) : t('auth.errors.restore')}
               </Text>
             ) : null}
 
-            <Pressable
+            <PressableFeedback
               accessibilityRole='button'
               accessibilityLabel={t('auth.login')}
               accessibilityState={{ disabled: busy || session.state === 'loading', busy }}
@@ -207,7 +216,7 @@ export function LoginScreen() {
                   size={18}
                 />
               ) : null}
-            </Pressable>
+            </PressableFeedback>
             <Text style={styles.help}>{t('auth.noAccount')}</Text>
           </View>
           <View style={styles.secure}>

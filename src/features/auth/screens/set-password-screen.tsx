@@ -1,8 +1,9 @@
 import { useRouter } from 'expo-router'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Pressable, Text } from 'react-native'
+import { Text } from 'react-native'
 
+import { PressableFeedback } from '@/shared/ui/pressable-feedback'
 import { useMobileTheme } from '@/shared/theme/theme-provider'
 import { ErrorReference } from '@/shared/ui/error-reference'
 
@@ -42,13 +43,13 @@ export function SetPasswordScreen({ token, purpose }: Props) {
         <Text accessibilityRole='alert' style={styles.error}>
           {t(`auth.setPassword.${purpose}.invalidLink`)}
         </Text>
-        <Pressable accessibilityRole='button' onPress={() => router.replace('/')} style={styles.button}>
+        <PressableFeedback accessibilityRole='button' onPress={() => router.replace('/')} style={styles.button}>
           <Text style={styles.buttonText}>{t('auth.forgot.backToLogin')}</Text>
-        </Pressable>
+        </PressableFeedback>
         {purpose === 'reset' ? (
-          <Pressable accessibilityRole='button' onPress={() => router.replace('/forgot-password')}>
+          <PressableFeedback accessibilityRole='button' onPress={() => router.replace('/forgot-password')}>
             <Text style={styles.link}>{t('auth.setPassword.requestNewLink')}</Text>
-          </Pressable>
+          </PressableFeedback>
         ) : null}
       </AuthFormLayout>
     )
@@ -59,9 +60,9 @@ export function SetPasswordScreen({ token, purpose }: Props) {
         <Text accessibilityRole='summary' style={styles.notice}>
           {t(`auth.setPassword.${purpose}.done`)}
         </Text>
-        <Pressable accessibilityRole='button' onPress={() => router.replace('/')} style={styles.button}>
+        <PressableFeedback accessibilityRole='button' onPress={() => router.replace('/')} style={styles.button}>
           <Text style={styles.buttonText}>{t('auth.setPassword.goToLogin')}</Text>
-        </Pressable>
+        </PressableFeedback>
       </AuthFormLayout>
     )
   }
@@ -92,7 +93,7 @@ export function SetPasswordScreen({ token, purpose }: Props) {
           <ErrorReference error={setter.error} />
         </>
       ) : null}
-      <Pressable
+      <PressableFeedback
         accessibilityRole='button'
         accessibilityState={{ disabled: setter.isPending, busy: setter.isPending }}
         disabled={setter.isPending}
@@ -100,7 +101,7 @@ export function SetPasswordScreen({ token, purpose }: Props) {
         style={[styles.button, setter.isPending && styles.disabled]}
       >
         <Text style={styles.buttonText}>{setter.isPending ? t('auth.loading') : t('auth.setPassword.submit')}</Text>
-      </Pressable>
+      </PressableFeedback>
     </AuthFormLayout>
   )
 }

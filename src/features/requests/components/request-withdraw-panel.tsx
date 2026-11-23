@@ -2,8 +2,9 @@ import { usePreventRemove } from '@react-navigation/native'
 import { useFocusEffect } from 'expo-router'
 import { useCallback, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { BackHandler, Platform, Pressable, StyleSheet, Text, View } from 'react-native'
+import { BackHandler, Platform, StyleSheet, Text, View } from 'react-native'
 
+import { PressableFeedback } from '@/shared/ui/pressable-feedback'
 import { apiErrorInfo } from '@/shared/api/api-error'
 import type { MobileColors } from '@/shared/theme/colors'
 import { useMobileTheme } from '@/shared/theme/theme-provider'
@@ -66,7 +67,7 @@ export function RequestWithdrawPanel({ requestId }: { requestId: string }) {
         <>
           <Text style={styles.title}>{t('requests.createLive.confirmWithdraw')}</Text>
           <Text style={styles.muted}>{t('requests.createLive.withdrawNote')}</Text>
-          <Pressable
+          <PressableFeedback
             accessibilityRole='button'
             accessibilityState={{ disabled: inFlight }}
             disabled={inFlight}
@@ -74,8 +75,8 @@ export function RequestWithdrawPanel({ requestId }: { requestId: string }) {
             style={styles.action}
           >
             <Text style={styles.actionText}>{t('requests.cancel')}</Text>
-          </Pressable>
-          <Pressable
+          </PressableFeedback>
+          <PressableFeedback
             accessibilityRole='button'
             accessibilityState={{ disabled: inFlight, busy: inFlight }}
             disabled={inFlight}
@@ -83,10 +84,10 @@ export function RequestWithdrawPanel({ requestId }: { requestId: string }) {
             style={styles.action}
           >
             <Text style={styles.danger}>{t('requests.createLive.withdrawAction')}</Text>
-          </Pressable>
+          </PressableFeedback>
         </>
       ) : !withdrawal.isSuccess ? (
-        <Pressable
+        <PressableFeedback
           accessibilityRole='button'
           accessibilityState={{ disabled: inFlight }}
           disabled={inFlight}
@@ -94,7 +95,7 @@ export function RequestWithdrawPanel({ requestId }: { requestId: string }) {
           style={styles.action}
         >
           <Text style={styles.danger}>{t('requests.createLive.withdraw')}</Text>
-        </Pressable>
+        </PressableFeedback>
       ) : null}
     </View>
   )

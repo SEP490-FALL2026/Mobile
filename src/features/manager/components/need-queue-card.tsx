@@ -1,7 +1,8 @@
 import { Feather } from '@expo/vector-icons'
 import { useTranslation } from 'react-i18next'
-import { Pressable, StyleSheet, Text, View } from 'react-native'
+import { StyleSheet, Text, View } from 'react-native'
 
+import { PressableFeedback } from '@/shared/ui/pressable-feedback'
 import type { NeedQueueResponseDtoDataItemsItem } from '@/shared/api/generated/contracts/need-decisions'
 import type { MobileColors } from '@/shared/theme/colors'
 import { useMobileTheme } from '@/shared/theme/theme-provider'
@@ -27,7 +28,7 @@ export function NeedQueueCard({
   const number = new Intl.NumberFormat(i18n.language)
 
   return (
-    <Pressable
+    <PressableFeedback
       accessibilityRole='button'
       accessibilityLabel={t('manager.live.openNamed', { name, person: item.requester.fullName })}
       onPress={() => onPress(item)}
@@ -74,7 +75,7 @@ export function NeedQueueCard({
           color={colors.primary}
         />
       </View>
-    </Pressable>
+    </PressableFeedback>
   )
 }
 

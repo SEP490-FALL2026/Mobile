@@ -1,9 +1,10 @@
 import { Feather } from '@expo/vector-icons'
 import { useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native'
+import { StyleSheet, Text, TextInput, View } from 'react-native'
 
 import { SoftwareIcon } from '@/entities/software'
+import { PressableFeedback } from '@/shared/ui/pressable-feedback'
 import type { RequestablePlanPageResponseDtoDataItemsItem } from '@/shared/api/generated/contracts/requestable-software'
 import type { MobileColors } from '@/shared/theme/colors'
 import { useMobileTheme } from '@/shared/theme/theme-provider'
@@ -68,7 +69,7 @@ export function RequestCatalog({
             style={styles.input}
           />
           <View style={styles.tabs}>
-            <Pressable
+            <PressableFeedback
               accessibilityRole='button'
               accessibilityState={{ selected: mode === 'department' }}
               onPress={() => {
@@ -80,15 +81,15 @@ export function RequestCatalog({
               style={styles.action}
             >
               <Text style={styles.link}>{t('requests.createLive.catalog.department')}</Text>
-            </Pressable>
-            <Pressable
+            </PressableFeedback>
+            <PressableFeedback
               accessibilityRole='button'
               accessibilityState={{ selected: mode === 'applications' }}
               onPress={showApplications}
               style={styles.action}
             >
               <Text style={styles.link}>{t('requests.createLive.catalog.all')}</Text>
-            </Pressable>
+            </PressableFeedback>
           </View>
           {mode === 'department' ? (
             <Text style={styles.muted}>{t('requests.createLive.catalog.departmentHint')}</Text>
@@ -96,7 +97,7 @@ export function RequestCatalog({
         </>
       ) : (
         <>
-          <Pressable
+          <PressableFeedback
             accessibilityRole='button'
             onPress={() => {
               setMode(origin)
@@ -107,7 +108,7 @@ export function RequestCatalog({
             style={styles.action}
           >
             <Text style={styles.link}>{t('requests.createLive.catalog.backToApps')}</Text>
-          </Pressable>
+          </PressableFeedback>
           <Text accessibilityRole='header' style={styles.heading}>
             {t('requests.createLive.catalog.plansFor', { name: application?.name })}
           </Text>
@@ -126,14 +127,14 @@ export function RequestCatalog({
               : t('requests.createLive.catalogError')}
           </Text>
           {!isNoDepartment(query.error) ? (
-            <Pressable accessibilityRole='button' onPress={() => void query.refetch()} style={styles.action}>
+            <PressableFeedback accessibilityRole='button' onPress={() => void query.refetch()} style={styles.action}>
               <Text style={styles.link}>{t('licenses.live.retry')}</Text>
-            </Pressable>
+            </PressableFeedback>
           ) : null}
           {page > 1 ? (
-            <Pressable accessibilityRole='button' onPress={() => setPage(page - 1)} style={styles.action}>
+            <PressableFeedback accessibilityRole='button' onPress={() => setPage(page - 1)} style={styles.action}>
               <Text style={styles.link}>{t('licenses.live.previous')}</Text>
-            </Pressable>
+            </PressableFeedback>
           ) : null}
         </View>
       ) : null}
@@ -142,7 +143,7 @@ export function RequestCatalog({
       ) : null}
       {mode === 'department' && !department.isError
         ? department.data?.items.map((item) => (
-            <Pressable
+            <PressableFeedback
               key={item.entryId}
               accessibilityRole='button'
               accessibilityLabel={
@@ -170,12 +171,12 @@ export function RequestCatalog({
                   color={colors.muted}
                 />
               </View>
-            </Pressable>
+            </PressableFeedback>
           ))
         : null}
       {mode === 'applications' && !applications.isError
         ? applications.data?.items.map((item) => (
-            <Pressable
+            <PressableFeedback
               key={item.id}
               accessibilityRole='button'
               accessibilityLabel={t('requests.createLive.catalog.openApp', { name: item.name })}
@@ -207,12 +208,12 @@ export function RequestCatalog({
                   ) : null}
                 </View>
               </View>
-            </Pressable>
+            </PressableFeedback>
           ))
         : null}
       {mode === 'plans' && !plans.isError
         ? plans.data?.items.map((plan) => (
-            <Pressable
+            <PressableFeedback
               key={plan.id}
               accessibilityRole='button'
               accessibilityLabel={t('requests.createLive.choosePlan', { app: plan.application.name, plan: plan.name })}
@@ -232,12 +233,12 @@ export function RequestCatalog({
                     : t('requests.createLive.planBlocked')}
                 </Text>
               ) : null}
-            </Pressable>
+            </PressableFeedback>
           ))
         : null}
       {!query.isError && query.data && query.data.pagination.totalPages > 1 ? (
         <View style={styles.pagination}>
-          <Pressable
+          <PressableFeedback
             accessibilityRole='button'
             disabled={page <= 1}
             accessibilityState={{ disabled: page <= 1 }}
@@ -245,9 +246,9 @@ export function RequestCatalog({
             style={[styles.action, page <= 1 && styles.disabled]}
           >
             <Text style={styles.link}>{t('licenses.live.previous')}</Text>
-          </Pressable>
+          </PressableFeedback>
           <Text style={styles.muted}>{t('licenses.live.page', { page: numberFormat(page, i18n.language) })}</Text>
-          <Pressable
+          <PressableFeedback
             accessibilityRole='button'
             disabled={page >= query.data.pagination.totalPages}
             accessibilityState={{ disabled: page >= query.data.pagination.totalPages }}
@@ -255,7 +256,7 @@ export function RequestCatalog({
             style={[styles.action, page >= query.data.pagination.totalPages && styles.disabled]}
           >
             <Text style={styles.link}>{t('licenses.live.next')}</Text>
-          </Pressable>
+          </PressableFeedback>
         </View>
       ) : null}
     </View>

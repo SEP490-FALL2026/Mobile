@@ -2,9 +2,10 @@ import { Feather } from '@expo/vector-icons'
 import { Redirect, useRouter } from 'expo-router'
 import { useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
+import { ScrollView, StyleSheet, Text, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
+import { PressableFeedback } from '@/shared/ui/pressable-feedback'
 import type { NotificationListResponseDtoDataItemsItem } from '@/shared/api/generated/contracts/notifications'
 import { useSession } from '@/shared/api/session-context'
 import { useAccountProfile } from '@/shared/api/use-account-profile'
@@ -90,14 +91,14 @@ export function LiveInboxScreen() {
             </Text>
           </View>
           {count.isError ? (
-            <Pressable accessibilityRole='button' onPress={() => void count.refetch()} style={styles.action}>
+            <PressableFeedback accessibilityRole='button' onPress={() => void count.refetch()} style={styles.action}>
               <Text accessibilityRole='alert' style={styles.muted}>
                 {t('inbox.live.countError')}
               </Text>
               <Text style={styles.actionText}>{t('licenses.live.retry')}</Text>
-            </Pressable>
+            </PressableFeedback>
           ) : null}
-          <Pressable
+          <PressableFeedback
             accessibilityRole='button'
             accessibilityLabel={t('inbox.live.markAll')}
             accessibilityState={{ disabled: markRead.isPending || count.data === 0, busy: markRead.isPending }}
@@ -113,7 +114,7 @@ export function LiveInboxScreen() {
               color={mobileColors.primaryInk}
             />
             <Text style={styles.actionText}>{t('inbox.live.markAll')}</Text>
-          </Pressable>
+          </PressableFeedback>
           {markRead.isError && markRead.variables === null ? (
             <Text accessibilityRole='alert' style={styles.error}>
               {t('inbox.live.writeError')}
@@ -134,13 +135,13 @@ export function LiveInboxScreen() {
               <Text accessibilityRole='alert' style={styles.error}>
                 {t('inbox.live.loadError')}
               </Text>
-              <Pressable accessibilityRole='button' onPress={() => void list.refetch()} style={styles.action}>
+              <PressableFeedback accessibilityRole='button' onPress={() => void list.refetch()} style={styles.action}>
                 <Text style={styles.actionText}>{t('licenses.live.retry')}</Text>
-              </Pressable>
+              </PressableFeedback>
               {page > 1 ? (
-                <Pressable accessibilityRole='button' onPress={() => setPage(page - 1)} style={styles.action}>
+                <PressableFeedback accessibilityRole='button' onPress={() => setPage(page - 1)} style={styles.action}>
                   <Text style={styles.actionText}>{t('licenses.live.previous')}</Text>
-                </Pressable>
+                </PressableFeedback>
               ) : null}
             </View>
           ) : null}
@@ -175,7 +176,7 @@ export function LiveInboxScreen() {
                   ? t(`inbox.live.codes.${code}`)
                   : t('inbox.live.newNotification')
             return (
-              <Pressable
+              <PressableFeedback
                 key={item.id}
                 accessibilityRole='button'
                 accessibilityLabel={t('inbox.live.openNamed', {
@@ -218,12 +219,12 @@ export function LiveInboxScreen() {
                     </Text>
                   </View>
                 </View>
-              </Pressable>
+              </PressableFeedback>
             )
           })}
           {list.data && list.data.pagination.totalPages > 1 ? (
             <View style={styles.pagination}>
-              <Pressable
+              <PressableFeedback
                 accessibilityRole='button'
                 accessibilityState={{ disabled: page <= 1 }}
                 disabled={page <= 1}
@@ -231,11 +232,11 @@ export function LiveInboxScreen() {
                 style={[styles.action, page <= 1 && styles.disabled]}
               >
                 <Text style={styles.actionText}>{t('licenses.live.previous')}</Text>
-              </Pressable>
+              </PressableFeedback>
               <Text style={styles.muted}>
                 {t('licenses.live.page', { page: new Intl.NumberFormat(i18n.language).format(page) })}
               </Text>
-              <Pressable
+              <PressableFeedback
                 accessibilityRole='button'
                 accessibilityState={{ disabled: page >= list.data.pagination.totalPages }}
                 disabled={page >= list.data.pagination.totalPages}
@@ -243,7 +244,7 @@ export function LiveInboxScreen() {
                 style={[styles.action, page >= list.data.pagination.totalPages && styles.disabled]}
               >
                 <Text style={styles.actionText}>{t('licenses.live.next')}</Text>
-              </Pressable>
+              </PressableFeedback>
             </View>
           ) : null}
         </ScrollView>

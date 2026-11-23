@@ -2,10 +2,11 @@ import { type NavigationAction, useNavigation, usePreventRemove } from '@react-n
 import { type Href, Redirect, useFocusEffect, useRouter } from 'expo-router'
 import { useCallback, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { BackHandler, Modal, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native'
+import { BackHandler, Modal, Platform, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 import { SoftwareIcon } from '@/entities/software'
+import { PressableFeedback } from '@/shared/ui/pressable-feedback'
 import type { RequestablePlanPageResponseDtoDataItemsItem } from '@/shared/api/generated/contracts/requestable-software'
 import { mayCreateRequest } from '@/shared/api/request-eligibility'
 import { useSession } from '@/shared/api/session-context'
@@ -187,13 +188,13 @@ export function LiveRequestCreateScreen({ initialApplication }: { initialApplica
                 : t('account.loading')}
           </Text>
           {profile.isError ? (
-            <Pressable accessibilityRole='button' onPress={() => void profile.refetch()} style={styles.action}>
+            <PressableFeedback accessibilityRole='button' onPress={() => void profile.refetch()} style={styles.action}>
               <Text style={styles.actionText}>{t('account.retry')}</Text>
-            </Pressable>
+            </PressableFeedback>
           ) : null}
-          <Pressable accessibilityRole='button' onPress={() => router.replace('/home')} style={styles.action}>
+          <PressableFeedback accessibilityRole='button' onPress={() => router.replace('/home')} style={styles.action}>
             <Text style={styles.actionText}>{t('navigation.home')}</Text>
-          </Pressable>
+          </PressableFeedback>
         </View>
       </SafeAreaView>
     )
@@ -249,7 +250,7 @@ export function LiveRequestCreateScreen({ initialApplication }: { initialApplica
         }}
         scrollEventThrottle={32}
       >
-        <Pressable
+        <PressableFeedback
           accessibilityRole='button'
           accessibilityState={{ disabled: inFlight }}
           disabled={inFlight}
@@ -257,7 +258,7 @@ export function LiveRequestCreateScreen({ initialApplication }: { initialApplica
           style={styles.action}
         >
           <Text style={styles.actionText}>{t('requests.live.back')}</Text>
-        </Pressable>
+        </PressableFeedback>
         <Text accessibilityRole='header' style={styles.pageTitle}>
           {t('requests.createLive.title')}
         </Text>
@@ -272,7 +273,7 @@ export function LiveRequestCreateScreen({ initialApplication }: { initialApplica
                 : t('requests.createLive.sending')}
             </Text>
             {conflictId && rejection === 'openRequest' ? (
-              <Pressable
+              <PressableFeedback
                 accessibilityRole='button'
                 onPress={() =>
                   navigateTo({ pathname: '/live-requests/[requestId]', params: { requestId: conflictId } })
@@ -280,10 +281,10 @@ export function LiveRequestCreateScreen({ initialApplication }: { initialApplica
                 style={styles.action}
               >
                 <Text style={styles.actionText}>{t('requests.createLive.reviewDetails.openRequest')}</Text>
-              </Pressable>
+              </PressableFeedback>
             ) : null}
             {conflictId && rejection === 'existingAccess' ? (
-              <Pressable
+              <PressableFeedback
                 accessibilityRole='button'
                 onPress={() =>
                   navigateTo({ pathname: '/my-software/[softwareId]', params: { softwareId: conflictId } })
@@ -291,10 +292,10 @@ export function LiveRequestCreateScreen({ initialApplication }: { initialApplica
                 style={styles.action}
               >
                 <Text style={styles.actionText}>{t('requests.createLive.reviewDetails.openAccess')}</Text>
-              </Pressable>
+              </PressableFeedback>
             ) : null}
             {rejection ? (
-              <Pressable
+              <PressableFeedback
                 accessibilityRole='button'
                 onPress={() => {
                   sent.current = false
@@ -304,16 +305,16 @@ export function LiveRequestCreateScreen({ initialApplication }: { initialApplica
                 style={styles.action}
               >
                 <Text style={styles.actionText}>{t('requests.createLive.recheckRejected')}</Text>
-              </Pressable>
+              </PressableFeedback>
             ) : null}
           </View>
         ) : null}
         {!selected || choosing ? (
           <>
             {selected ? (
-              <Pressable accessibilityRole='button' onPress={() => setChoosing(false)} style={styles.action}>
+              <PressableFeedback accessibilityRole='button' onPress={() => setChoosing(false)} style={styles.action}>
                 <Text style={styles.actionText}>{t('requests.createLive.keepPlan')}</Text>
-              </Pressable>
+              </PressableFeedback>
             ) : null}
             <RequestCatalog
               getScrollY={() => scrollY.current}
@@ -347,7 +348,7 @@ export function LiveRequestCreateScreen({ initialApplication }: { initialApplica
                   </View>
                 </View>
                 {!selected.canSubmit ? <Text style={styles.error}>{t('requests.createLive.planBlocked')}</Text> : null}
-                <Pressable
+                <PressableFeedback
                   accessibilityRole='button'
                   disabled={locked}
                   accessibilityState={{ disabled: locked }}
@@ -355,7 +356,7 @@ export function LiveRequestCreateScreen({ initialApplication }: { initialApplica
                   style={styles.action}
                 >
                   <Text style={styles.actionText}>{t('requests.createLive.changePlan')}</Text>
-                </Pressable>
+                </PressableFeedback>
                 <View style={styles.divider} />
                 {asksTerm ? (
                   <>
@@ -400,7 +401,7 @@ export function LiveRequestCreateScreen({ initialApplication }: { initialApplica
                     {t('requests.createLive.validation')}
                   </Text>
                 ) : null}
-                <Pressable
+                <PressableFeedback
                   accessibilityRole='button'
                   accessibilityState={{ disabled: locked || preview.isPending }}
                   disabled={locked || preview.isPending}
@@ -408,7 +409,7 @@ export function LiveRequestCreateScreen({ initialApplication }: { initialApplica
                   style={styles.primary}
                 >
                   <Text style={styles.primaryText}>{t('requests.createLive.preview')}</Text>
-                </Pressable>
+                </PressableFeedback>
                 {preview.isPending ? (
                   <Text accessibilityRole='progressbar' style={styles.muted}>
                     {t('requests.createLive.previewLoading')}
@@ -460,7 +461,7 @@ export function LiveRequestCreateScreen({ initialApplication }: { initialApplica
                 {currentPreview.spendSubmission === 'BLOCKED_UNTIL_PRICED' ? (
                   <Text style={styles.error}>{t('requests.createLive.pricingBlocked')}</Text>
                 ) : null}
-                <Pressable
+                <PressableFeedback
                   accessibilityRole='button'
                   disabled={locked}
                   accessibilityState={{ disabled: locked }}
@@ -468,8 +469,8 @@ export function LiveRequestCreateScreen({ initialApplication }: { initialApplica
                   style={styles.action}
                 >
                   <Text style={styles.actionText}>{t('requests.createLive.reviewDetails.edit')}</Text>
-                </Pressable>
-                <Pressable
+                </PressableFeedback>
+                <PressableFeedback
                   accessibilityRole='button'
                   accessibilityState={{ disabled: !canSend || locked }}
                   disabled={!canSend || locked}
@@ -477,7 +478,7 @@ export function LiveRequestCreateScreen({ initialApplication }: { initialApplica
                   style={[styles.primary, (!canSend || locked) && styles.disabled]}
                 >
                   <Text style={styles.primaryText}>{t('requests.createLive.submit')}</Text>
-                </Pressable>
+                </PressableFeedback>
               </View>
             ) : null}
           </View>
@@ -499,7 +500,7 @@ export function LiveRequestCreateScreen({ initialApplication }: { initialApplica
               {t('requests.createLive.leaveTitle')}
             </Text>
             <Text style={styles.muted}>{t('requests.createLive.leaveMessage')}</Text>
-            <Pressable
+            <PressableFeedback
               accessibilityRole='button'
               onPress={() => {
                 setDestination(undefined)
@@ -509,8 +510,8 @@ export function LiveRequestCreateScreen({ initialApplication }: { initialApplica
               style={styles.primary}
             >
               <Text style={styles.primaryText}>{t('requests.createLive.leaveCancel')}</Text>
-            </Pressable>
-            <Pressable
+            </PressableFeedback>
+            <PressableFeedback
               accessibilityRole='button'
               onPress={() => {
                 if (destination) {
@@ -529,7 +530,7 @@ export function LiveRequestCreateScreen({ initialApplication }: { initialApplica
               style={styles.dialogAction}
             >
               <Text style={styles.actionText}>{t('requests.createLive.leaveConfirm')}</Text>
-            </Pressable>
+            </PressableFeedback>
           </View>
         </View>
       </Modal>

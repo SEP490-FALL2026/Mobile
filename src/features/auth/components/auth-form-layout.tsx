@@ -1,8 +1,9 @@
 import type { PropsWithChildren } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
+import { ScrollView, StyleSheet, Text, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
+import { PressableFeedback } from '@/shared/ui/pressable-feedback'
 import type { MobileColors } from '@/shared/theme/colors'
 import { useMobileTheme } from '@/shared/theme/theme-provider'
 import { PreferenceSwitches } from '@/shared/ui/preference-switches'
@@ -19,9 +20,9 @@ export function AuthFormLayout({ title, subtitle, onBack, children }: Props) {
       <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps='handled'>
         <View style={styles.top}>
           {onBack ? (
-            <Pressable accessibilityRole='button' onPress={onBack} style={styles.back}>
+            <PressableFeedback accessibilityRole='button' onPress={onBack} style={styles.back}>
               <Text style={styles.backText}>{t('common.back')}</Text>
-            </Pressable>
+            </PressableFeedback>
           ) : (
             <View />
           )}

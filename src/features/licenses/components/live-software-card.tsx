@@ -1,8 +1,9 @@
 import { Feather } from '@expo/vector-icons'
 import { useTranslation } from 'react-i18next'
-import { Pressable, StyleSheet, Text, View } from 'react-native'
+import { StyleSheet, Text, View } from 'react-native'
 
 import { SoftwareIcon } from '@/entities/software'
+import { PressableFeedback } from '@/shared/ui/pressable-feedback'
 import type { MySoftwarePageResponseDtoDataItemsItem } from '@/shared/api/generated/contracts/me'
 import { MySoftwarePageResponseDtoDataItemsItemStatus } from '@/shared/api/generated/contracts/me'
 import type { MobileColors } from '@/shared/theme/colors'
@@ -92,13 +93,13 @@ export function LiveSoftwareCard({
     </View>
   )
   return onPress ? (
-    <Pressable
+    <PressableFeedback
       accessibilityRole='button'
       accessibilityLabel={t('licenses.live.openNamed', { name: item.application.name, plan: item.plan.name })}
       onPress={onPress}
     >
       {content}
-    </Pressable>
+    </PressableFeedback>
   ) : (
     content
   )

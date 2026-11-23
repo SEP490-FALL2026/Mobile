@@ -1,8 +1,9 @@
 import { Redirect, useRouter } from 'expo-router'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Pressable, Text } from 'react-native'
+import { Text } from 'react-native'
 
+import { PressableFeedback } from '@/shared/ui/pressable-feedback'
 import { useSession } from '@/shared/api/session-context'
 import { goBackOr } from '@/shared/lib/go-back-or'
 import { useMobileTheme } from '@/shared/theme/theme-provider'
@@ -32,9 +33,9 @@ export function ChangePasswordScreen() {
         <Text accessibilityRole='summary' style={styles.notice}>
           {t('auth.change.done')}
         </Text>
-        <Pressable accessibilityRole='button' onPress={() => router.replace('/')} style={styles.button}>
+        <PressableFeedback accessibilityRole='button' onPress={() => router.replace('/')} style={styles.button}>
           <Text style={styles.buttonText}>{t('auth.setPassword.goToLogin')}</Text>
-        </Pressable>
+        </PressableFeedback>
       </AuthFormLayout>
     )
   }
@@ -102,7 +103,7 @@ export function ChangePasswordScreen() {
         </>
       ) : null}
       <Text style={styles.notice}>{t('auth.change.signOutNotice')}</Text>
-      <Pressable
+      <PressableFeedback
         accessibilityRole='button'
         accessibilityState={{ disabled: change.isPending, busy: change.isPending }}
         disabled={change.isPending}
@@ -110,7 +111,7 @@ export function ChangePasswordScreen() {
         style={[styles.button, change.isPending && styles.disabled]}
       >
         <Text style={styles.buttonText}>{change.isPending ? t('auth.loading') : t('auth.change.submit')}</Text>
-      </Pressable>
+      </PressableFeedback>
     </AuthFormLayout>
   )
 }

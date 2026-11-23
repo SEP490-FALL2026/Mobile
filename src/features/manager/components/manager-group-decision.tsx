@@ -1,7 +1,8 @@
 import { useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native'
+import { StyleSheet, Text, TextInput, View } from 'react-native'
 
+import { PressableFeedback } from '@/shared/ui/pressable-feedback'
 import { apiErrorInfo } from '@/shared/api/api-error'
 import type { MobileColors } from '@/shared/theme/colors'
 import { useMobileTheme } from '@/shared/theme/theme-provider'
@@ -123,9 +124,9 @@ export function ManagerGroupDecision({
           <Text accessibilityRole='alert' style={styles.error}>
             {t('manager.live.group.error')}
           </Text>
-          <Pressable accessibilityRole='button' onPress={() => void lines.refetch()} style={styles.action}>
+          <PressableFeedback accessibilityRole='button' onPress={() => void lines.refetch()} style={styles.action}>
             <Text style={styles.link}>{t('licenses.live.retry')}</Text>
-          </Pressable>
+          </PressableFeedback>
         </>
       ) : null}
       {!lines.isPending && !lines.isFetching && !lines.isError && pending.length === 0 ? (
@@ -144,7 +145,7 @@ export function ManagerGroupDecision({
                 {!returnAll ? (
                   <View style={styles.row}>
                     {(['APPROVE', 'REJECT'] as const).map((value) => (
-                      <Pressable
+                      <PressableFeedback
                         key={value}
                         accessibilityRole='radio'
                         accessibilityLabel={t(`manager.live.group.${value}Named`, { name: line.employee.fullName })}
@@ -156,7 +157,7 @@ export function ManagerGroupDecision({
                         <Text style={choice === value ? styles.primaryText : styles.link}>
                           {t(value === 'APPROVE' ? 'manager.live.approve' : 'manager.live.reject')}
                         </Text>
-                      </Pressable>
+                      </PressableFeedback>
                     ))}
                   </View>
                 ) : null}
@@ -178,7 +179,7 @@ export function ManagerGroupDecision({
           })
         : null}
       {ready ? (
-        <Pressable
+        <PressableFeedback
           accessibilityRole='switch'
           accessibilityState={{ checked: returnAll, disabled: locked }}
           disabled={locked}
@@ -186,7 +187,7 @@ export function ManagerGroupDecision({
           style={returnAll ? styles.primary : styles.outline}
         >
           <Text style={returnAll ? styles.primaryText : styles.link}>{t('manager.live.group.returnAll')}</Text>
-        </Pressable>
+        </PressableFeedback>
       ) : null}
       {returnAll ? (
         <>
@@ -210,12 +211,12 @@ export function ManagerGroupDecision({
         </Text>
       ) : null}
       {ready && checklistError ? (
-        <Pressable accessibilityRole='button' onPress={onReloadChecklist} style={styles.action}>
+        <PressableFeedback accessibilityRole='button' onPress={onReloadChecklist} style={styles.action}>
           <Text accessibilityRole='alert' style={styles.error}>
             {t('manager.live.checklistError')}
           </Text>
           <Text style={styles.link}>{t('licenses.live.retry')}</Text>
-        </Pressable>
+        </PressableFeedback>
       ) : null}
       {ready
         ? items.map((item) => (
@@ -226,7 +227,7 @@ export function ManagerGroupDecision({
               ) : (
                 <View style={styles.row}>
                   {(['YES', 'NO'] as const).map((answer) => (
-                    <Pressable
+                    <PressableFeedback
                       key={answer}
                       accessibilityRole='radio'
                       accessibilityState={{ checked: values[item.code] === answer, disabled: locked }}
@@ -243,7 +244,7 @@ export function ManagerGroupDecision({
                       <Text style={values[item.code] === answer ? styles.primaryText : styles.link}>
                         {t(answer === 'YES' ? 'manager.live.yes' : 'manager.live.no')}
                       </Text>
-                    </Pressable>
+                    </PressableFeedback>
                   ))}
                 </View>
               )}
@@ -270,7 +271,7 @@ export function ManagerGroupDecision({
           </Text>
           <ErrorReference error={decision.error} />
           {errorInfo?.code === 'POLICY.VERSION_CHANGED' ? (
-            <Pressable
+            <PressableFeedback
               accessibilityRole='button'
               onPress={() => {
                 setAnswers(undefined)
@@ -280,9 +281,9 @@ export function ManagerGroupDecision({
               style={styles.action}
             >
               <Text style={styles.link}>{t('manager.live.reloadChecklist')}</Text>
-            </Pressable>
+            </PressableFeedback>
           ) : (
-            <Pressable
+            <PressableFeedback
               accessibilityRole='button'
               onPress={() => {
                 decision.reset()
@@ -291,11 +292,11 @@ export function ManagerGroupDecision({
               style={styles.action}
             >
               <Text style={styles.link}>{t('manager.live.group.reload')}</Text>
-            </Pressable>
+            </PressableFeedback>
           )}
         </>
       ) : null}
-      <Pressable
+      <PressableFeedback
         accessibilityRole='button'
         accessibilityState={{ disabled: blocked || locked, busy: decision.isPending }}
         disabled={blocked || locked}
@@ -303,7 +304,7 @@ export function ManagerGroupDecision({
         style={[styles.primary, (blocked || locked) && styles.disabled]}
       >
         <Text style={styles.primaryText}>{t('manager.live.confirm')}</Text>
-      </Pressable>
+      </PressableFeedback>
     </View>
   )
 }

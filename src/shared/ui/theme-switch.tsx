@@ -1,8 +1,9 @@
 import { Feather } from '@expo/vector-icons'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Modal, Pressable, StyleSheet, Text, View } from 'react-native'
+import { Modal, StyleSheet, Text, View } from 'react-native'
 
+import { PressableFeedback } from '@/shared/ui/pressable-feedback'
 import type { MobileColors } from '@/shared/theme/colors'
 import { type ThemePreference, useMobileTheme } from '@/shared/theme/theme-provider'
 
@@ -17,7 +18,7 @@ export function ThemeSwitch() {
 
   return (
     <>
-      <Pressable
+      <PressableFeedback
         accessibilityRole='button'
         accessibilityLabel={t('common.theme.open')}
         onPress={() => setOpen(true)}
@@ -30,7 +31,7 @@ export function ThemeSwitch() {
           size={19}
           color={colors.primaryInk}
         />
-      </Pressable>
+      </PressableFeedback>
       <Modal transparent animationType='fade' visible={open} onRequestClose={() => setOpen(false)}>
         <View style={styles.backdrop}>
           <View accessibilityViewIsModal style={styles.sheet}>
@@ -38,7 +39,7 @@ export function ThemeSwitch() {
               {t('common.theme.title')}
             </Text>
             {preferences.map((value) => (
-              <Pressable
+              <PressableFeedback
                 key={value}
                 accessibilityRole='radio'
                 accessibilityLabel={t(`common.theme.${value}`)}
@@ -64,16 +65,16 @@ export function ThemeSwitch() {
                     importantForAccessibility='no'
                   />
                 ) : null}
-              </Pressable>
+              </PressableFeedback>
             ))}
             {storageError ? (
               <Text accessibilityRole='alert' style={styles.error}>
                 {t('common.theme.storageError')}
               </Text>
             ) : null}
-            <Pressable accessibilityRole='button' onPress={() => setOpen(false)} style={styles.close}>
+            <PressableFeedback accessibilityRole='button' onPress={() => setOpen(false)} style={styles.close}>
               <Text style={styles.closeText}>{t('common.theme.close')}</Text>
-            </Pressable>
+            </PressableFeedback>
           </View>
         </View>
       </Modal>

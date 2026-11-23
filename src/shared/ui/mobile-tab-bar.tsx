@@ -1,6 +1,7 @@
 import { Feather } from '@expo/vector-icons'
-import { Pressable, StyleSheet, Text, View } from 'react-native'
+import { StyleSheet, Text, View } from 'react-native'
 
+import { PressableFeedback } from '@/shared/ui/pressable-feedback'
 import type { MobileColors } from '@/shared/theme/colors'
 import { useMobileTheme } from '@/shared/theme/theme-provider'
 
@@ -29,7 +30,7 @@ export function MobileTabBar({ accessibilityLabel, tabs }: MobileTabBarProps) {
   return (
     <View accessibilityLabel={accessibilityLabel} accessibilityRole='tablist' style={styles.container}>
       {tabs.map((tab) => (
-        <Pressable
+        <PressableFeedback
           accessibilityLabel={tab.accessibilityLabel}
           accessibilityHint={tab.accessibilityHint}
           accessibilityRole='tab'
@@ -54,7 +55,7 @@ export function MobileTabBar({ accessibilityLabel, tabs }: MobileTabBarProps) {
             ) : null}
           </View>
           <Text style={[styles.label, tab.selected && styles.labelSelected]}>{tab.label}</Text>
-        </Pressable>
+        </PressableFeedback>
       ))}
     </View>
   )

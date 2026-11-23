@@ -1,8 +1,9 @@
 import { Feather } from '@expo/vector-icons'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native'
+import { StyleSheet, Text, TextInput, View } from 'react-native'
 
+import { PressableFeedback } from '@/shared/ui/pressable-feedback'
 import { apiErrorInfo } from '@/shared/api/api-error'
 import { pickAvatar } from '@/shared/native/avatar-picker'
 import type { MobileColors } from '@/shared/theme/colors'
@@ -47,7 +48,7 @@ export function ProfileHero({ name, jobTitle, avatarUrl, onAvatarError }: Props)
 
   return (
     <View style={styles.hero}>
-      <Pressable
+      <PressableFeedback
         accessibilityRole='button'
         accessibilityLabel={t('account.edit.changePhoto')}
         accessibilityState={{ disabled: busy, busy }}
@@ -65,13 +66,13 @@ export function ProfileHero({ name, jobTitle, avatarUrl, onAvatarError }: Props)
             color={colors.onPrimary}
           />
         </View>
-      </Pressable>
+      </PressableFeedback>
       <Text accessibilityRole='header' style={styles.name}>
         {name}
       </Text>
       <Text style={styles.job}>{jobTitle || t('account.noValue')}</Text>
       {avatarUrl ? (
-        <Pressable
+        <PressableFeedback
           accessibilityRole='button'
           accessibilityState={{ disabled: busy }}
           disabled={busy}
@@ -83,7 +84,7 @@ export function ProfileHero({ name, jobTitle, avatarUrl, onAvatarError }: Props)
           style={styles.remove}
         >
           <Text style={styles.removeText}>{t('account.edit.removePhoto')}</Text>
-        </Pressable>
+        </PressableFeedback>
       ) : null}
       <Text style={styles.hint}>{t('account.edit.photoHint')}</Text>
       {errorKey ? (
@@ -137,7 +138,7 @@ export function WorkPhoneRow({ workPhone }: { workPhone: string | null | undefin
         </Text>
       ) : null}
       {dirty ? (
-        <Pressable
+        <PressableFeedback
           accessibilityRole='button'
           accessibilityState={{ disabled: mutation.isPending, busy: mutation.isPending }}
           disabled={mutation.isPending}
@@ -145,7 +146,7 @@ export function WorkPhoneRow({ workPhone }: { workPhone: string | null | undefin
           style={[styles.save, mutation.isPending && styles.disabled]}
         >
           <Text style={styles.saveText}>{t('account.edit.save')}</Text>
-        </Pressable>
+        </PressableFeedback>
       ) : (
         <Text style={styles.hint}>{t('account.edit.workPhoneHint')}</Text>
       )}

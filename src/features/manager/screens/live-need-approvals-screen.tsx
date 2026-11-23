@@ -3,9 +3,10 @@ import { usePreventRemove } from '@react-navigation/native'
 import { Redirect, useFocusEffect, useRouter } from 'expo-router'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { BackHandler, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native'
+import { BackHandler, Platform, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
+import { PressableFeedback } from '@/shared/ui/pressable-feedback'
 import type { NeedQueueResponseDtoDataItemsItem } from '@/shared/api/generated/contracts/need-decisions'
 import { useSession } from '@/shared/api/session-context'
 import { useAccountProfile } from '@/shared/api/use-account-profile'
@@ -240,10 +241,14 @@ export function LiveNeedApprovalsScreen({
               <Text accessibilityRole='alert' style={styles.error}>
                 {t('manager.live.profileError')}
               </Text>
-              <Pressable accessibilityRole='button' onPress={() => void profile.refetch()} style={styles.action}>
+              <PressableFeedback
+                accessibilityRole='button'
+                onPress={() => void profile.refetch()}
+                style={styles.action}
+              >
                 <Text style={styles.link}>{t('licenses.live.retry')}</Text>
-              </Pressable>
-              <Pressable
+              </PressableFeedback>
+              <PressableFeedback
                 accessibilityRole='button'
                 disabled={loggingOut}
                 accessibilityState={{ disabled: loggingOut, busy: loggingOut }}
@@ -251,11 +256,11 @@ export function LiveNeedApprovalsScreen({
                 style={styles.action}
               >
                 <Text style={styles.link}>{t('licenses.live.logout')}</Text>
-              </Pressable>
+              </PressableFeedback>
             </View>
           ) : null}
           {selected ? (
-            <Pressable
+            <PressableFeedback
               accessibilityRole='button'
               accessibilityState={{ disabled: inFlight }}
               disabled={inFlight}
@@ -263,7 +268,7 @@ export function LiveNeedApprovalsScreen({
               style={styles.action}
             >
               <Text style={styles.link}>{t('manager.live.backQueue')}</Text>
-            </Pressable>
+            </PressableFeedback>
           ) : null}
           {isManager ? (
             <View style={styles.titleBlock}>
@@ -285,13 +290,13 @@ export function LiveNeedApprovalsScreen({
                   <Text accessibilityRole='alert' style={styles.error}>
                     {t('manager.live.notificationError')}
                   </Text>
-                  <Pressable
+                  <PressableFeedback
                     accessibilityRole='button'
                     onPress={() => void notificationLookup.refetch()}
                     style={styles.action}
                   >
                     <Text style={styles.link}>{t('licenses.live.retry')}</Text>
-                  </Pressable>
+                  </PressableFeedback>
                 </View>
               ) : null}
               {hasScope &&
@@ -309,9 +314,13 @@ export function LiveNeedApprovalsScreen({
                   <Text accessibilityRole='alert' style={styles.error}>
                     {t('manager.live.noScope')}
                   </Text>
-                  <Pressable accessibilityRole='button' onPress={() => void profile.refetch()} style={styles.action}>
+                  <PressableFeedback
+                    accessibilityRole='button'
+                    onPress={() => void profile.refetch()}
+                    style={styles.action}
+                  >
                     <Text style={styles.link}>{t('licenses.live.retry')}</Text>
-                  </Pressable>
+                  </PressableFeedback>
                 </View>
               ) : null}
               {hasScope && (session.state === 'loading' || queue.isLoading) ? (
@@ -324,13 +333,21 @@ export function LiveNeedApprovalsScreen({
                   <Text accessibilityRole='alert' style={styles.error}>
                     {t('manager.live.queueError')}
                   </Text>
-                  <Pressable accessibilityRole='button' onPress={() => void queue.refetch()} style={styles.action}>
+                  <PressableFeedback
+                    accessibilityRole='button'
+                    onPress={() => void queue.refetch()}
+                    style={styles.action}
+                  >
                     <Text style={styles.link}>{t('licenses.live.retry')}</Text>
-                  </Pressable>
+                  </PressableFeedback>
                   {page > 1 ? (
-                    <Pressable accessibilityRole='button' onPress={() => setPage(page - 1)} style={styles.action}>
+                    <PressableFeedback
+                      accessibilityRole='button'
+                      onPress={() => setPage(page - 1)}
+                      style={styles.action}
+                    >
                       <Text style={styles.link}>{t('licenses.live.previous')}</Text>
-                    </Pressable>
+                    </PressableFeedback>
                   ) : null}
                 </View>
               ) : null}
@@ -354,9 +371,13 @@ export function LiveNeedApprovalsScreen({
                 </View>
               ) : null}
               {hasScope ? (
-                <Pressable accessibilityRole='button' onPress={() => void queue.refetch()} style={styles.action}>
+                <PressableFeedback
+                  accessibilityRole='button'
+                  onPress={() => void queue.refetch()}
+                  style={styles.action}
+                >
                   <Text style={styles.link}>{t('manager.live.refreshQueue')}</Text>
-                </Pressable>
+                </PressableFeedback>
               ) : null}
               {hasScope && queue.data?.items.length === 0 ? (
                 <View style={styles.card}>
@@ -367,7 +388,7 @@ export function LiveNeedApprovalsScreen({
                 queue.data?.items.map((item) => <NeedQueueCard key={item.stepId} item={item} onPress={setSelected} />)}
               {hasScope && queue.data && queue.data.pagination.totalPages > 1 ? (
                 <View style={styles.pagination}>
-                  <Pressable
+                  <PressableFeedback
                     accessibilityRole='button'
                     accessibilityState={{ disabled: page <= 1 }}
                     disabled={page <= 1}
@@ -375,11 +396,11 @@ export function LiveNeedApprovalsScreen({
                     style={[styles.action, page <= 1 && styles.disabled]}
                   >
                     <Text style={styles.link}>{t('licenses.live.previous')}</Text>
-                  </Pressable>
+                  </PressableFeedback>
                   <Text style={styles.muted}>
                     {t('licenses.live.page', { page: new Intl.NumberFormat(i18n.language).format(page) })}
                   </Text>
-                  <Pressable
+                  <PressableFeedback
                     accessibilityRole='button'
                     accessibilityState={{ disabled: page >= queue.data.pagination.totalPages }}
                     disabled={page >= queue.data.pagination.totalPages}
@@ -387,7 +408,7 @@ export function LiveNeedApprovalsScreen({
                     style={[styles.action, page >= queue.data.pagination.totalPages && styles.disabled]}
                   >
                     <Text style={styles.link}>{t('licenses.live.next')}</Text>
-                  </Pressable>
+                  </PressableFeedback>
                 </View>
               ) : null}
             </>
@@ -403,9 +424,13 @@ export function LiveNeedApprovalsScreen({
                   <Text accessibilityRole='alert' style={styles.error}>
                     {t('manager.live.detailError')}
                   </Text>
-                  <Pressable accessibilityRole='button' onPress={() => void detail.refetch()} style={styles.action}>
+                  <PressableFeedback
+                    accessibilityRole='button'
+                    onPress={() => void detail.refetch()}
+                    style={styles.action}
+                  >
                     <Text style={styles.link}>{t('licenses.live.retry')}</Text>
-                  </Pressable>
+                  </PressableFeedback>
                 </View>
               ) : null}
               {decision.isSuccess ? (
@@ -424,7 +449,7 @@ export function LiveNeedApprovalsScreen({
                         {t('manager.live.policyReloadError')}
                       </Text>
                     ) : null}
-                    <Pressable
+                    <PressableFeedback
                       accessibilityRole='button'
                       disabled={recoveryBusy}
                       accessibilityState={{ disabled: recoveryBusy, busy: recoveryBusy }}
@@ -432,7 +457,7 @@ export function LiveNeedApprovalsScreen({
                       style={styles.action}
                     >
                       <Text style={styles.link}>{t('manager.live.reloadChecklist')}</Text>
-                    </Pressable>
+                    </PressableFeedback>
                   </View>
                 ) : (
                   <>
@@ -499,15 +524,27 @@ export function LiveNeedApprovalsScreen({
                   ) : null}
                   {canDecide && !locked && !choice ? (
                     <View style={styles.actions}>
-                      <Pressable accessibilityRole='button' onPress={() => setChoice('REJECT')} style={styles.outline}>
+                      <PressableFeedback
+                        accessibilityRole='button'
+                        onPress={() => setChoice('REJECT')}
+                        style={styles.outline}
+                      >
                         <Text style={styles.link}>{t('manager.live.reject')}</Text>
-                      </Pressable>
-                      <Pressable accessibilityRole='button' onPress={() => setChoice('RETURN')} style={styles.outline}>
+                      </PressableFeedback>
+                      <PressableFeedback
+                        accessibilityRole='button'
+                        onPress={() => setChoice('RETURN')}
+                        style={styles.outline}
+                      >
                         <Text style={styles.link}>{t('manager.live.return')}</Text>
-                      </Pressable>
-                      <Pressable accessibilityRole='button' onPress={() => setChoice('APPROVE')} style={styles.primary}>
+                      </PressableFeedback>
+                      <PressableFeedback
+                        accessibilityRole='button'
+                        onPress={() => setChoice('APPROVE')}
+                        style={styles.primary}
+                      >
                         <Text style={styles.primaryText}>{t('manager.live.approve')}</Text>
-                      </Pressable>
+                      </PressableFeedback>
                     </View>
                   ) : null}
                   {choice && !decision.isSuccess ? (
@@ -528,7 +565,7 @@ export function LiveNeedApprovalsScreen({
                         </Text>
                       ) : null}
                       {policy.isError ? (
-                        <Pressable
+                        <PressableFeedback
                           accessibilityRole='button'
                           onPress={() => void policy.refetch()}
                           style={styles.action}
@@ -537,7 +574,7 @@ export function LiveNeedApprovalsScreen({
                             {t('manager.live.checklistError')}
                           </Text>
                           <Text style={styles.link}>{t('licenses.live.retry')}</Text>
-                        </Pressable>
+                        </PressableFeedback>
                       ) : null}
                       {checklist?.map((item) => (
                         <View key={item.code}>
@@ -547,7 +584,7 @@ export function LiveNeedApprovalsScreen({
                           ) : (
                             <View style={styles.actions}>
                               {(['YES', 'NO'] as const).map((answer) => (
-                                <Pressable
+                                <PressableFeedback
                                   key={answer}
                                   accessibilityRole='radio'
                                   accessibilityState={{ checked: answers[item.code] === answer, disabled: locked }}
@@ -564,7 +601,7 @@ export function LiveNeedApprovalsScreen({
                                   <Text style={answers[item.code] === answer ? styles.primaryText : styles.link}>
                                     {t(answer === 'YES' ? 'manager.live.yes' : 'manager.live.no')}
                                   </Text>
-                                </Pressable>
+                                </PressableFeedback>
                               ))}
                             </View>
                           )}
@@ -596,7 +633,7 @@ export function LiveNeedApprovalsScreen({
                         </>
                       ) : null}
                       <View style={styles.actions}>
-                        <Pressable
+                        <PressableFeedback
                           accessibilityRole='button'
                           accessibilityState={{ disabled: locked }}
                           disabled={locked}
@@ -604,8 +641,8 @@ export function LiveNeedApprovalsScreen({
                           style={[styles.outline, locked && styles.disabled]}
                         >
                           <Text style={styles.link}>{t('requests.cancel')}</Text>
-                        </Pressable>
-                        <Pressable
+                        </PressableFeedback>
+                        <PressableFeedback
                           accessibilityRole='button'
                           accessibilityState={{
                             disabled: locked || !canDecide || !complete || (choice === 'APPROVE' && hasNo),
@@ -619,7 +656,7 @@ export function LiveNeedApprovalsScreen({
                           ]}
                         >
                           <Text style={styles.primaryText}>{t('manager.live.confirm')}</Text>
-                        </Pressable>
+                        </PressableFeedback>
                       </View>
                     </View>
                   ) : null}

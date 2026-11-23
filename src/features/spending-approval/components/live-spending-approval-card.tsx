@@ -1,7 +1,8 @@
 import { Feather } from '@expo/vector-icons'
 import { useTranslation } from 'react-i18next'
-import { Pressable, StyleSheet, Text, View } from 'react-native'
+import { StyleSheet, Text, View } from 'react-native'
 
+import { PressableFeedback } from '@/shared/ui/pressable-feedback'
 import type { ApprovalListResponseDtoDataItemsItem } from '@/shared/api/generated/contracts/spend-approvals'
 import type { MobileColors } from '@/shared/theme/colors'
 import { useMobileTheme } from '@/shared/theme/theme-provider'
@@ -24,7 +25,7 @@ export function LiveSpendingApprovalCard({
   const primaryCodeKey = getPrimaryCodeKey(item.primaryCode)
 
   return (
-    <Pressable
+    <PressableFeedback
       accessibilityRole='button'
       accessibilityLabel={t('spending.live.openRequest', { requestId: item.requestId, software: appName })}
       onPress={() => onPress(item.requestId)}
@@ -87,7 +88,7 @@ export function LiveSpendingApprovalCard({
           </Text>
         </View>
       </View>
-    </Pressable>
+    </PressableFeedback>
   )
 }
 

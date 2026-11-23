@@ -1,8 +1,9 @@
 import { useRouter } from 'expo-router'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Pressable, Text, TextInput } from 'react-native'
+import { Text, TextInput } from 'react-native'
 
+import { PressableFeedback } from '@/shared/ui/pressable-feedback'
 import { goBackOr } from '@/shared/lib/go-back-or'
 import { useMobileTheme } from '@/shared/theme/theme-provider'
 import { ErrorReference } from '@/shared/ui/error-reference'
@@ -41,9 +42,9 @@ export function ForgotPasswordScreen() {
           <Text accessibilityRole='summary' style={styles.notice}>
             {t('auth.forgot.sent')}
           </Text>
-          <Pressable accessibilityRole='button' onPress={() => router.replace('/')} style={styles.button}>
+          <PressableFeedback accessibilityRole='button' onPress={() => router.replace('/')} style={styles.button}>
             <Text style={styles.buttonText}>{t('auth.forgot.backToLogin')}</Text>
-          </Pressable>
+          </PressableFeedback>
         </>
       ) : (
         <>
@@ -73,7 +74,7 @@ export function ForgotPasswordScreen() {
               <ErrorReference error={request.error} />
             </>
           ) : null}
-          <Pressable
+          <PressableFeedback
             accessibilityRole='button'
             accessibilityState={{ disabled: request.isPending, busy: request.isPending }}
             disabled={request.isPending}
@@ -81,7 +82,7 @@ export function ForgotPasswordScreen() {
             style={[styles.button, request.isPending && styles.disabled]}
           >
             <Text style={styles.buttonText}>{request.isPending ? t('auth.loading') : t('auth.forgot.submit')}</Text>
-          </Pressable>
+          </PressableFeedback>
         </>
       )}
     </AuthFormLayout>

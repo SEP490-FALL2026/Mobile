@@ -3,7 +3,7 @@ import { usePreventRemove } from '@react-navigation/native'
 import { type ReactNode, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Redirect, useFocusEffect } from 'expo-router'
 import { useTranslation } from 'react-i18next'
-import { BackHandler, Platform, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native'
+import { BackHandler, Platform, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 import type {
@@ -11,6 +11,7 @@ import type {
   LineSpendDecisionBodyDto,
   SpendDecisionBodyDto
 } from '@/shared/api/generated/contracts'
+import { PressableFeedback } from '@/shared/ui/pressable-feedback'
 import type { LinesResponseDtoDataItemsItem } from '@/shared/api/generated/contracts/group-requests'
 import type { PolicyStepResponseDtoDataStepChecklistItem } from '@/shared/api/generated/contracts/policies'
 import { useSession } from '@/shared/api/session-context'
@@ -526,7 +527,7 @@ export function LiveSpendingApprovalsScreen({ requestId }: { requestId?: string 
                       : t('spending.live.assignedOnly')}
                   </Text>
                 </View>
-                <Pressable
+                <PressableFeedback
                   accessibilityRole='button'
                   accessibilityLabel={t('spending.live.refreshQueue')}
                   accessibilityState={{ busy: queue.isFetching }}
@@ -541,7 +542,7 @@ export function LiveSpendingApprovalsScreen({ requestId }: { requestId?: string 
                     name='refresh-cw'
                     size={17}
                   />
-                </Pressable>
+                </PressableFeedback>
               </View>
               <View style={styles.search}>
                 <Feather
@@ -947,7 +948,7 @@ function ActionButton({ label, onPress, disabled }: { label: string; onPress: ()
   const { colors } = useMobileTheme()
   const styles = createStyles(colors)
   return (
-    <Pressable
+    <PressableFeedback
       accessibilityRole='button'
       accessibilityState={{ disabled }}
       disabled={disabled}
@@ -955,7 +956,7 @@ function ActionButton({ label, onPress, disabled }: { label: string; onPress: ()
       style={[styles.actionButton, disabled && styles.buttonDisabled]}
     >
       <Text style={styles.actionButtonText}>{label}</Text>
-    </Pressable>
+    </PressableFeedback>
   )
 }
 
@@ -973,7 +974,7 @@ function ChoiceButton({
   const { colors } = useMobileTheme()
   const styles = createStyles(colors)
   return (
-    <Pressable
+    <PressableFeedback
       accessibilityRole='button'
       accessibilityState={{ selected, disabled }}
       disabled={disabled}
@@ -981,7 +982,7 @@ function ChoiceButton({
       style={[styles.choiceButton, selected && styles.choiceSelected, disabled && styles.buttonDisabled]}
     >
       <Text style={[styles.choiceText, selected && styles.choiceTextSelected]}>{label}</Text>
-    </Pressable>
+    </PressableFeedback>
   )
 }
 

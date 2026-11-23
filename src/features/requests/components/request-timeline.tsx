@@ -1,7 +1,8 @@
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Pressable, StyleSheet, Text, View } from 'react-native'
+import { StyleSheet, Text, View } from 'react-native'
 
+import { PressableFeedback } from '@/shared/ui/pressable-feedback'
 import { RequestEventPageResponseDtoDataItemsItemKind } from '@/shared/api/generated/contracts/access-requests'
 import type { MobileColors } from '@/shared/theme/colors'
 import { useMobileTheme } from '@/shared/theme/theme-provider'
@@ -30,13 +31,17 @@ export function RequestTimeline({ requestId }: { requestId: string }) {
           <Text accessibilityRole='alert' style={styles.error}>
             {t('requests.live.timeline.error')}
           </Text>
-          <Pressable accessibilityRole='button' onPress={() => void events.refetch()} style={styles.action}>
+          <PressableFeedback accessibilityRole='button' onPress={() => void events.refetch()} style={styles.action}>
             <Text style={styles.link}>{t('account.retry')}</Text>
-          </Pressable>
+          </PressableFeedback>
           {page > 1 ? (
-            <Pressable accessibilityRole='button' onPress={() => setPage((value) => value - 1)} style={styles.action}>
+            <PressableFeedback
+              accessibilityRole='button'
+              onPress={() => setPage((value) => value - 1)}
+              style={styles.action}
+            >
               <Text style={styles.link}>{t('licenses.live.previous')}</Text>
-            </Pressable>
+            </PressableFeedback>
           ) : null}
         </View>
       ) : null}
@@ -84,7 +89,7 @@ export function RequestTimeline({ requestId }: { requestId: string }) {
         : null}
       {events.data && !events.isError && events.data.pagination.totalPages > 1 ? (
         <View style={styles.pagination}>
-          <Pressable
+          <PressableFeedback
             accessibilityRole='button'
             disabled={page <= 1}
             accessibilityState={{ disabled: page <= 1 }}
@@ -92,11 +97,11 @@ export function RequestTimeline({ requestId }: { requestId: string }) {
             style={styles.action}
           >
             <Text style={styles.link}>{t('licenses.live.previous')}</Text>
-          </Pressable>
+          </PressableFeedback>
           <Text style={styles.muted}>
             {t('licenses.live.page', { page: new Intl.NumberFormat(i18n.language).format(page) })}
           </Text>
-          <Pressable
+          <PressableFeedback
             accessibilityRole='button'
             disabled={page >= events.data.pagination.totalPages}
             accessibilityState={{ disabled: page >= events.data.pagination.totalPages }}
@@ -104,7 +109,7 @@ export function RequestTimeline({ requestId }: { requestId: string }) {
             style={styles.action}
           >
             <Text style={styles.link}>{t('licenses.live.next')}</Text>
-          </Pressable>
+          </PressableFeedback>
         </View>
       ) : null}
     </View>

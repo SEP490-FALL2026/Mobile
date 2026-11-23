@@ -1,8 +1,9 @@
 import { Feather } from '@expo/vector-icons'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Pressable, StyleSheet, Text, TextInput, View } from 'react-native'
+import { StyleSheet, Text, TextInput, View } from 'react-native'
 
+import { PressableFeedback } from '@/shared/ui/pressable-feedback'
 import type { MobileColors } from '@/shared/theme/colors'
 import { useMobileTheme } from '@/shared/theme/theme-provider'
 
@@ -37,7 +38,7 @@ export function PasswordField({ label, value, onChangeText, autoComplete, error,
           style={[styles.input, !!error && styles.invalid]}
           value={value}
         />
-        <Pressable
+        <PressableFeedback
           accessibilityLabel={t(visible ? 'auth.hidePassword' : 'auth.showPassword')}
           accessibilityRole='button'
           accessibilityState={{ checked: visible }}
@@ -51,7 +52,7 @@ export function PasswordField({ label, value, onChangeText, autoComplete, error,
             name={visible ? 'eye-off' : 'eye'}
             size={20}
           />
-        </Pressable>
+        </PressableFeedback>
       </View>
       {error ? (
         <Text accessibilityRole='alert' style={styles.error}>

@@ -3,11 +3,12 @@ import { usePreventRemove } from '@react-navigation/native'
 import { Redirect, useFocusEffect, useRouter } from 'expo-router'
 import { useCallback, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { BackHandler, Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
+import { BackHandler, Platform, ScrollView, StyleSheet, Text, View } from 'react-native'
 
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 import { SoftwareIcon } from '@/entities/software'
+import { PressableFeedback } from '@/shared/ui/pressable-feedback'
 import { mayCreateRequest } from '@/shared/api/request-eligibility'
 import { useSession } from '@/shared/api/session-context'
 import { useAccountProfile } from '@/shared/api/use-account-profile'
@@ -55,7 +56,7 @@ export function LiveRequestsScreen() {
               <Text style={styles.muted}>{t('requests.live.subtitle')}</Text>
             </View>
             {!profile.isError && mayCreateRequest(profile.data) ? (
-              <Pressable
+              <PressableFeedback
                 accessibilityRole='button'
                 accessibilityLabel={t('navigation.createRequest')}
                 accessibilityState={{ disabled: inFlight }}
@@ -71,12 +72,12 @@ export function LiveRequestsScreen() {
                   color={mobileColors.onPrimary}
                 />
                 <Text style={styles.createText}>{t('requests.live.createShort')}</Text>
-              </Pressable>
+              </PressableFeedback>
             ) : null}
           </View>
           <View style={styles.filters}>
             {(['open', 'ended'] as const).map((value) => (
-              <Pressable
+              <PressableFeedback
                 key={value}
                 accessibilityRole='button'
                 accessibilityState={{ selected: view === value, disabled: inFlight }}
@@ -92,7 +93,7 @@ export function LiveRequestsScreen() {
                 <Text style={[styles.filterText, view === value && styles.selectedText]}>
                   {t(`requests.live.views.${value}`)}
                 </Text>
-              </Pressable>
+              </PressableFeedback>
             ))}
           </View>
           {withdrawal.isError ? (
@@ -111,7 +112,7 @@ export function LiveRequestsScreen() {
             <View accessibilityRole='summary' style={styles.card}>
               <Text style={styles.itemTitle}>{t('requests.createLive.confirmWithdraw')}</Text>
               <Text style={styles.muted}>{t('requests.createLive.withdrawNote')}</Text>
-              <Pressable
+              <PressableFeedback
                 accessibilityRole='button'
                 disabled={inFlight}
                 accessibilityState={{ disabled: inFlight }}
@@ -121,8 +122,8 @@ export function LiveRequestsScreen() {
                 style={styles.action}
               >
                 <Text style={styles.actionText}>{t('requests.cancel')}</Text>
-              </Pressable>
-              <Pressable
+              </PressableFeedback>
+              <PressableFeedback
                 accessibilityRole='button'
                 disabled={inFlight || query.isFetching || query.isError}
                 accessibilityState={{ disabled: inFlight || query.isFetching || query.isError, busy: inFlight }}
@@ -139,7 +140,7 @@ export function LiveRequestsScreen() {
                 style={styles.action}
               >
                 <Text style={styles.actionText}>{t('requests.createLive.withdrawAction')}</Text>
-              </Pressable>
+              </PressableFeedback>
             </View>
           ) : null}
           {session.state === 'loading' || query.isLoading ? (
@@ -152,13 +153,13 @@ export function LiveRequestsScreen() {
               <Text accessibilityRole='alert' style={styles.error}>
                 {t('requests.live.listError')}
               </Text>
-              <Pressable accessibilityRole='button' onPress={() => void query.refetch()} style={styles.action}>
+              <PressableFeedback accessibilityRole='button' onPress={() => void query.refetch()} style={styles.action}>
                 <Text style={styles.actionText}>{t('licenses.live.retry')}</Text>
-              </Pressable>
+              </PressableFeedback>
               {page > 1 ? (
-                <Pressable accessibilityRole='button' onPress={() => setPage(page - 1)} style={styles.action}>
+                <PressableFeedback accessibilityRole='button' onPress={() => setPage(page - 1)} style={styles.action}>
                   <Text style={styles.actionText}>{t('licenses.live.previous')}</Text>
-                </Pressable>
+                </PressableFeedback>
               ) : null}
             </View>
           ) : null}
@@ -172,7 +173,7 @@ export function LiveRequestsScreen() {
             const date = new Date(item.submittedAt)
             return (
               <View key={item.id} style={styles.card}>
-                <Pressable
+                <PressableFeedback
                   accessibilityRole='button'
                   accessibilityLabel={t('requests.live.openNamed', { name })}
                   accessibilityState={{ disabled: inFlight }}
@@ -211,9 +212,9 @@ export function LiveRequestsScreen() {
                         : new Intl.DateTimeFormat(i18n.language, { dateStyle: 'medium' }).format(date)
                     })}
                   </Text>
-                </Pressable>
+                </PressableFeedback>
                 {item.canWithdraw ? (
-                  <Pressable
+                  <PressableFeedback
                     accessibilityRole='button'
                     accessibilityLabel={t('requests.createLive.withdrawNamed', { name })}
                     accessibilityState={{
@@ -226,14 +227,14 @@ export function LiveRequestsScreen() {
                     style={styles.action}
                   >
                     <Text style={styles.actionText}>{t('requests.createLive.withdraw')}</Text>
-                  </Pressable>
+                  </PressableFeedback>
                 ) : null}
               </View>
             )
           })}
           {query.data && query.data.pagination.totalPages > 1 ? (
             <View style={styles.pagination}>
-              <Pressable
+              <PressableFeedback
                 accessibilityRole='button'
                 accessibilityState={{ disabled: page <= 1 || inFlight }}
                 disabled={page <= 1 || inFlight}
@@ -243,11 +244,11 @@ export function LiveRequestsScreen() {
                 style={[styles.action, page <= 1 && styles.disabled]}
               >
                 <Text style={styles.actionText}>{t('licenses.live.previous')}</Text>
-              </Pressable>
+              </PressableFeedback>
               <Text style={styles.muted}>
                 {t('licenses.live.page', { page: new Intl.NumberFormat(i18n.language).format(page) })}
               </Text>
-              <Pressable
+              <PressableFeedback
                 accessibilityRole='button'
                 accessibilityState={{ disabled: page >= query.data.pagination.totalPages || inFlight }}
                 disabled={page >= query.data.pagination.totalPages || inFlight}
@@ -257,7 +258,7 @@ export function LiveRequestsScreen() {
                 style={[styles.action, page >= query.data.pagination.totalPages && styles.disabled]}
               >
                 <Text style={styles.actionText}>{t('licenses.live.next')}</Text>
-              </Pressable>
+              </PressableFeedback>
             </View>
           ) : null}
         </ScrollView>
