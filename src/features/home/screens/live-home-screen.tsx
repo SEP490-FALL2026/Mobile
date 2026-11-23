@@ -172,6 +172,7 @@ const createStyles = (colors: MobileColors) =>
       alignItems: 'center',
       gap: 14,
       backgroundColor: colors.primarySoft,
+      borderCurve: 'continuous',
       borderRadius: 18,
       padding: 16,
       minHeight: 84
@@ -183,6 +184,7 @@ const createStyles = (colors: MobileColors) =>
       backgroundColor: colors.surface,
       borderColor: colors.border,
       borderWidth: 1,
+      borderCurve: 'continuous',
       borderRadius: 18,
       padding: 16,
       gap: 9,
@@ -191,6 +193,7 @@ const createStyles = (colors: MobileColors) =>
     cardIcon: {
       width: 42,
       height: 42,
+      borderCurve: 'continuous',
       borderRadius: 14,
       backgroundColor: colors.primarySoft,
       alignItems: 'center',
@@ -199,6 +202,12 @@ const createStyles = (colors: MobileColors) =>
     cardCopy: { flex: 1, gap: 5 },
     cardTitle: { color: colors.foreground, fontSize: 15, fontWeight: '700' },
     cardDescription: { color: colors.muted, fontSize: 13, lineHeight: 19 },
-    notice: { backgroundColor: colors.surfaceSubtle, borderRadius: 14, padding: 14, color: colors.foreground },
+    notice: {
+      backgroundColor: colors.surfaceSubtle,
+      borderCurve: 'continuous',
+      borderRadius: 14,
+      padding: 14,
+      color: colors.foreground
+    },
     link: { color: colors.primaryInk, fontWeight: '700', paddingTop: 10 }
   })

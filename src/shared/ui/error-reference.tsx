@@ -17,4 +17,4 @@ export function ErrorReference({ error }: { error: unknown }) {
   )
 }
 
-const styles = StyleSheet.create({ text: { fontSize: 11 } })
+const styles = StyleSheet.create({ text: { fontSize: 12 } })

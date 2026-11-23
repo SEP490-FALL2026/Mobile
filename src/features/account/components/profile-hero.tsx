@@ -163,6 +163,7 @@ const createStyles = (colors: MobileColors) =>
       bottom: -2,
       width: 30,
       height: 30,
+      borderCurve: 'continuous',
       borderRadius: 15,
       backgroundColor: colors.primary,
       borderWidth: 2,
@@ -183,6 +184,7 @@ const createStyles = (colors: MobileColors) =>
       minHeight: 48,
       borderColor: colors.border,
       borderWidth: 1,
+      borderCurve: 'continuous',
       borderRadius: 14,
       paddingHorizontal: 14,
       color: colors.foreground,
@@ -190,6 +192,7 @@ const createStyles = (colors: MobileColors) =>
     },
     save: {
       minHeight: 48,
+      borderCurve: 'continuous',
       borderRadius: 14,
       backgroundColor: colors.primary,
       alignItems: 'center',

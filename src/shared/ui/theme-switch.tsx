@@ -88,6 +88,7 @@ const createStyles = (colors: MobileColors) =>
       height: 44,
       alignItems: 'center',
       justifyContent: 'center',
+      borderCurve: 'continuous',
       borderRadius: 22,
       borderWidth: 1,
       borderColor: colors.border,
@@ -98,6 +99,7 @@ const createStyles = (colors: MobileColors) =>
     title: { color: colors.foreground, fontSize: 20, fontWeight: '700', marginBottom: 8 },
     option: {
       minHeight: 52,
+      borderCurve: 'continuous',
       borderRadius: 14,
       paddingHorizontal: 16,
       flexDirection: 'row',

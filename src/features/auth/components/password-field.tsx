@@ -70,6 +70,7 @@ const createStyles = (colors: MobileColors) =>
     input: {
       backgroundColor: colors.surfaceSubtle,
       borderColor: colors.border,
+      borderCurve: 'continuous',
       borderRadius: 14,
       borderWidth: 1,
       color: colors.foreground,

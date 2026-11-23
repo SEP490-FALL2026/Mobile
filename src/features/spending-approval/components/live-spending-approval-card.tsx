@@ -115,6 +115,7 @@ const createStyles = (colors: MobileColors) =>
     card: {
       backgroundColor: colors.surface,
       borderColor: colors.border,
+      borderCurve: 'continuous',
       borderRadius: 18,
       borderWidth: 1,
       gap: 12,
@@ -125,6 +126,7 @@ const createStyles = (colors: MobileColors) =>
     icon: {
       alignItems: 'center',
       backgroundColor: colors.primarySoft,
+      borderCurve: 'continuous',
       borderRadius: 13,
       height: 42,
       justifyContent: 'center',
@@ -134,9 +136,9 @@ const createStyles = (colors: MobileColors) =>
     appName: { color: colors.foreground, fontSize: 15, fontWeight: '700' },
     planName: { color: colors.muted, fontSize: 12 },
     meta: { gap: 4, paddingLeft: 53 },
-    requestId: { color: colors.primaryInk, fontSize: 11, fontWeight: '700' },
+    requestId: { color: colors.primaryInk, fontSize: 12, fontWeight: '700' },
     metaText: { color: colors.muted, fontSize: 12, lineHeight: 17 },
-    primaryCode: { color: colors.primaryInk, fontSize: 11, fontWeight: '600', lineHeight: 16 },
+    primaryCode: { color: colors.primaryInk, fontSize: 12, fontWeight: '600', lineHeight: 16 },
     bottom: {
       alignItems: 'flex-end',
       borderTopColor: colors.border,
@@ -149,9 +151,10 @@ const createStyles = (colors: MobileColors) =>
     badges: { alignItems: 'flex-start', flex: 1, flexWrap: 'wrap', flexDirection: 'row', gap: 5 },
     reserveBadge: {
       backgroundColor: colors.warningBackground,
+      borderCurve: 'continuous',
       borderRadius: 8,
       color: colors.warning,
-      fontSize: 10,
+      fontSize: 12,
       fontWeight: '700',
       overflow: 'hidden',
       paddingHorizontal: 8,
@@ -159,9 +162,10 @@ const createStyles = (colors: MobileColors) =>
     },
     oneStepBadge: {
       backgroundColor: colors.primarySoft,
+      borderCurve: 'continuous',
       borderRadius: 8,
       color: colors.primaryInk,
-      fontSize: 10,
+      fontSize: 12,
       fontWeight: '700',
       overflow: 'hidden',
       paddingHorizontal: 8,
@@ -169,15 +173,16 @@ const createStyles = (colors: MobileColors) =>
     },
     warningBadge: {
       backgroundColor: colors.dangerBackground,
+      borderCurve: 'continuous',
       borderRadius: 8,
       color: colors.danger,
-      fontSize: 10,
+      fontSize: 12,
       fontWeight: '700',
       overflow: 'hidden',
       paddingHorizontal: 8,
       paddingVertical: 5
     },
     amountGroup: { alignItems: 'flex-end', gap: 3 },
-    amount: { color: colors.foreground, fontSize: 13, fontWeight: '700' },
-    dueDate: { color: colors.muted, fontSize: 10 }
+    amount: { color: colors.foreground, fontSize: 13, fontVariant: ['tabular-nums'], fontWeight: '700' },
+    dueDate: { color: colors.muted, fontSize: 12 }
   })

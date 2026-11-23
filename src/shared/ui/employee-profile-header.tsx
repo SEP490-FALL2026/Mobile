@@ -79,6 +79,7 @@ const createStyles = (mobileColors: MobileColors) =>
     avatar: {
       alignItems: 'center',
       backgroundColor: mobileColors.primarySoft,
+      borderCurve: 'continuous',
       borderRadius: 999,
       height: 42,
       justifyContent: 'center',
@@ -88,6 +89,7 @@ const createStyles = (mobileColors: MobileColors) =>
       alignItems: 'center',
       backgroundColor: mobileColors.white,
       borderColor: mobileColors.border,
+      borderCurve: 'continuous',
       borderRadius: 22,
       borderWidth: 1,
       height: 44,

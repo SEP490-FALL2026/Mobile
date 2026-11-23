@@ -211,12 +211,14 @@ const createStyles = (colors: MobileColors) =>
       alignItems: 'center',
       gap: 16,
       padding: 20,
+      borderCurve: 'continuous',
       borderRadius: 20,
       backgroundColor: colors.primarySoft
     },
     avatar: {
       width: 58,
       height: 58,
+      borderCurve: 'continuous',
       borderRadius: 20,
       backgroundColor: colors.surface,
       alignItems: 'center',
@@ -230,6 +232,7 @@ const createStyles = (colors: MobileColors) =>
       backgroundColor: colors.surface,
       borderColor: colors.border,
       borderWidth: 1,
+      borderCurve: 'continuous',
       borderRadius: 20,
       padding: 20
     },
@@ -246,6 +249,7 @@ const createStyles = (colors: MobileColors) =>
       gap: 10,
       minHeight: 52,
       paddingHorizontal: 16,
+      borderCurve: 'continuous',
       borderRadius: 16,
       backgroundColor: colors.primarySoft
     },
@@ -254,6 +258,7 @@ const createStyles = (colors: MobileColors) =>
       minHeight: 52,
       borderWidth: 1,
       borderColor: colors.border,
+      borderCurve: 'continuous',
       borderRadius: 16,
       backgroundColor: colors.surface,
       flexDirection: 'row',
@@ -273,6 +278,7 @@ const createStyles = (colors: MobileColors) =>
     dialogTitle: { color: colors.foreground, fontSize: 20, fontWeight: '700' },
     confirmButton: {
       backgroundColor: colors.danger,
+      borderCurve: 'continuous',
       borderRadius: 14,
       minHeight: 48,
       justifyContent: 'center',

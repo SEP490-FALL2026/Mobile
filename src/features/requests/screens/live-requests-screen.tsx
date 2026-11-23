@@ -277,6 +277,7 @@ const createStyles = (mobileColors: MobileColors) =>
       alignItems: 'center',
       gap: 6,
       paddingHorizontal: 14,
+      borderCurve: 'continuous',
       borderRadius: 14,
       backgroundColor: mobileColors.primary
     },
@@ -289,13 +290,14 @@ const createStyles = (mobileColors: MobileColors) =>
       alignItems: 'center',
       gap: 12,
       padding: 20,
+      borderCurve: 'continuous',
       borderRadius: 22,
       backgroundColor: mobileColors.primarySoft
     },
     heading: { flex: 1, gap: 5 },
     kicker: {
       color: mobileColors.primaryInk,
-      fontSize: 10,
+      fontSize: 12,
       fontWeight: '700',
       letterSpacing: 1,
       textTransform: 'uppercase'
@@ -306,6 +308,7 @@ const createStyles = (mobileColors: MobileColors) =>
     icon: {
       width: 44,
       height: 44,
+      borderCurve: 'continuous',
       borderRadius: 16,
       backgroundColor: mobileColors.surface,
       alignItems: 'center',
@@ -316,9 +319,16 @@ const createStyles = (mobileColors: MobileColors) =>
       flexDirection: 'row',
       backgroundColor: mobileColors.surfaceSubtle,
       padding: 4,
+      borderCurve: 'continuous',
       borderRadius: 14
     },
-    filter: { minHeight: 44, justifyContent: 'center', paddingHorizontal: 15, borderRadius: 12 },
+    filter: {
+      minHeight: 44,
+      justifyContent: 'center',
+      paddingHorizontal: 15,
+      borderCurve: 'continuous',
+      borderRadius: 12
+    },
     selected: { backgroundColor: mobileColors.primary },
     filterText: { color: mobileColors.muted, fontWeight: '600', fontSize: 12 },
     selectedText: { color: mobileColors.onPrimary },
@@ -326,6 +336,7 @@ const createStyles = (mobileColors: MobileColors) =>
       backgroundColor: mobileColors.white,
       borderColor: mobileColors.border,
       borderWidth: 1,
+      borderCurve: 'continuous',
       borderRadius: 20,
       padding: 18,
       gap: 9

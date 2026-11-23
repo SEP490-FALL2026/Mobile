@@ -255,12 +255,20 @@ const createStyles = (colors: MobileColors) =>
       backgroundColor: colors.surface,
       borderColor: colors.border,
       borderWidth: 1,
+      borderCurve: 'continuous',
       borderRadius: 16,
       padding: 16,
       gap: 12
     },
     section: { gap: 6, marginTop: 6 },
-    primary: { backgroundColor: colors.primary, borderRadius: 14, padding: 14, alignItems: 'center', minHeight: 48 },
+    primary: {
+      backgroundColor: colors.primary,
+      borderCurve: 'continuous',
+      borderRadius: 14,
+      padding: 14,
+      alignItems: 'center',
+      minHeight: 48
+    },
     primaryText: { color: colors.onPrimary, fontWeight: '700' },
     secondary: { minHeight: 44, justifyContent: 'center' },
     link: { color: colors.primaryInk, fontWeight: '700' }

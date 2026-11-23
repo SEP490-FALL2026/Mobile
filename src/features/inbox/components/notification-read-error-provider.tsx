@@ -55,6 +55,7 @@ const createStyles = (colors: MobileColors) =>
       backgroundColor: colors.surface,
       borderColor: colors.danger,
       borderWidth: 1,
+      borderCurve: 'continuous',
       borderRadius: 12,
       paddingHorizontal: 16,
       paddingVertical: 8,

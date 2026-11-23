@@ -237,6 +237,7 @@ const createStyles = (mobileColors: MobileColors) =>
       right: -140,
       width: 340,
       height: 340,
+      borderCurve: 'continuous',
       borderRadius: 170,
       backgroundColor: mobileColors.primarySoft,
       opacity: 0.7
@@ -247,6 +248,7 @@ const createStyles = (mobileColors: MobileColors) =>
       left: -90,
       width: 220,
       height: 220,
+      borderCurve: 'continuous',
       borderRadius: 110,
       backgroundColor: mobileColors.primarySoft,
       opacity: 0.5
@@ -265,6 +267,7 @@ const createStyles = (mobileColors: MobileColors) =>
     brandMark: {
       alignItems: 'center',
       backgroundColor: mobileColors.primary,
+      borderCurve: 'continuous',
       borderRadius: 14,
       height: 44,
       justifyContent: 'center',
@@ -284,16 +287,13 @@ const createStyles = (mobileColors: MobileColors) =>
     form: {
       backgroundColor: mobileColors.white,
       borderColor: mobileColors.border,
+      borderCurve: 'continuous',
       borderRadius: 24,
       borderWidth: 1,
-      elevation: 3,
       gap: 16,
       marginTop: 24,
       padding: 20,
-      shadowColor: '#000',
-      shadowOffset: { width: 0, height: 8 },
-      shadowOpacity: 0.06,
-      shadowRadius: 18
+      boxShadow: '0 8px 18px rgba(35, 39, 65, 0.06)'
     },
     field: { gap: 8 },
     label: { color: mobileColors.foreground, fontSize: 13, fontWeight: '600' },
@@ -301,6 +301,7 @@ const createStyles = (mobileColors: MobileColors) =>
       alignItems: 'center',
       backgroundColor: mobileColors.surfaceSubtle,
       borderColor: mobileColors.border,
+      borderCurve: 'continuous',
       borderRadius: 14,
       borderWidth: 1,
       flexDirection: 'row',
@@ -316,6 +317,7 @@ const createStyles = (mobileColors: MobileColors) =>
     loginButton: {
       alignItems: 'center',
       backgroundColor: mobileColors.primary,
+      borderCurve: 'continuous',
       borderRadius: 14,
       flexDirection: 'row',
       gap: 8,

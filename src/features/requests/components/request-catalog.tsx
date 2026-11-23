@@ -274,6 +274,7 @@ const createStyles = (colors: MobileColors) =>
       backgroundColor: colors.surface,
       borderColor: colors.border,
       borderWidth: 1,
+      borderCurve: 'continuous',
       borderRadius: 16,
       paddingHorizontal: 14,
       minHeight: 52,
@@ -283,6 +284,7 @@ const createStyles = (colors: MobileColors) =>
       backgroundColor: colors.surface,
       borderColor: colors.border,
       borderWidth: 1,
+      borderCurve: 'continuous',
       borderRadius: 20,
       padding: 18,
       gap: 7

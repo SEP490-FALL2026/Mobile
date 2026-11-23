@@ -1033,7 +1033,7 @@ const createStyles = (colors: MobileColors) =>
     hero: { gap: 6, paddingVertical: 8 },
     kicker: {
       color: colors.primaryInk,
-      fontSize: 11,
+      fontSize: 12,
       fontWeight: '700',
       letterSpacing: 0.8,
       textTransform: 'uppercase'
@@ -1048,6 +1048,7 @@ const createStyles = (colors: MobileColors) =>
     reviewIcon: {
       alignItems: 'center',
       backgroundColor: colors.primarySoft,
+      borderCurve: 'continuous',
       borderRadius: 14,
       height: 46,
       justifyContent: 'center',
@@ -1056,14 +1057,22 @@ const createStyles = (colors: MobileColors) =>
     card: {
       backgroundColor: colors.surface,
       borderColor: colors.border,
+      borderCurve: 'continuous',
       borderRadius: 18,
       borderWidth: 1,
       gap: 12,
       padding: 15
     },
-    notice: { backgroundColor: colors.surfaceSubtle, borderRadius: 14, gap: 10, padding: 14 },
+    notice: {
+      backgroundColor: colors.surfaceSubtle,
+      borderCurve: 'continuous',
+      borderRadius: 14,
+      gap: 10,
+      padding: 14
+    },
     noticeText: {
       backgroundColor: colors.warningBackground,
+      borderCurve: 'continuous',
       borderRadius: 10,
       color: colors.warning,
       fontSize: 12,
@@ -1071,9 +1080,21 @@ const createStyles = (colors: MobileColors) =>
       overflow: 'hidden',
       padding: 10
     },
-    errorCard: { backgroundColor: colors.warningBackground, borderRadius: 14, gap: 10, padding: 14 },
+    errorCard: {
+      backgroundColor: colors.warningBackground,
+      borderCurve: 'continuous',
+      borderRadius: 14,
+      gap: 10,
+      padding: 14
+    },
     errorText: { color: colors.danger, fontSize: 12, lineHeight: 18 },
-    successCard: { backgroundColor: colors.successBackground, borderRadius: 14, gap: 10, padding: 14 },
+    successCard: {
+      backgroundColor: colors.successBackground,
+      borderCurve: 'continuous',
+      borderRadius: 14,
+      gap: 10,
+      padding: 14
+    },
     successText: { color: colors.success, fontSize: 13, fontWeight: '700' },
     infoRow: { alignItems: 'flex-start', flexDirection: 'row', gap: 10, justifyContent: 'space-between' },
     infoLabel: { color: colors.muted, flex: 1, fontSize: 12, lineHeight: 18 },
@@ -1090,6 +1111,7 @@ const createStyles = (colors: MobileColors) =>
     iconButton: {
       alignItems: 'center',
       backgroundColor: colors.primarySoft,
+      borderCurve: 'continuous',
       borderRadius: 12,
       height: 42,
       justifyContent: 'center',
@@ -1099,6 +1121,7 @@ const createStyles = (colors: MobileColors) =>
       alignItems: 'center',
       backgroundColor: colors.surface,
       borderColor: colors.border,
+      borderCurve: 'continuous',
       borderRadius: 12,
       borderWidth: 1,
       flexDirection: 'row',
@@ -1108,13 +1131,21 @@ const createStyles = (colors: MobileColors) =>
     },
     searchInput: { color: colors.foreground, flex: 1, fontSize: 16, minHeight: 44, paddingVertical: 0 },
     list: { gap: 10 },
-    emptyState: { alignItems: 'center', backgroundColor: colors.surfaceSubtle, borderRadius: 16, gap: 8, padding: 22 },
+    emptyState: {
+      alignItems: 'center',
+      backgroundColor: colors.surfaceSubtle,
+      borderCurve: 'continuous',
+      borderRadius: 16,
+      gap: 8,
+      padding: 22
+    },
     emptyTitle: { color: colors.foreground, fontSize: 14, fontWeight: '700', textAlign: 'center' },
     pagination: { alignItems: 'center', flexDirection: 'row', gap: 8, justifyContent: 'space-between' },
     actionButton: {
       alignItems: 'center',
       alignSelf: 'flex-start',
       backgroundColor: colors.primarySoft,
+      borderCurve: 'continuous',
       borderRadius: 11,
       justifyContent: 'center',
       minHeight: 40,
@@ -1140,6 +1171,7 @@ const createStyles = (colors: MobileColors) =>
       alignItems: 'center',
       backgroundColor: colors.surfaceSubtle,
       borderColor: colors.border,
+      borderCurve: 'continuous',
       borderRadius: 10,
       borderWidth: 1,
       justifyContent: 'center',
@@ -1155,6 +1187,7 @@ const createStyles = (colors: MobileColors) =>
     reasonInput: {
       backgroundColor: colors.background,
       borderColor: colors.border,
+      borderCurve: 'continuous',
       borderRadius: 12,
       borderWidth: 1,
       color: colors.foreground,

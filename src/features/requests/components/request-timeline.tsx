@@ -117,13 +117,21 @@ const createStyles = (colors: MobileColors) =>
       backgroundColor: colors.surface,
       borderColor: colors.border,
       borderWidth: 1,
+      borderCurve: 'continuous',
       borderRadius: 20,
       padding: 18,
       gap: 14
     },
     heading: { color: colors.foreground, fontWeight: '700', fontSize: 16 },
     event: { flexDirection: 'row', gap: 12 },
-    dot: { width: 10, height: 10, borderRadius: 5, marginTop: 5, backgroundColor: colors.primary },
+    dot: {
+      width: 10,
+      height: 10,
+      borderCurve: 'continuous',
+      borderRadius: 5,
+      marginTop: 5,
+      backgroundColor: colors.primary
+    },
     eventBody: { flex: 1, gap: 3 },
     eventTitle: { color: colors.foreground, fontWeight: '700', fontSize: 14 },
     muted: { color: colors.muted, fontSize: 13, lineHeight: 19 },

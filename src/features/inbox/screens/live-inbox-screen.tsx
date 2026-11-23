@@ -264,6 +264,7 @@ const createStyles = (mobileColors: MobileColors) =>
       alignItems: 'center',
       gap: 12,
       padding: 20,
+      borderCurve: 'continuous',
       borderRadius: 22,
       backgroundColor: mobileColors.primarySoft
     },
@@ -271,6 +272,7 @@ const createStyles = (mobileColors: MobileColors) =>
     headerIcon: {
       width: 44,
       height: 44,
+      borderCurve: 'continuous',
       borderRadius: 16,
       backgroundColor: mobileColors.surface,
       alignItems: 'center',
@@ -278,7 +280,7 @@ const createStyles = (mobileColors: MobileColors) =>
     },
     kicker: {
       color: mobileColors.primaryInk,
-      fontSize: 10,
+      fontSize: 12,
       fontWeight: '700',
       letterSpacing: 1,
       textTransform: 'uppercase'
@@ -290,6 +292,7 @@ const createStyles = (mobileColors: MobileColors) =>
       backgroundColor: mobileColors.white,
       borderColor: mobileColors.border,
       borderWidth: 1,
+      borderCurve: 'continuous',
       borderRadius: 20,
       padding: 18,
       gap: 8
@@ -299,6 +302,7 @@ const createStyles = (mobileColors: MobileColors) =>
     itemIcon: {
       width: 40,
       height: 40,
+      borderCurve: 'continuous',
       borderRadius: 14,
       alignItems: 'center',
       justifyContent: 'center',
@@ -306,7 +310,13 @@ const createStyles = (mobileColors: MobileColors) =>
     },
     itemCopy: { flex: 1, minWidth: 0, gap: 3 },
     readStatus: { flexDirection: 'row', alignItems: 'center', gap: 6 },
-    unreadDot: { width: 7, height: 7, borderRadius: 4, backgroundColor: mobileColors.primary },
+    unreadDot: {
+      width: 7,
+      height: 7,
+      borderCurve: 'continuous',
+      borderRadius: 4,
+      backgroundColor: mobileColors.primary
+    },
     unreadText: { color: mobileColors.primaryInk, fontSize: 13, fontWeight: '700' },
     itemActions: { gap: 0 },
     itemTitle: { color: mobileColors.foreground, fontSize: 15, fontWeight: '700' },

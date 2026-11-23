@@ -548,13 +548,14 @@ const createStyles = (mobileColors: MobileColors) =>
       gap: 12,
       marginBottom: 8,
       padding: 20,
+      borderCurve: 'continuous',
       borderRadius: 22,
       backgroundColor: mobileColors.primarySoft
     },
     headerCopy: { flex: 1, minWidth: 0, gap: 4 },
     kicker: {
       color: mobileColors.primaryInk,
-      fontSize: 10,
+      fontSize: 12,
       fontWeight: '700',
       letterSpacing: 1,
       textTransform: 'uppercase'
@@ -563,6 +564,7 @@ const createStyles = (mobileColors: MobileColors) =>
     headerIcon: {
       width: 48,
       height: 48,
+      borderCurve: 'continuous',
       borderRadius: 16,
       backgroundColor: mobileColors.surface,
       alignItems: 'center',
@@ -577,6 +579,7 @@ const createStyles = (mobileColors: MobileColors) =>
       minHeight: 52,
       borderWidth: 1,
       borderColor: mobileColors.border,
+      borderCurve: 'continuous',
       borderRadius: 16,
       backgroundColor: mobileColors.surface,
       paddingHorizontal: 14,
@@ -589,6 +592,7 @@ const createStyles = (mobileColors: MobileColors) =>
       backgroundColor: mobileColors.white,
       borderColor: mobileColors.border,
       borderWidth: 1,
+      borderCurve: 'continuous',
       borderRadius: 12,
       padding: 12,
       minHeight: 44,
@@ -599,6 +603,7 @@ const createStyles = (mobileColors: MobileColors) =>
       backgroundColor: mobileColors.white,
       borderColor: mobileColors.border,
       borderWidth: 1,
+      borderCurve: 'continuous',
       borderRadius: 20,
       padding: 18,
       gap: 10
@@ -611,6 +616,7 @@ const createStyles = (mobileColors: MobileColors) =>
     actionText: { color: mobileColors.primaryInk, fontWeight: '700' },
     primary: {
       backgroundColor: mobileColors.primary,
+      borderCurve: 'continuous',
       borderRadius: 12,
       minHeight: 48,
       alignItems: 'center',
@@ -622,6 +628,6 @@ const createStyles = (mobileColors: MobileColors) =>
     review: { gap: 9, borderTopColor: mobileColors.border, borderTopWidth: 1, paddingTop: 12 },
     error: { color: mobileColors.danger, fontSize: 13, lineHeight: 19 },
     modalBackdrop: { flex: 1, backgroundColor: 'rgba(36, 28, 24, 0.55)', justifyContent: 'center', padding: 24 },
-    dialog: { backgroundColor: mobileColors.white, borderRadius: 20, padding: 22, gap: 14 },
+    dialog: { backgroundColor: mobileColors.white, borderCurve: 'continuous', borderRadius: 20, padding: 22, gap: 14 },
     dialogAction: { minHeight: 48, alignItems: 'center', justifyContent: 'center' }
   })

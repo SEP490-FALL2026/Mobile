@@ -33,6 +33,7 @@ const createStyles = (colors: MobileColors) =>
       alignItems: 'center',
       backgroundColor: colors.surface,
       borderColor: colors.border,
+      borderCurve: 'continuous',
       borderRadius: 22,
       borderWidth: 1,
       height: 44,

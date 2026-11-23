@@ -22,7 +22,16 @@ export function Avatar({ name, url, size = 42, onImageError }: Props) {
     <View
       accessibilityElementsHidden
       importantForAccessibility='no'
-      style={[styles.box, { width: size, height: size, borderRadius: radius, backgroundColor: colors.primarySoft }]}
+      style={[
+        styles.box,
+        {
+          width: size,
+          height: size,
+          borderCurve: 'continuous',
+          borderRadius: radius,
+          backgroundColor: colors.primarySoft
+        }
+      ]}
     >
       {showImage ? (
         <Image

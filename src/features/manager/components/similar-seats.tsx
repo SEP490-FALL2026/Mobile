@@ -70,7 +70,13 @@ const createStyles = (mobileColors: MobileColors) =>
   StyleSheet.create({
     section: { borderTopWidth: 1, borderTopColor: mobileColors.border, marginTop: 8, paddingTop: 12, gap: 8 },
     title: { color: mobileColors.foreground, fontSize: 16, fontWeight: '700' },
-    item: { backgroundColor: mobileColors.surfaceSubtle, borderRadius: 10, padding: 10, gap: 3 },
+    item: {
+      backgroundColor: mobileColors.surfaceSubtle,
+      borderCurve: 'continuous',
+      borderRadius: 10,
+      padding: 10,
+      gap: 3
+    },
     value: { color: mobileColors.foreground, fontSize: 14, lineHeight: 20 },
     muted: { color: mobileColors.muted, fontSize: 13, lineHeight: 19 },
     error: { color: mobileColors.danger, fontSize: 13, lineHeight: 19 },

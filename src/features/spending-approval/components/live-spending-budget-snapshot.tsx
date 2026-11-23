@@ -172,6 +172,7 @@ const createStyles = (colors: MobileColors) =>
     card: {
       backgroundColor: colors.surface,
       borderColor: colors.border,
+      borderCurve: 'continuous',
       borderRadius: 18,
       borderWidth: 1,
       gap: 12,
@@ -181,12 +182,13 @@ const createStyles = (colors: MobileColors) =>
     headingCopy: { flex: 1, gap: 3 },
     title: { color: colors.foreground, fontSize: 15, fontWeight: '700' },
     sectionTitle: { color: colors.foreground, fontSize: 13, fontWeight: '700' },
-    muted: { color: colors.muted, fontSize: 11, lineHeight: 16 },
+    muted: { color: colors.muted, fontSize: 12, lineHeight: 16 },
     readOnly: {
       backgroundColor: colors.surfaceSubtle,
+      borderCurve: 'continuous',
       borderRadius: 8,
       color: colors.muted,
-      fontSize: 10,
+      fontSize: 12,
       fontWeight: '700',
       overflow: 'hidden',
       paddingHorizontal: 8,
@@ -194,6 +196,7 @@ const createStyles = (colors: MobileColors) =>
     },
     notice: {
       backgroundColor: colors.surfaceSubtle,
+      borderCurve: 'continuous',
       borderRadius: 10,
       color: colors.foreground,
       fontSize: 12,
@@ -207,6 +210,7 @@ const createStyles = (colors: MobileColors) =>
     value: {
       color: colors.foreground,
       flexShrink: 1,
+      fontVariant: ['tabular-nums'],
       fontSize: 12,
       fontWeight: '600',
       lineHeight: 18,

@@ -84,6 +84,7 @@ const createStyles = (colors: MobileColors) =>
       backgroundColor: colors.white,
       borderColor: colors.border,
       borderWidth: 1,
+      borderCurve: 'continuous',
       borderRadius: 16,
       padding: 16,
       gap: 9
@@ -92,6 +93,7 @@ const createStyles = (colors: MobileColors) =>
     avatar: {
       width: 38,
       height: 38,
+      borderCurve: 'continuous',
       borderRadius: 19,
       backgroundColor: colors.primarySoft,
       alignItems: 'center',

@@ -32,6 +32,7 @@ const createStyles = (mobileColors: MobileColors) =>
     status: {
       alignSelf: 'flex-start',
       overflow: 'hidden',
+      borderCurve: 'continuous',
       borderRadius: 10,
       paddingHorizontal: 10,
       paddingVertical: 5,

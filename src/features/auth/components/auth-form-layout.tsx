@@ -42,6 +42,7 @@ export function authFormStyles(colors: MobileColors) {
     button: {
       alignItems: 'center',
       backgroundColor: colors.primary,
+      borderCurve: 'continuous',
       borderRadius: 14,
       justifyContent: 'center',
       minHeight: 52
@@ -54,6 +55,7 @@ export function authFormStyles(colors: MobileColors) {
     input: {
       backgroundColor: colors.surfaceSubtle,
       borderColor: colors.border,
+      borderCurve: 'continuous',
       borderRadius: 14,
       borderWidth: 1,
       color: colors.foreground,
@@ -77,6 +79,7 @@ const createStyles = (colors: MobileColors) =>
     form: {
       backgroundColor: colors.white,
       borderColor: colors.border,
+      borderCurve: 'continuous',
       borderRadius: 22,
       borderWidth: 1,
       gap: 16,

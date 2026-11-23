@@ -106,6 +106,7 @@ const createStyles = (colors: MobileColors) =>
       backgroundColor: colors.white,
       borderColor: colors.border,
       borderWidth: 1,
+      borderCurve: 'continuous',
       borderRadius: 20,
       padding: 18,
       gap: 8

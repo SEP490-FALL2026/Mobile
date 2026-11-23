@@ -31,7 +31,7 @@ export function SoftwareIcon({ name, logoUrl, size = 52 }: Props) {
   const brand = getSoftwareBrand(name)
   const showLogo = !!logoUrl && failedUrl !== logoUrl
   const [tintBackground, tintForeground] = tintFor(name)
-  const box = { width: size, height: size, borderRadius: size * 0.3 }
+  const box = { width: size, height: size, borderCurve: 'continuous', borderRadius: size * 0.3 } as const
 
   return (
     <View

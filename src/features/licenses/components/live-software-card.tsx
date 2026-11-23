@@ -110,6 +110,7 @@ const createStyles = (mobileColors: MobileColors) =>
       backgroundColor: mobileColors.surface,
       borderColor: mobileColors.border,
       borderWidth: 1,
+      borderCurve: 'continuous',
       borderRadius: 20,
       padding: 18,
       gap: 12
@@ -124,11 +125,12 @@ const createStyles = (mobileColors: MobileColors) =>
       flexDirection: 'row',
       gap: 6,
       backgroundColor: mobileColors.successBackground,
+      borderCurve: 'continuous',
       borderRadius: 999,
       paddingHorizontal: 10,
       paddingVertical: 6
     },
-    dot: { width: 7, height: 7, borderRadius: 4, backgroundColor: mobileColors.successDot },
+    dot: { width: 7, height: 7, borderCurve: 'continuous', borderRadius: 4, backgroundColor: mobileColors.successDot },
     badgeNeutral: { backgroundColor: mobileColors.surfaceSubtle },
     badgeText: { color: mobileColors.success, fontSize: 12, fontWeight: '700' },
     neutralText: { color: mobileColors.muted },
@@ -142,6 +144,7 @@ const createStyles = (mobileColors: MobileColors) =>
       alignItems: 'center',
       gap: 6,
       backgroundColor: mobileColors.warningBackground,
+      borderCurve: 'continuous',
       borderRadius: 10,
       paddingHorizontal: 9,
       paddingVertical: 7

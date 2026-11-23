@@ -663,6 +663,7 @@ const createStyles = (mobileColors: MobileColors) =>
       flex: 1,
       minHeight: 44,
       paddingHorizontal: 14,
+      borderCurve: 'continuous',
       borderRadius: 14,
       backgroundColor: mobileColors.primarySoft,
       flexDirection: 'row',
@@ -673,6 +674,7 @@ const createStyles = (mobileColors: MobileColors) =>
     iconButton: {
       width: 44,
       height: 44,
+      borderCurve: 'continuous',
       borderRadius: 20,
       borderWidth: 1,
       borderColor: mobileColors.border,
@@ -691,13 +693,14 @@ const createStyles = (mobileColors: MobileColors) =>
       alignItems: 'center',
       gap: 12,
       padding: 18,
+      borderCurve: 'continuous',
       borderRadius: 20,
       backgroundColor: mobileColors.primarySoft
     },
     headingCopy: { flex: 1, gap: 5 },
     kicker: {
       color: mobileColors.primaryInk,
-      fontSize: 10,
+      fontSize: 12,
       fontWeight: '700',
       letterSpacing: 1,
       textTransform: 'uppercase'
@@ -706,6 +709,7 @@ const createStyles = (mobileColors: MobileColors) =>
     icon: {
       width: 44,
       height: 44,
+      borderCurve: 'continuous',
       borderRadius: 16,
       backgroundColor: mobileColors.surface,
       alignItems: 'center',
@@ -715,6 +719,7 @@ const createStyles = (mobileColors: MobileColors) =>
       backgroundColor: mobileColors.white,
       borderColor: mobileColors.border,
       borderWidth: 1,
+      borderCurve: 'continuous',
       borderRadius: 16,
       padding: 16,
       gap: 9
@@ -723,6 +728,7 @@ const createStyles = (mobileColors: MobileColors) =>
     avatar: {
       width: 38,
       height: 38,
+      borderCurve: 'continuous',
       borderRadius: 19,
       backgroundColor: mobileColors.primarySoft,
       alignItems: 'center',
@@ -736,6 +742,7 @@ const createStyles = (mobileColors: MobileColors) =>
       backgroundColor: mobileColors.surface,
       borderColor: mobileColors.border,
       borderWidth: 1,
+      borderCurve: 'continuous',
       borderRadius: 16,
       padding: 18,
       gap: 10
@@ -755,6 +762,7 @@ const createStyles = (mobileColors: MobileColors) =>
       minHeight: 48,
       borderWidth: 1,
       borderColor: mobileColors.border,
+      borderCurve: 'continuous',
       borderRadius: 12,
       paddingHorizontal: 15,
       justifyContent: 'center',
@@ -763,6 +771,7 @@ const createStyles = (mobileColors: MobileColors) =>
     primary: {
       minHeight: 48,
       backgroundColor: mobileColors.primary,
+      borderCurve: 'continuous',
       borderRadius: 12,
       paddingHorizontal: 15,
       justifyContent: 'center',
@@ -774,6 +783,7 @@ const createStyles = (mobileColors: MobileColors) =>
       minHeight: 90,
       borderColor: mobileColors.border,
       borderWidth: 1,
+      borderCurve: 'continuous',
       borderRadius: 12,
       padding: 12,
       color: mobileColors.foreground,

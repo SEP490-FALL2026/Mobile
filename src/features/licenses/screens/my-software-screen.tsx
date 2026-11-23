@@ -253,6 +253,7 @@ const createStyles = (mobileColors: MobileColors) =>
     inboxButton: {
       width: 44,
       height: 44,
+      borderCurve: 'continuous',
       borderRadius: 22,
       borderWidth: 1,
       borderColor: mobileColors.border,
@@ -262,12 +263,19 @@ const createStyles = (mobileColors: MobileColors) =>
     },
     titleBlock: { gap: 4 },
     pageTitle: { color: mobileColors.foreground, fontSize: 26, fontWeight: '800', letterSpacing: -0.4 },
-    heading: { gap: 8, padding: 20, borderRadius: 22, backgroundColor: mobileColors.primarySoft },
+    heading: {
+      gap: 8,
+      padding: 20,
+      borderCurve: 'continuous',
+      borderRadius: 22,
+      backgroundColor: mobileColors.primarySoft
+    },
     headingMain: { flexDirection: 'row', alignItems: 'flex-start', gap: 12 },
     headingCopy: { flex: 1, minWidth: 0, gap: 7 },
     headingIcon: {
       width: 44,
       height: 44,
+      borderCurve: 'continuous',
       borderRadius: 14,
       alignItems: 'center',
       justifyContent: 'center',
@@ -276,7 +284,7 @@ const createStyles = (mobileColors: MobileColors) =>
     approvalsLink: { minHeight: 44, flexDirection: 'row', alignItems: 'center', alignSelf: 'flex-start', gap: 8 },
     kicker: {
       color: mobileColors.primaryInk,
-      fontSize: 10,
+      fontSize: 12,
       fontWeight: '700',
       letterSpacing: 1,
       textTransform: 'uppercase'
@@ -288,6 +296,7 @@ const createStyles = (mobileColors: MobileColors) =>
     summaryCard: {
       backgroundColor: mobileColors.white,
       borderColor: mobileColors.border,
+      borderCurve: 'continuous',
       borderRadius: 17,
       borderWidth: 1,
       flex: 1,
@@ -300,6 +309,7 @@ const createStyles = (mobileColors: MobileColors) =>
     summaryIcon: {
       alignItems: 'center',
       backgroundColor: mobileColors.primarySoft,
+      borderCurve: 'continuous',
       borderRadius: 12,
       height: 30,
       justifyContent: 'center',
@@ -314,12 +324,14 @@ const createStyles = (mobileColors: MobileColors) =>
     filters: {
       alignSelf: 'flex-start',
       backgroundColor: mobileColors.surfaceSubtle,
+      borderCurve: 'continuous',
       borderRadius: 14,
       flexDirection: 'row',
       padding: 4
     },
     filterButton: {
       alignItems: 'center',
+      borderCurve: 'continuous',
       borderRadius: 12,
       justifyContent: 'center',
       minHeight: 44,
@@ -329,18 +341,26 @@ const createStyles = (mobileColors: MobileColors) =>
     filterText: { color: mobileColors.muted, fontSize: 12, fontWeight: '600' },
     filterTextSelected: { color: mobileColors.onPrimary },
     list: { gap: 12 },
-    messageCard: { backgroundColor: mobileColors.white, borderRadius: 16, padding: 16, gap: 8 },
+    messageCard: {
+      backgroundColor: mobileColors.white,
+      borderCurve: 'continuous',
+      borderRadius: 16,
+      padding: 16,
+      gap: 8
+    },
     emptyCard: {
       alignItems: 'center',
       backgroundColor: mobileColors.white,
       borderColor: mobileColors.border,
       borderWidth: 1,
+      borderCurve: 'continuous',
       borderRadius: 16,
       padding: 28,
       gap: 10
     },
     emptyIcon: {
       backgroundColor: mobileColors.primarySoft,
+      borderCurve: 'continuous',
       borderRadius: 16,
       height: 48,
       width: 48,

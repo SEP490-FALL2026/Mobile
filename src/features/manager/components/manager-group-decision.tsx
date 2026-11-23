@@ -317,7 +317,14 @@ const createStyles = (colors: MobileColors) =>
     label: { color: colors.foreground, fontSize: 13, fontWeight: '600' },
     error: { color: colors.danger, fontSize: 13, lineHeight: 19 },
     success: { color: colors.success, fontSize: 14, lineHeight: 20 },
-    line: { borderColor: colors.border, borderWidth: 1, borderRadius: 14, padding: 12, gap: 6 },
+    line: {
+      borderColor: colors.border,
+      borderWidth: 1,
+      borderCurve: 'continuous',
+      borderRadius: 14,
+      padding: 12,
+      gap: 6
+    },
     question: { gap: 6 },
     row: { flexDirection: 'row', gap: 10, flexWrap: 'wrap' },
     action: { minHeight: 44, justifyContent: 'center' },
@@ -325,6 +332,7 @@ const createStyles = (colors: MobileColors) =>
     outline: {
       minHeight: 44,
       paddingHorizontal: 16,
+      borderCurve: 'continuous',
       borderRadius: 12,
       borderWidth: 1,
       borderColor: colors.border,
@@ -334,6 +342,7 @@ const createStyles = (colors: MobileColors) =>
     primary: {
       minHeight: 44,
       paddingHorizontal: 16,
+      borderCurve: 'continuous',
       borderRadius: 12,
       backgroundColor: colors.primary,
       alignItems: 'center',
@@ -345,6 +354,7 @@ const createStyles = (colors: MobileColors) =>
       minHeight: 64,
       borderColor: colors.border,
       borderWidth: 1,
+      borderCurve: 'continuous',
       borderRadius: 12,
       padding: 10,
       color: colors.foreground,

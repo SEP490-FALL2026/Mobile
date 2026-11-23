@@ -68,13 +68,14 @@ const createStyles = (mobileColors: MobileColors) =>
       right: -4,
       minWidth: 16,
       height: 16,
+      borderCurve: 'continuous',
       borderRadius: 8,
       paddingHorizontal: 4,
       backgroundColor: mobileColors.danger,
       alignItems: 'center',
       justifyContent: 'center'
     },
-    badgeText: { color: mobileColors.onDanger, fontSize: 10, fontWeight: '700' },
+    badgeText: { color: mobileColors.onDanger, fontSize: 11, fontWeight: '700' },
     container: {
       backgroundColor: mobileColors.sidebar,
       borderTopColor: mobileColors.border,
@@ -87,6 +88,7 @@ const createStyles = (mobileColors: MobileColors) =>
     },
     iconContainer: {
       alignItems: 'center',
+      borderCurve: 'continuous',
       borderRadius: 16,
       height: 32,
       justifyContent: 'center',
