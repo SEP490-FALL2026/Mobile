@@ -2,6 +2,7 @@ import { useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { StyleSheet, Text, TextInput, View } from 'react-native'
 
+import { ChecklistToolbar } from '@/shared/ui/checklist-toolbar'
 import { PressableFeedback } from '@/shared/ui/pressable-feedback'
 import { apiErrorInfo } from '@/shared/api/api-error'
 import type { MobileColors } from '@/shared/theme/colors'
@@ -43,11 +44,13 @@ export function ManagerGroupDecision({
   const [returnReason, setReturnReason] = useState('')
   const [answers, setAnswers] = useState<{ version: string; values: Record<string, 'YES' | 'NO'> }>()
   const [validation, setValidation] = useState(false)
+  const [checklistOpen, setChecklistOpen] = useState(true)
   const sent = useRef(false)
 
   const pending = pendingNeedLines(lines.data ?? [])
   const values = answers && answers.version === checklist?.policyVersionId ? answers.values : {}
   const items = checklist?.step.checklist ?? []
+  const personItems = items.filter((item) => item.check === 'PERSON')
   const complete = items.length > 0 && items.every((item) => item.check === 'SYSTEM' || !!values[item.code])
   const hasNo = items.some((item) => item.check === 'PERSON' && values[item.code] === 'NO')
   const locked = decision.isPending || decision.isSuccess || (sent.current && !decision.isError)
@@ -218,7 +221,28 @@ export function ManagerGroupDecision({
           <Text style={styles.link}>{t('licenses.live.retry')}</Text>
         </PressableFeedback>
       ) : null}
-      {ready
+      {ready && items.length > 0 ? (
+        <ChecklistToolbar
+          allYes={personItems.every((item) => values[item.code] === 'YES')}
+          answerAllLabel={t('manager.live.answerAllYes')}
+          disabled={locked || !checklist}
+          expanded={checklistOpen}
+          onAnswerAll={() =>
+            checklist &&
+            setAnswers({
+              version: checklist.policyVersionId,
+              values: { ...values, ...Object.fromEntries(personItems.map((item) => [item.code, 'YES' as const])) }
+            })
+          }
+          onToggle={() => setChecklistOpen((open) => !open)}
+          progressLabel={t('manager.live.checklistProgress', {
+            answered: personItems.filter((item) => values[item.code] !== undefined).length,
+            total: personItems.length
+          })}
+          toggleLabel={t(checklistOpen ? 'manager.live.checklistCollapse' : 'manager.live.checklistExpand')}
+        />
+      ) : null}
+      {ready && checklistOpen
         ? items.map((item) => (
             <View key={item.code} style={styles.question}>
               <Text style={styles.label}>{item.text}</Text>

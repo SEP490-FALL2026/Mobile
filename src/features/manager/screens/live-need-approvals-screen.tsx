@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next'
 import { BackHandler, Platform, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
+import { ChecklistToolbar } from '@/shared/ui/checklist-toolbar'
 import { PressableFeedback } from '@/shared/ui/pressable-feedback'
 import type { NeedQueueResponseDtoDataItemsItem } from '@/shared/api/generated/contracts/need-decisions'
 import { useSession } from '@/shared/api/session-context'
@@ -55,6 +56,7 @@ export function LiveNeedApprovalsScreen({
   const router = useRouter()
   const session = useSession()
   const [page, setPage] = useState(1)
+  const [checklistOpen, setChecklistOpen] = useState(true)
   const [selected, setSelected] = useState<NeedQueueResponseDtoDataItemsItem>()
   const [choice, setChoice] = useState<'APPROVE' | 'REJECT' | 'RETURN'>()
   const [response, setResponse] = useState<{ version: string; answers: Record<string, 'YES' | 'NO'> }>()
@@ -108,6 +110,7 @@ export function LiveNeedApprovalsScreen({
     !policy.isFetching &&
     !!checklist?.length &&
     checklist.every((item) => item.check === 'SYSTEM' || !!answers[item.code])
+  const personItems = checklist?.filter((item) => item.check === 'PERSON') ?? []
   const hasNo = checklist?.some((item) => item.check === 'PERSON' && answers[item.code] === 'NO') ?? false
   const canDecide =
     hasScope &&
@@ -576,7 +579,33 @@ export function LiveNeedApprovalsScreen({
                           <Text style={styles.link}>{t('licenses.live.retry')}</Text>
                         </PressableFeedback>
                       ) : null}
-                      {checklist?.map((item) => (
+                      {checklist?.length ? (
+                        <ChecklistToolbar
+                          allYes={personItems.every((item) => answers[item.code] === 'YES')}
+                          answerAllLabel={t('manager.live.answerAllYes')}
+                          disabled={locked || !policy.data}
+                          expanded={checklistOpen}
+                          onAnswerAll={() => {
+                            if (!policy.data) return
+                            setResponse({
+                              version: policy.data.policyVersionId,
+                              answers: {
+                                ...answers,
+                                ...Object.fromEntries(personItems.map((item) => [item.code, 'YES' as const]))
+                              }
+                            })
+                          }}
+                          onToggle={() => setChecklistOpen((open) => !open)}
+                          progressLabel={t('manager.live.checklistProgress', {
+                            answered: personItems.filter((item) => answers[item.code] !== undefined).length,
+                            total: personItems.length
+                          })}
+                          toggleLabel={t(
+                            checklistOpen ? 'manager.live.checklistCollapse' : 'manager.live.checklistExpand'
+                          )}
+                        />
+                      ) : null}
+                      {(checklistOpen ? checklist : undefined)?.map((item) => (
                         <View key={item.code}>
                           <Text style={styles.label}>{item.text}</Text>
                           {item.check === 'SYSTEM' ? (

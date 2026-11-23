@@ -11,6 +11,7 @@ import type {
   LineSpendDecisionBodyDto,
   SpendDecisionBodyDto
 } from '@/shared/api/generated/contracts'
+import { ChecklistToolbar } from '@/shared/ui/checklist-toolbar'
 import { PressableFeedback } from '@/shared/ui/pressable-feedback'
 import type { LinesResponseDtoDataItemsItem } from '@/shared/api/generated/contracts/group-requests'
 import type { PolicyStepResponseDtoDataStepChecklistItem } from '@/shared/api/generated/contracts/policies'
@@ -842,33 +843,16 @@ function DecisionForm({
   return (
     <InfoCard title={t('spending.live.decisionTitle')}>
       {checklist.length > 0 ? (
-        <View style={styles.checklistHeader}>
-          <PressableFeedback
-            accessibilityLabel={t(expanded ? 'spending.live.checklistCollapse' : 'spending.live.checklistExpand')}
-            accessibilityRole='button'
-            accessibilityState={{ expanded }}
-            onPress={() => setExpanded((value) => !value)}
-            style={styles.checklistToggle}
-          >
-            <Feather color={colors.muted} name={expanded ? 'chevron-up' : 'chevron-down'} size={20} />
-            <Text style={styles.checklistProgress}>
-              {t('spending.live.checklistProgress', { answered, total: personItems.length })}
-            </Text>
-          </PressableFeedback>
-          {personItems.length > 0 ? (
-            <PressableFeedback
-              accessibilityRole='button'
-              accessibilityState={{ checked: allYes }}
-              onPress={onAnswerAll}
-              style={[styles.answerAll, allYes && styles.choiceSelected]}
-            >
-              <Feather color={colors.primaryInk} name='check-circle' size={16} />
-              <Text style={[styles.choiceText, allYes && styles.choiceTextSelected]}>
-                {t('spending.live.answerAllYes')}
-              </Text>
-            </PressableFeedback>
-          ) : null}
-        </View>
+        <ChecklistToolbar
+          allYes={allYes}
+          answerAllLabel={t('spending.live.answerAllYes')}
+          disabled={personItems.length === 0}
+          expanded={expanded}
+          onAnswerAll={onAnswerAll}
+          onToggle={() => setExpanded((value) => !value)}
+          progressLabel={t('spending.live.checklistProgress', { answered, total: personItems.length })}
+          toggleLabel={t(expanded ? 'spending.live.checklistCollapse' : 'spending.live.checklistExpand')}
+        />
       ) : null}
       {checklistLoading ? (
         <Text accessibilityRole='progressbar' style={styles.muted}>
@@ -1207,27 +1191,6 @@ const createStyles = (colors: MobileColors) =>
       flexWrap: 'wrap',
       gap: 7,
       paddingTop: 10
-    },
-    checklistHeader: {
-      alignItems: 'center',
-      flexDirection: 'row',
-      flexWrap: 'wrap',
-      gap: 8,
-      justifyContent: 'space-between'
-    },
-    checklistToggle: { alignItems: 'center', flexDirection: 'row', gap: 6, minHeight: 44 },
-    checklistProgress: { color: colors.muted, fontSize: 13, fontWeight: '600' },
-    answerAll: {
-      alignItems: 'center',
-      backgroundColor: colors.primarySoft,
-      borderColor: colors.border,
-      borderCurve: 'continuous',
-      borderRadius: 10,
-      borderWidth: 1,
-      flexDirection: 'row',
-      gap: 6,
-      minHeight: 44,
-      paddingHorizontal: 12
     },
     question: { borderTopColor: colors.border, borderTopWidth: 1, gap: 9, paddingTop: 11 },
     systemAnswer: { color: colors.success, fontSize: 12, fontWeight: '700' },
