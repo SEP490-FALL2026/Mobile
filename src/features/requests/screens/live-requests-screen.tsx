@@ -3,7 +3,7 @@ import { usePreventRemove } from '@react-navigation/native'
 import { Redirect, useFocusEffect, useRouter } from 'expo-router'
 import { useCallback, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { BackHandler, Platform, ScrollView, StyleSheet, Text, View } from 'react-native'
+import { BackHandler, Platform, RefreshControl, ScrollView, StyleSheet, Text, View } from 'react-native'
 
 import { SafeAreaView } from 'react-native-safe-area-context'
 
@@ -47,7 +47,18 @@ export function LiveRequestsScreen() {
   return (
     <SafeAreaView style={styles.safe}>
       <View style={styles.screen}>
-        <ScrollView contentContainerStyle={styles.content}>
+        <ScrollView
+          contentContainerStyle={styles.content}
+          refreshControl={
+            <RefreshControl
+              onRefresh={() => {
+                void query.refetch()
+              }}
+              refreshing={query.isRefetching}
+              tintColor={mobileColors.primary}
+            />
+          }
+        >
           <View style={styles.titleRow}>
             <View style={styles.titleBlock}>
               <Text accessibilityRole='header' style={styles.pageTitle}>

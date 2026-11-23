@@ -2,7 +2,7 @@ import { Feather } from '@expo/vector-icons'
 import { Redirect, useRouter } from 'expo-router'
 import { useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { ScrollView, StyleSheet, Text, View } from 'react-native'
+import { RefreshControl, ScrollView, StyleSheet, Text, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 import { PressableFeedback } from '@/shared/ui/pressable-feedback'
@@ -76,7 +76,19 @@ export function LiveInboxScreen() {
   return (
     <SafeAreaView style={styles.safe}>
       <View style={styles.screen}>
-        <ScrollView contentContainerStyle={styles.content}>
+        <ScrollView
+          contentContainerStyle={styles.content}
+          refreshControl={
+            <RefreshControl
+              onRefresh={() => {
+                void list.refetch()
+                void count.refetch()
+              }}
+              refreshing={list.isRefetching}
+              tintColor={mobileColors.primary}
+            />
+          }
+        >
           <View style={styles.titleBlock}>
             <Text accessibilityRole='header' style={styles.pageTitle}>
               {t('inbox.title')}

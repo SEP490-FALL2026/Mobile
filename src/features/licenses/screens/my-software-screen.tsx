@@ -2,7 +2,7 @@ import { Feather } from '@expo/vector-icons'
 import { Redirect, useRouter } from 'expo-router'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { ScrollView, StyleSheet, Text, View } from 'react-native'
+import { RefreshControl, ScrollView, StyleSheet, Text, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 import { PressableFeedback } from '@/shared/ui/pressable-feedback'
@@ -40,7 +40,19 @@ export function MySoftwareScreen() {
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.screen}>
-        <ScrollView contentContainerStyle={styles.content}>
+        <ScrollView
+          contentContainerStyle={styles.content}
+          refreshControl={
+            <RefreshControl
+              onRefresh={() => {
+                void software.refetch()
+                void summary.refetch()
+              }}
+              refreshing={software.isRefetching}
+              tintColor={mobileColors.primary}
+            />
+          }
+        >
           <View style={styles.titleBlock}>
             <Text accessibilityRole='header' style={styles.pageTitle}>
               {t('licenses.screenTitle')}
