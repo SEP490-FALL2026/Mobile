@@ -42,7 +42,7 @@ export function LiveHomeScreen() {
               />
               <View style={styles.profile}>
                 <Text style={styles.eyebrow}>{t('home.live.eyebrow')}</Text>
-                <Text accessibilityRole='header' numberOfLines={2} style={styles.title}>
+                <Text accessibilityRole='header' maxFontSizeMultiplier={1.3} numberOfLines={2} style={styles.title}>
                   {t('home.live.greeting', { name: account.employee.fullName })}
                 </Text>
                 <Text numberOfLines={1} style={styles.subtitle}>
@@ -57,7 +57,7 @@ export function LiveHomeScreen() {
                 onPress={() => router.push('/live-need-approvals')}
                 style={styles.featured}
               >
-                <View style={styles.cardIcon}>
+                <View style={[styles.cardIcon, styles.featuredIcon]}>
                   <Feather name='check-square' size={22} color={colors.primaryInk} />
                 </View>
                 <View style={styles.cardCopy}>
@@ -79,7 +79,7 @@ export function LiveHomeScreen() {
                 onPress={() => router.push('/spending-approvals')}
                 style={styles.featured}
               >
-                <View style={styles.cardIcon}>
+                <View style={[styles.cardIcon, styles.featuredIcon]}>
                   <Feather name='credit-card' size={22} color={colors.primaryInk} />
                 </View>
                 <View style={styles.cardCopy}>
@@ -212,6 +212,7 @@ const createStyles = (colors: MobileColors) =>
       alignItems: 'center',
       justifyContent: 'center'
     },
+    featuredIcon: { backgroundColor: colors.surface },
     cardCopy: { flex: 1, gap: 5 },
     cardTitle: { color: colors.foreground, fontSize: 15, fontWeight: '700' },
     cardDescription: { color: colors.muted, fontSize: 13, lineHeight: 19 },

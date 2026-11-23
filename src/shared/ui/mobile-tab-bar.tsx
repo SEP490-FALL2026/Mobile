@@ -54,7 +54,13 @@ export function MobileTabBar({ accessibilityLabel, tabs }: MobileTabBarProps) {
               </View>
             ) : null}
           </View>
-          <Text style={[styles.label, tab.selected && styles.labelSelected]}>{tab.label}</Text>
+          <Text
+            maxFontSizeMultiplier={1.15}
+            numberOfLines={1}
+            style={[styles.label, tab.selected && styles.labelSelected]}
+          >
+            {tab.label}
+          </Text>
         </PressableFeedback>
       ))}
     </View>
@@ -89,7 +95,6 @@ const createStyles = (mobileColors: MobileColors) =>
     },
     iconContainer: {
       alignItems: 'center',
-      borderCurve: 'continuous',
       borderRadius: 16,
       height: 32,
       justifyContent: 'center',
