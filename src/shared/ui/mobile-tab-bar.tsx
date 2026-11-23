@@ -40,7 +40,8 @@ export function MobileTabBar({ accessibilityLabel, tabs }: MobileTabBarProps) {
           onPress={tab.onPress}
           style={({ pressed }) => [styles.tab, pressed && styles.tabPressed, tab.disabled && styles.tabDisabled]}
         >
-          <View style={[styles.iconContainer, tab.selected && styles.iconContainerSelected]}>
+          <View style={styles.iconContainer}>
+            <View style={[styles.indicator, tab.selected && styles.indicatorSelected]} />
             <Feather
               accessibilityElementsHidden
               color={tab.selected ? mobileColors.primaryInk : mobileColors.muted}
@@ -95,12 +96,19 @@ const createStyles = (mobileColors: MobileColors) =>
     },
     iconContainer: {
       alignItems: 'center',
-      borderRadius: 16,
       height: 32,
       justifyContent: 'center',
-      width: 44
+      width: 60
     },
-    iconContainerSelected: {
+    indicator: {
+      borderRadius: 16,
+      bottom: 0,
+      left: 0,
+      position: 'absolute',
+      right: 0,
+      top: 0
+    },
+    indicatorSelected: {
       backgroundColor: mobileColors.primarySoft
     },
     label: {

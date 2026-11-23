@@ -190,6 +190,14 @@ export function LiveSpendingApprovalsScreen({ requestId }: { requestId?: string 
     void queue.refetch()
   }
 
+  function answerAllYes() {
+    setAnswers((current) => {
+      const next = { ...current }
+      for (const item of checklist) if (item.check === 'PERSON') next[item.code] = 'YES'
+      return next
+    })
+  }
+
   function setAnswer(code: string, answer: 'YES' | 'NO') {
     setAnswers((current) => ({ ...current, [code]: answer }))
   }
@@ -470,6 +478,7 @@ export function LiveSpendingApprovalsScreen({ requestId }: { requestId?: string 
                     oneStep={approval.routing.mode === 'ONE_STEP'}
                     loading={mutationPending}
                     onAnswer={setAnswer}
+                    onAnswerAll={answerAllYes}
                     onChooseDecision={setDecision}
                     onReasonChange={setReason}
                     onRetryChecklist={() => void policy.refetch()}
@@ -784,6 +793,7 @@ function DecisionForm({
   checklist,
   answers,
   onAnswer,
+  onAnswerAll,
   decision,
   hasRejectedLine,
   onChooseDecision,
@@ -804,6 +814,7 @@ function DecisionForm({
   checklist: PolicyStepResponseDtoDataStepChecklistItem[]
   answers: ChecklistAnswers
   onAnswer: (code: string, answer: 'YES' | 'NO') => void
+  onAnswerAll: () => void
   decision?: SpendDecision
   hasRejectedLine: boolean
   onChooseDecision: (decision: SpendDecision | undefined) => void
@@ -824,8 +835,41 @@ function DecisionForm({
   const { colors } = useMobileTheme()
   const { t } = useTranslation()
   const styles = createStyles(colors)
+  const [expanded, setExpanded] = useState(true)
+  const personItems = checklist.filter((item) => item.check === 'PERSON')
+  const answered = personItems.filter((item) => answers[item.code] !== undefined).length
+  const allYes = personItems.length > 0 && personItems.every((item) => answers[item.code] === 'YES')
   return (
     <InfoCard title={t('spending.live.decisionTitle')}>
+      {checklist.length > 0 ? (
+        <View style={styles.checklistHeader}>
+          <PressableFeedback
+            accessibilityLabel={t(expanded ? 'spending.live.checklistCollapse' : 'spending.live.checklistExpand')}
+            accessibilityRole='button'
+            accessibilityState={{ expanded }}
+            onPress={() => setExpanded((value) => !value)}
+            style={styles.checklistToggle}
+          >
+            <Feather color={colors.muted} name={expanded ? 'chevron-up' : 'chevron-down'} size={20} />
+            <Text style={styles.checklistProgress}>
+              {t('spending.live.checklistProgress', { answered, total: personItems.length })}
+            </Text>
+          </PressableFeedback>
+          {personItems.length > 0 ? (
+            <PressableFeedback
+              accessibilityRole='button'
+              accessibilityState={{ checked: allYes }}
+              onPress={onAnswerAll}
+              style={[styles.answerAll, allYes && styles.choiceSelected]}
+            >
+              <Feather color={colors.primaryInk} name='check-circle' size={16} />
+              <Text style={[styles.choiceText, allYes && styles.choiceTextSelected]}>
+                {t('spending.live.answerAllYes')}
+              </Text>
+            </PressableFeedback>
+          ) : null}
+        </View>
+      ) : null}
       {checklistLoading ? (
         <Text accessibilityRole='progressbar' style={styles.muted}>
           {t('spending.live.checklistLoading')}
@@ -839,7 +883,7 @@ function DecisionForm({
           <ActionButton label={t('account.retry')} onPress={onRetryChecklist} />
         </View>
       ) : null}
-      {checklist.map((item) => (
+      {(expanded ? checklist : []).map((item) => (
         <View key={item.code} style={styles.question}>
           <Text style={styles.bodyText}>{item.text}</Text>
           {item.check === 'SYSTEM' ? (
@@ -1164,6 +1208,27 @@ const createStyles = (colors: MobileColors) =>
       gap: 7,
       paddingTop: 10
     },
+    checklistHeader: {
+      alignItems: 'center',
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: 8,
+      justifyContent: 'space-between'
+    },
+    checklistToggle: { alignItems: 'center', flexDirection: 'row', gap: 6, minHeight: 44 },
+    checklistProgress: { color: colors.muted, fontSize: 13, fontWeight: '600' },
+    answerAll: {
+      alignItems: 'center',
+      backgroundColor: colors.primarySoft,
+      borderColor: colors.border,
+      borderCurve: 'continuous',
+      borderRadius: 10,
+      borderWidth: 1,
+      flexDirection: 'row',
+      gap: 6,
+      minHeight: 44,
+      paddingHorizontal: 12
+    },
     question: { borderTopColor: colors.border, borderTopWidth: 1, gap: 9, paddingTop: 11 },
     systemAnswer: { color: colors.success, fontSize: 12, fontWeight: '700' },
     choiceRow: { flexDirection: 'row', gap: 8 },
@@ -1176,7 +1241,7 @@ const createStyles = (colors: MobileColors) =>
       borderRadius: 10,
       borderWidth: 1,
       justifyContent: 'center',
-      minHeight: 38,
+      minHeight: 44,
       paddingHorizontal: 11,
       paddingVertical: 7
     },

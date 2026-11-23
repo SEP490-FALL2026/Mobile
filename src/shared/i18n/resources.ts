@@ -444,6 +444,10 @@ export const resources = {
           submitting: 'Submitting…',
           subtitle: 'Review each assigned item, the policy checklist, and the read-only budget snapshot.',
           systemYes: 'System check · Yes',
+          answerAllYes: 'Answer Yes to all',
+          checklistCollapse: 'Collapse policy checklist',
+          checklistExpand: 'Expand policy checklist',
+          checklistProgress: '{{answered}}/{{total}} answered',
           tabs: {
             queue: 'Approvals'
           },
@@ -1312,6 +1316,10 @@ export const resources = {
           submitting: 'Đang gửi…',
           subtitle: 'Rà soát từng mục, checklist chính sách và snapshot ngân sách chỉ đọc.',
           systemYes: 'Hệ thống kiểm tra · Có',
+          answerAllYes: 'Chọn Có cho tất cả',
+          checklistCollapse: 'Thu gọn checklist chính sách',
+          checklistExpand: 'Mở rộng checklist chính sách',
+          checklistProgress: 'Đã trả lời {{answered}}/{{total}}',
           tabs: {
             queue: 'Duyệt chi'
           },
