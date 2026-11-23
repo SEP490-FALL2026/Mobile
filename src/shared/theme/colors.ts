@@ -2,6 +2,7 @@ export type MobileColors = {
   background: string
   border: string
   danger: string
+  dangerBackground: string
   onDanger: string
   foreground: string
   muted: string
@@ -21,31 +22,33 @@ export type MobileColors = {
 }
 
 export const mobileColors: MobileColors = {
-  background: '#fef7ef',
-  border: '#efe3d7',
-  danger: '#b12a22',
+  background: '#f3f5fa',
+  border: '#e2e5ef',
+  danger: '#b42630',
+  dangerBackground: '#fbe8e9',
   onDanger: '#ffffff',
-  foreground: '#241c18',
-  muted: '#7c7068',
-  primary: '#ff7020',
-  primaryInk: '#a33700',
-  primarySoft: '#ffe0c0',
-  onPrimary: '#241c18',
-  sidebar: '#fdfaf5',
-  success: '#146b4a',
-  successBackground: '#e1f5e9',
-  successDot: '#40b880',
-  surface: '#fefbf6',
-  surfaceSubtle: '#fdf3e7',
-  warning: '#7a4500',
-  warningBackground: '#fff2d6',
-  white: '#fefbf6'
+  foreground: '#232741',
+  muted: '#646887',
+  primary: '#5546b0',
+  primaryInk: '#43378f',
+  primarySoft: '#ecebfa',
+  onPrimary: '#ffffff',
+  sidebar: '#ffffff',
+  success: '#13704a',
+  successBackground: '#e3f4ec',
+  successDot: '#2fa36b',
+  surface: '#ffffff',
+  surfaceSubtle: '#f5f6fb',
+  warning: '#8a4b00',
+  warningBackground: '#fdf0d8',
+  white: '#ffffff'
 }
 
 export const darkMobileColors: MobileColors = {
   background: '#05162a',
   border: '#1b3553',
   danger: '#f04850',
+  dangerBackground: '#3d1f27',
   onDanger: '#05162a',
   foreground: '#f8fcff',
   muted: '#a8b8cc',

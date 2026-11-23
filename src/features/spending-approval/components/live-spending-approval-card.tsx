@@ -15,8 +15,8 @@ export function LiveSpendingApprovalCard({
   item: ApprovalListResponseDtoDataItemsItem
   onPress: (requestId: string) => void
 }) {
-  const { colors, dark } = useMobileTheme()
-  const styles = createStyles(colors, dark)
+  const { colors } = useMobileTheme()
+  const styles = createStyles(colors)
   const { t, i18n } = useTranslation()
   const appName = item.plan?.applicationName ?? item.softwareName ?? t('spending.live.unnamed')
   const amount = formatSpendMoney(item.amount, i18n.language)
@@ -110,7 +110,7 @@ function getPrimaryCodeKey(code: string | null) {
   }
 }
 
-const createStyles = (colors: MobileColors, isDark: boolean) =>
+const createStyles = (colors: MobileColors) =>
   StyleSheet.create({
     card: {
       backgroundColor: colors.surface,
@@ -148,9 +148,9 @@ const createStyles = (colors: MobileColors, isDark: boolean) =>
     },
     badges: { alignItems: 'flex-start', flex: 1, flexWrap: 'wrap', flexDirection: 'row', gap: 5 },
     reserveBadge: {
-      backgroundColor: isDark ? '#573c1c' : '#fff1d8',
+      backgroundColor: colors.warningBackground,
       borderRadius: 8,
-      color: isDark ? '#ffd893' : '#80510a',
+      color: colors.warning,
       fontSize: 10,
       fontWeight: '700',
       overflow: 'hidden',
@@ -168,9 +168,9 @@ const createStyles = (colors: MobileColors, isDark: boolean) =>
       paddingVertical: 5
     },
     warningBadge: {
-      backgroundColor: isDark ? '#512a2a' : '#ffebea',
+      backgroundColor: colors.dangerBackground,
       borderRadius: 8,
-      color: isDark ? '#ffb8b2' : '#a02c24',
+      color: colors.danger,
       fontSize: 10,
       fontWeight: '700',
       overflow: 'hidden',

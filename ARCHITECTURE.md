@@ -247,8 +247,7 @@ that a real advantage.
   Manager screens, login, and shared tab bar use the web-aligned palette. Legacy
   prototype screens have not yet been converted to dark mode.
 
-The palette retains the web primary hues, but text on solid primary buttons uses a
-dark foreground for contrast rather than the web's white primary foreground.
+The palette matches the web light theme (indigo primary, white primary foreground) and the web dark theme.
 
 The session boundary uses the generated login, refresh and logout operations. The
 refresh token is stored using Expo SecureStore on native, with device-only iOS
