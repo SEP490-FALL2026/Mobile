@@ -1,7 +1,6 @@
-import { authLogin, authLogout, authRefresh } from './generated/operations/auth'
-import type { SessionTokenResponseDtoData } from './generated/model/auth'
+import { authLogin, authLogout, authRefresh } from './generated/api/auth/auth'
+import type { SessionTokenResponseDtoData } from './generated/contracts/auth'
 import { env } from '../config/env'
-import { httpStatusOf } from './http-error'
 import { assertSecureApiOrigin } from './secure-origin'
 
 type Tokens = NonNullable<SessionTokenResponseDtoData>
@@ -30,25 +29,25 @@ function requireTokens(tokens: SessionTokenResponseDtoData): Tokens {
   return tokens
 }
 
-/** Auth calls carry no access token and must never trigger the client's own refresh. */
-const authRequest = { skipAuth: true, skipAuthRefresh: true } as const
-
 export const sessionApi: SessionApi = {
   async login(email, password) {
     assertSecureApiOrigin(env.API_BASE_URL, __DEV__)
-    return requireTokens((await authLogin({ email, password }, authRequest)).data)
+    return requireTokens((await authLogin({ email, password })).data.data)
   },
   async refresh(refreshToken) {
     assertSecureApiOrigin(env.API_BASE_URL, __DEV__)
-    return requireTokens((await authRefresh({ refreshToken }, authRequest)).data)
+    return requireTokens((await authRefresh({ refreshToken })).data.data)
   },
   async logout(refreshToken) {
     assertSecureApiOrigin(env.API_BASE_URL, __DEV__)
-    await authLogout({ refreshToken }, authRequest)
+    await authLogout({ refreshToken })
   }
 }
 
-const statusOf = httpStatusOf
+function statusOf(error: unknown): number | undefined {
+  if (typeof error !== 'object' || error === null || !('status' in error)) return undefined
+  return typeof error.status === 'number' ? error.status : undefined
+}
 
 export class SessionExpiredError extends Error {
   constructor(options?: ErrorOptions) {
@@ -191,6 +190,14 @@ export class Session {
     const result = await operation(tokens.accessToken)
     if (this.revision !== revision || this.loggingOut) throw new SessionExpiredError()
     return result
+  }
+
+  // The server already ended every session (for example after a password change); only local state remains.
+  async endLocally(): Promise<void> {
+    ++this.revision
+    this.tokens = null
+    this.onExpired('logout')
+    await this.storage.remove()
   }
 
   async logout(): Promise<void> {

@@ -7,24 +7,26 @@
     "icon": "./assets/images/icon.png",
     "scheme": "softwarelicensemanagementmobile",
     "userInterfaceStyle": "automatic",
+    "locales": {
+      "en": "./locales/en.json",
+      "vi": "./locales/vi.json"
+    },
     "ios": {
       "supportsTablet": true,
+      "bundleIdentifier": "vn.saassentry.mobile",
       "infoPlist": {
-        "CFBundleLocalizations": [
-          "en",
-          "vi"
-        ]
+        "CFBundleLocalizations": ["en", "vi"]
       }
     },
     "android": {
+      "package": "vn.saassentry.mobile",
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
         "foregroundImage": "./assets/images/android-icon-foreground.png",
         "backgroundImage": "./assets/images/android-icon-background.png",
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
       },
-      "predictiveBackGestureEnabled": false,
-      "package": "com.saassentry.mobile"
+      "predictiveBackGestureEnabled": false
     },
     "web": {
       "output": "static",
@@ -50,14 +52,8 @@
         "expo-localization",
         {
           "supportedLocales": {
-            "ios": [
-              "en",
-              "vi"
-            ],
-            "android": [
-              "en",
-              "vi"
-            ]
+            "ios": ["en", "vi"],
+            "android": ["en", "vi"]
           }
         }
       ]
@@ -69,9 +65,9 @@
     "extra": {
       "router": {},
       "eas": {
-        "projectId": "fbc71161-6fb2-4336-80b9-9a7d7d1ff046"
+        "projectId": "b11209f4-b5a3-45f7-b816-3fbc41413e4e"
       }
     },
-    "owner": "dang37"
+    "owner": "ngtheson224"
   }
 }

@@ -3,29 +3,90 @@ export const resources = {
     translation: {
       common: {
         back: 'Back',
-        datePicker: {
-          title: 'Choose a date from the calendar',
-          clear: 'Clear date',
-          close: 'Close',
-          today: 'Today',
-          previousMonth: 'Previous month',
-          nextMonth: 'Next month'
-        },
-        brand: 'SAAS-SENTRY MOBILE',
         brandInitial: 'S',
         brandName: 'SaaS-Sentry',
-        demo: 'demo',
-        demoDecisionError: 'This demo item is no longer available for that action. Please review its current status.',
+        errorReference: 'Reference: {{id}}',
+        theme: {
+          open: 'Appearance',
+          title: 'Choose appearance',
+          system: 'Use device setting',
+          light: 'Light',
+          dark: 'Dark',
+          close: 'Close',
+          storageError: 'Appearance preference could not be saved or loaded.'
+        },
         language: {
           english: 'English',
           englishShort: 'EN',
-          selector: 'Language',
           switchTo: 'Switch to {{language}}',
           vietnamese: 'Vietnamese',
           vietnameseShort: 'VI'
         }
       },
+      account: {
+        openProfile: 'Open account information for {{name}}',
+        title: 'Account information',
+        subtitle: 'Your signed-in account',
+        details: 'Account details',
+        settings: 'Settings',
+        appearance: 'Language and appearance',
+        changePassword: 'Change password',
+        edit: {
+          title: 'Edit profile',
+          photoAlt: 'Your profile photo',
+          changePhoto: 'Change photo',
+          removePhoto: 'Remove photo',
+          photoHint: 'PNG, JPEG or WebP up to 1 MB. The app resizes the photo and removes location data before upload.',
+          workPhone: 'Work phone',
+          workPhonePlaceholder: '+84 912 345 678',
+          workPhoneHint: '8 to 15 digits with an optional leading +. Leave empty to remove it.',
+          save: 'Save phone number',
+          saved: 'Saved.',
+          errors: {
+            invalidPhone: 'The work phone must have 8 to 15 digits and may start with +.',
+            avatarTooLarge: 'The photo is larger than 1 MB. Choose a smaller photo.',
+            avatarType: 'The photo must be PNG, JPEG or WebP.',
+            general: 'Could not save the change. Check your connection and try again.'
+          }
+        },
+        name: 'Full name',
+        email: 'Sign-in email',
+        employeeCode: 'Employee ID',
+        department: 'Department',
+        jobTitle: 'Job title',
+        managerScope: 'Department managed',
+        noValue: 'Not provided',
+        loading: 'Loading account information…',
+        error: 'Could not load account information. Check your connection and try again.',
+        retry: 'Try again',
+        logoutTitle: 'Sign out?',
+        logoutMessage: 'You will need to sign in again to access your account.',
+        logoutCancel: 'Cancel',
+        logoutConfirm: 'Confirm sign out'
+      },
+      policy: {
+        title: 'Review policies',
+        intro: 'Read and acknowledge each policy before continuing.',
+        loading: 'Loading policy…',
+        loadError: 'Could not load the current policy. Try again or refresh your account.',
+        refreshAccount: 'Refresh account',
+        changed: 'The policy changed while you were confirming. Read the current version and confirm again.',
+        writeError: 'Could not confirm the result. Your account will be refreshed before you try again.',
+        version: 'Version {{version}}',
+        published: 'Published {{date}}',
+        confirm: 'I have read and understood'
+      },
       navigation: {
+        tab: {
+          home: 'Home',
+          'my-software': 'Software',
+          'live-need-approvals': 'To review',
+          'spending-approvals': 'To approve',
+          'live-requests': 'Requests',
+          'live-inbox': 'Inbox',
+          profile: 'Me'
+        },
+        home: 'Home',
         createRequest: 'Create request',
         inbox: 'Inbox',
         openTab: 'Open {{tab}}',
@@ -34,179 +95,97 @@ export const resources = {
         tabs: 'Main navigation'
       },
       auth: {
-        back: 'Back',
         profileLoading: 'Loading your account…',
         profileError: 'Could not load your account. Retry or sign out.',
-        demoNote: 'UF-17 / QĐ-46a · Internal email and password only; no external sign-in provider. Demo data.',
         email: 'Company email',
         emailPlaceholder: 'name@company.tech',
         forgotPassword: 'Forgot password?',
-        recoveryUnavailable: 'Password recovery is not available in the app yet. Please use the web application.',
+        forgot: {
+          title: 'Reset your password',
+          subtitle: 'Enter your company email. If it matches an account, we will send a reset link.',
+          emailRequired: 'Enter your company email.',
+          submit: 'Send reset link',
+          sent: 'If the email matches an account, a reset link has been sent. Check your mailbox and open the link on this device.',
+          backToLogin: 'Back to sign in'
+        },
+        setPassword: {
+          invitation: {
+            title: 'Activate your account',
+            invalidLink: 'This activation link can no longer be used. Ask your administrator to send a new invitation.',
+            done: 'Your account is active. Sign in with your new password.'
+          },
+          reset: {
+            title: 'Set a new password',
+            invalidLink: 'This reset link can no longer be used. Request a new one.',
+            done: 'Your password was changed and every session was ended. Sign in again.'
+          },
+          rules: 'Use 12 to 128 characters. It must not match your email.',
+          newPassword: 'New password',
+          confirm: 'Confirm new password',
+          tooShort: 'The password must have 12 to 128 characters.',
+          mismatch: 'The passwords do not match.',
+          submit: 'Save password',
+          goToLogin: 'Go to sign in',
+          requestNewLink: 'Request a new link'
+        },
+        change: {
+          title: 'Change password',
+          subtitle: 'Enter your current password and choose a new one.',
+          current: 'Current password',
+          currentRequired: 'Enter your current password.',
+          sameAsCurrent: 'The new password must differ from the current one.',
+          signOutNotice: 'After the change, every session ends and you must sign in again.',
+          submit: 'Change password',
+          done: 'Your password was changed. Sign in again with the new password.'
+        },
         loading: 'Please wait…',
         errors: {
           credentials: 'Check your email and password and try again.',
           rateLimit: 'Too many attempts. Please wait before trying again.',
           general: 'Could not sign in. Check your connection and try again.',
           configuration: 'The application API address is invalid or insecure. Contact your administrator.',
-          restore: 'The previous session could not be restored. Please sign in again.'
+          restore: 'The previous session could not be restored. Please sign in again.',
+          password: {
+            policy: 'The new password does not meet the password rules.',
+            currentInvalid: 'The current password is incorrect.',
+            rateLimit: 'Too many attempts. Please wait before trying again.',
+            general: 'Could not complete the request. Check your connection and try again.',
+            linkInvalid: 'This link can no longer be used.'
+          }
         },
         login: 'Sign in',
         loginTitle: 'Sign in to your internal account',
+        loginSubtitle: 'Access your software and follow your requests in one place.',
+        noAccount: 'No account yet? Contact your organisation administrator.',
+        secureSession: 'Your session is protected by short-lived access tokens.',
+        tagline: 'Every app. One place to manage.',
         password: 'Password',
         passwordPlaceholder: 'Enter your password',
-        recovery: {
-          backToLogin: 'Back to sign in',
-          done: {
-            description: 'Your demo password has been updated. You can now return to sign in.',
-            title: 'Password updated'
-          },
-          email: {
-            description: 'Enter your company email and we will send reset instructions.',
-            title: 'Reset your password'
-          },
-          newPassword: 'New password',
-          openLink: 'Open simulated reset link',
-          resetButton: 'Set new password',
-          send: 'Send instructions',
-          sent: {
-            description:
-              'If an account matches that email, reset instructions will be sent. This response is the same for every address.',
-            title: 'Check your email'
-          },
-          passwordStep: {
-            description: 'Choose a new password for your internal account.',
-            title: 'Create a new password'
-          }
-        }
+        showPassword: 'Show password',
+        hidePassword: 'Hide password',
+        back: 'Back'
       },
       home: {
-        capabilitiesHeading: 'Mobile scope',
-        capabilities: {
-          myRequests: {
-            title: 'My software and requests',
-            description:
-              'Employees view their software and requests, and submit or withdraw a simple request for catalog software.'
-          },
-          needApproval: {
-            title: 'Need approval',
-            description: 'Managers decide the need approval step for requests from their department.'
-          },
-          spendApproval: {
-            title: 'Spending approval',
-            description:
-              'The spending approver decides one item at a time using a read-only budget snapshot, and handles the need step when a manager submits their own request.'
-          },
-          inbox: {
-            title: 'In-app inbox',
-            description: 'Users read workflow updates in the app without push notifications.'
-          }
-        },
-        contractNote:
-          'These are the four mobile tasks in BRD 3.53. The current OpenAPI snapshot only defines a system status endpoint, so business actions are not connected yet.',
-        description: 'Native iOS and Android companion for the four workflows defined in the BRD.',
-        openEmployeeDemo: 'Open employee demo',
-        title: 'SaaS-Sentry on mobile'
+        live: {
+          eyebrow: 'YOUR WORKSPACE',
+          greeting: 'Hello, {{name}}',
+          subtitle: 'Your software, requests and updates in one place.',
+          actions: 'Your shortcuts',
+          software: 'My software',
+          softwareDescription: 'View your software access.',
+          createDescription: 'Request software from the catalog.',
+          requests: 'My requests',
+          requestsDescription: 'Follow requests involving you.',
+          approvalsDescription: 'Review need decisions assigned to you.',
+          noManagerScope: 'Your manager assignment is not currently active.',
+          spendingDescription: 'Review your assigned decisions and budget context.',
+          unread_one: '{{formattedCount}} unread notification',
+          unread_other: '{{formattedCount}} unread notifications',
+          countError: 'Unread count unavailable',
+          countLoading: 'Loading unread count'
+        }
       },
       manager: {
-        spend: {
-          title: 'Send to spending approver',
-          hint: 'Paid requests of your department whose need is approved. Send them on in one batch.',
-          empty: 'Nothing is waiting to be sent on.',
-          emptyHint: 'Approved paid requests of your department appear here.',
-          error: 'Could not load the queue. Please try again.',
-          uncertain: 'Could not confirm the submission. Refresh the queue to check before trying again.',
-          selectReady: 'Select all ready ({{count}})',
-          budgetOutcomes: {
-            WITHIN_BASE: 'Within the base budget',
-            USES_RESERVE: 'Uses the reserve',
-            BLOCKED: 'Blocked'
-          },
-          overBy: 'Over by {{amount}}',
-          reserveReason: 'Reason for using the reserve (one line)',
-          reserveReasonFor: 'Reserve reason for {{name}}',
-          reservePlaceholder: 'Why the reserve is needed',
-          reserveRequired: 'Give a one-line reason (up to 500 characters) for every request that uses the reserve.',
-          reserveIgnored: 'The reason was ignored because this request does not use the reserve.',
-          select: 'Select {{name}} requested by {{person}}',
-          reference: 'Request: {{id}}',
-          waited: 'Waiting {{days}} working days',
-          submit: 'Send {{count}} to the spending approver',
-          confirmTitle: 'Send {{count}} request(s) now?',
-          confirmNote:
-            'Each request is checked against the budget. Requests that fail stay in the queue with the reason.',
-          sending: 'Sending…',
-          confirmSend: 'Send now',
-          sent: 'Batch sent with {{count}} request(s).',
-          backToQueue: 'Back to the queue',
-          stages: {
-            NOT_SUBMITTED: 'Ready to send',
-            RESERVE_CONFIRMATION: 'Needs your reserve confirmation',
-            BLOCKED: 'Blocked',
-            RETURNED_BY_FINANCE: 'Returned by Finance'
-          },
-          stopReasons: {
-            STALE_COST_EVIDENCE: 'Price evidence is stale',
-            CLOSED_OR_EXPIRED_BUDGET_PERIOD: 'Budget period closed',
-            PRICE_MISSING: 'Price is missing',
-            PRICE_EXPIRED: 'The price quote is no longer valid',
-            NO_APPROVED_BUDGET: 'No approved budget in the current cost center',
-            OVER_RESERVE: 'Over the reserve',
-            RATE_MISSING: 'Exchange rate is missing'
-          },
-          outcomes: {
-            SENT_TO_APPROVER: 'Sent to the spending approver',
-            SENT_TO_FINANCE: 'Sent to Finance for review first',
-            STOPPED: 'Stopped, stays in the queue',
-            AWAITING_RESERVE_CONFIRMATION: 'Waiting for your reserve confirmation'
-          }
-        },
-        group: {
-          title: 'Request for people in your department',
-          hint: 'Ask for one paid plan for two or more people in your department.',
-          stepPlan: '1. Choose a plan',
-          changePlan: 'Choose another plan',
-          endDate: 'Use until',
-          endDatePlaceholder: 'Pick a date (optional)',
-          endDateOutOfRange: 'The date is too late. The latest is {{date}}.',
-          manyPaid:
-            '{{name}} uses {{count}} paid applications (threshold {{threshold}}). Explain why another is needed.',
-          manyPaidFor: 'Reason for {{name}}',
-          stepDetails: '2. Details for {{app}} · {{plan}}',
-          stepPeople: '3. Choose people ({{count}} chosen)',
-          searchPeople: 'Search people by name or email',
-          noPeople: 'No people found.',
-          peopleError: 'Could not load people. Please try again.',
-          validation: 'Choose a plan, enter a reason and choose at least one person.',
-          check: 'Check before sending',
-          checking: 'Checking…',
-          checkError: 'Could not check the request. Please try again.',
-          checkTitle: 'Result of the check',
-          planNotEligible: 'This plan does not take a group request.',
-          tooMany: 'Too many people. The most allowed is {{max}}.',
-          tooFew: 'Too few people. The least allowed is {{min}}.',
-          termLimit: 'The term is too long. The most allowed is {{max}} months.',
-          cost: 'Cost: {{total}} in all, {{each}} for each person.',
-          hasSpend: 'It goes on to a spending decision after the need is confirmed.',
-          noSpend: 'It has no spending step.',
-          submit: 'Send the request',
-          uncertain: 'Could not confirm the submission. Check your requests before trying again.',
-          sent: 'Request sent.',
-          openRequest: 'Open the request',
-          another: 'Create another request',
-          reasons: {
-            SPENDING_APPROVER: 'Is the spending approver',
-            OUTSIDE_DEPARTMENT: 'Not in your department',
-            NOT_ACTIVE: 'No longer working here',
-            EMAIL_REQUIRED: 'Has no work email',
-            HAS_ACCESS: 'Already has this software',
-            HAS_OPEN_REQUEST: 'Already has an open request',
-            DUPLICATE_LINE: 'Listed twice',
-            HEAD_IN_GROUP: 'The head is decided separately',
-            TERM_REQUIRED: 'This plan needs a "Use until" date',
-            OPEN_LIMIT_REACHED: 'Already has as many open requests as allowed',
-            MANY_PAID_SOFTWARE_REASON_REQUIRED: 'Needs a reason for another paid application'
-          }
-        },
         live: {
           openQueue: 'Need approvals',
           backSoftware: 'Back to my software',
@@ -218,6 +197,10 @@ export const resources = {
             'Individual requests assigned to you. Other request types and department-wide views are not available here.',
           loading: 'Loading approvals',
           queueError: 'Could not load assigned approvals. Please try again.',
+          notificationLoading: 'Checking whether this request is assigned to you…',
+          notificationError: 'Could not verify the request in your assigned queue. Please try again.',
+          notificationUnavailable:
+            'This request is no longer assigned to you or cannot be reviewed in the app. Check the queue or use the web.',
           detailError: 'Could not load this request. It may no longer be assigned to you.',
           count: '{{formattedCount}} assigned requests',
           assignedLabel: 'Assigned individual requests',
@@ -225,8 +208,24 @@ export const resources = {
           noScope: 'No active department-head assignment was returned. Refresh or contact your administrator.',
           urgentUnavailable: 'Urgent SLA count unavailable',
           urgentHint: 'Exact SLA time is not provided by the API.',
-          spendTab: 'Send to approver',
-          groupTab: 'Group request',
+          teamTab: 'Department team',
+          teamTitle: 'Department team',
+          group: {
+            title: 'Individual decisions for each person',
+            note: 'Decide every person in this group. Returning sends the whole group back.',
+            loading: 'Loading people in this request…',
+            error: 'Could not load the people in this request. Decisions are disabled until they can be verified.',
+            noPending: 'No person in this request is waiting for your decision.',
+            APPROVENamed: 'Approve {{name}}',
+            REJECTNamed: 'Reject {{name}}',
+            reasonNamed: 'Reason for rejecting {{name}}',
+            returnAll: 'Return the whole group',
+            returnAllNote: 'Return sends every person back to the requester, not individual members.',
+            saved: 'The group decision was recorded. Return to the queue to see the latest assignments.',
+            mismatch: 'The people in this request changed. Reload the list and decide again.',
+            reload: 'Reload the people'
+          },
+          teamWebOnly: 'Department management is available on the web. Mobile supports assigned need approvals.',
           personal: 'My software and requests',
           review: 'Review',
           refreshQueue: 'Refresh assigned requests',
@@ -245,9 +244,8 @@ export const resources = {
           costMissing: 'Pricing is not available yet.',
           costUnavailable: 'Amount cannot be displayed. Check the web application.',
           due: 'Due: {{date}}',
-          longTermBlocked:
-            'Approval for terms over 12 months requires a confirmation not available in the current API. Use the web workflow or contact support.',
           stale: 'This step is no longer available for a decision. Return to the queue and refresh.',
+          notAssigned: 'The server refused this decision because you cannot decide this request. Return to the queue.',
           saved: 'The need decision was recorded. Return to the queue to see the latest assignments.',
           uncertain:
             'The decision could not be confirmed. Return to the queue and check the request before trying again.',
@@ -255,268 +253,229 @@ export const resources = {
           approve: 'Approve',
           confirmApprove: 'Approve this need?',
           confirmReject: 'Reject this need?',
+          confirmReturn: 'Return this request?',
+          return: 'Return',
+          noTerm: 'No fixed duration',
+          checklistLoading: 'Loading policy checklist',
+          checklistError: 'Could not load the policy checklist.',
+          systemYes: 'Yes (checked by the system)',
+          yes: 'Yes',
+          no: 'No',
+          noBlocksApproval: 'Approval is unavailable when an answer is No.',
+          policyChanged: 'The policy changed. Reload the checklist and answer again before deciding.',
+          policyReloadError: 'The latest checklist or request could not be verified. Please try loading it again.',
+          reloadChecklist: 'Reload checklist',
           confirmNote:
             'This records a real decision on the server. The server checks authorization and current status.',
           rejectReason: 'Reason for rejection',
           reasonRequired: 'Enter a rejection reason of 1–1000 characters.',
           confirm: 'Confirm decision'
         },
-        approveNeed: 'Approve need',
-        approvedResult: 'Need approval recorded for {{id}}.',
-        backToHome: 'Back to demo home',
-        backToQueue: 'Back to department queue',
-        budgetLink: 'Budget plan',
-        businessReason: 'Business reason',
-        cancel: 'Cancel',
-        confirmApproval: 'Confirm need approval',
-        confirmRejection: 'Confirm rejection',
-        closeRejectSheet: 'Close rejection form',
-        department: 'Department',
-        departmentVisibleCount: 'Department-visible items',
-        departmentVisibilityHint: 'Visible for context, but not assigned to your approval queue.',
-        departmentVisibilityTitle: 'Department visibility · not assigned',
-        demoActionNote: 'Demo only · this action stays in this session and is not sent to an API.',
-        demoNote: 'Static demo data · SLA values are illustrative snapshots.',
-        detailSubtitle: 'Review the work context and request conditions before deciding.',
-        duration: '{{months}} months',
-        durationLabel: 'Requested duration',
-        emptyQueue: 'No requests are waiting for your decision.',
-        emptyQueueHint: 'Completed demo decisions are removed from the assigned queue.',
-        emptySearch: 'No requests match these filters.',
-        emptySearchHint: 'Try a different employee, software name or request flag.',
-        filters: {
-          all: 'All',
-          label: 'Filter department requests',
-          longTerm: 'Over 12 months',
-          outsideStandard: 'Outside standard'
-        },
-        initials: 'LH',
-        kicker: 'Department head · demo',
-        longTermConfirmation: 'I confirm this request is genuinely needed for more than 12 months for the project.',
-        longTermFlag: 'OI-07a · Over 12 months',
-        longTermNoticeBody:
-          'Requests over 12 months need additional review (OI-07a). Confirm the extended need before approval.',
-        longTermNoticeTitle: 'Extended duration review',
-        managerMeta: 'Department head · CC-TECH',
-        managerName: 'Lê Hoàng',
-        assignedCount: 'Assigned to you',
-        openRequest: 'Review request {{id}} for {{software}}',
-        outsideStandard: 'Outside standard',
-        outsideStandardDetail: 'Outside the standard toolset · the requester provided a business reason.',
-        plannedBudget: 'Plan line {{plan}}',
-        planUnavailable: 'Budget plan not provided in this demo',
-        queueHint: 'Only requests assigned to the department head appear in this queue.',
-        queueTitle: 'Assigned need approvals',
-        requesterTitle: 'Employee and department context',
-        reasons: {
-          claude:
-            'Development and research work needs an AI workspace for the requested 18-month period (demo reason).',
-          raycast: 'The employee needs a productivity launcher for daily engineering workflows (demo reason).'
-        },
-        reject: 'Reject',
-        rejectDescription: 'A rejection reason is required and will appear in the demo decision record.',
-        rejectReasonLabel: 'Rejection reason',
-        rejectReasonLength: '{{count}} / 10 characters minimum',
-        rejectReasonPlaceholder: 'Explain why the business need is not approved',
-        rejectTitle: 'Reject need',
-        rejectedResult: 'Request {{id}} rejected in this demo.',
-        rejectionSuggestions: {
-          cost: 'The cost is not suitable for this project at this time.',
-          projectTiming: 'The project has not reached the stage where this tool is needed.',
-          standardAlternative: 'A suitable alternative is already available in the standard toolset.'
-        },
-        searchLabel: 'Search by employee, software or request ID',
-        searchPlaceholder: 'Search department requests',
-        slaRemainingDays: 'SLA · {{days}}d {{hours}}h remaining',
-        slaRemainingHours: 'SLA · {{hours}}h remaining',
-        slaTitle: 'Service-level target',
-        slaUnavailable: 'SLA not provided in this demo',
-        employeeVisibilityNote: 'Visible within your department; this item is not assigned to the need approval queue.',
-        standardUnknown: 'Standard status not provided',
-        statusUnavailable: 'Demo status unavailable',
-        reasonUnavailable: 'No business reason provided in this demo.',
-        standardTool: 'Standard toolset',
-        subtitle: 'Review your department’s software needs and take assigned actions.',
-        suggestionsTitle: 'Suggested reasons',
         tabs: {
-          department: 'Department',
-          queue: 'Queue'
+          queue: 'Queue',
+          department: 'Department'
         },
-        title: 'Need approval queue',
-        unplannedBudget: 'Outside the approved plan · demo',
-        visibility: {
-          otherApproved: {
-            label: 'Need approved · department view',
-            note: 'Need approval was recorded in this demo.'
-          },
-          otherRejected: {
-            label: 'Rejected · department view',
-            note: 'The manager rejected this need in this demo.'
-          },
-          needApproved: {
-            label: 'Need approved · department view',
-            note: 'The spending approver approved this self-request’s need step. Subsequent steps are not simulated.'
-          },
-          rejected: {
-            label: 'Rejected · department view',
-            note: 'The spending approver rejected this self-request’s need step.'
-          },
-          withdrawn: {
-            label: 'Withdrawn · department view',
-            note: 'The employee withdrew this request.'
-          },
-          financeReview: {
-            label: 'Finance review · department view',
-            note: 'Visible within your department. Finance is reviewing this request; it is not in the spending approver queue.'
-          },
-          selfRequest: {
-            label: 'SoD-4 · self-request',
-            note: 'This is the manager’s own request. Need review is routed to the spending approver; no manager decision is available here.'
-          }
-        }
+        department: 'Department',
+        filters: {
+          all: 'All'
+        },
+        openRequest: 'Review request {{id}} for {{software}}'
       },
       spending: {
-        tabs: {
-          manager: 'Manager requests',
-          spend: 'Spending'
-        },
-        role: 'Spending approver',
-        noTerm: 'No "use until" date set',
-        outcome: { WITHIN_BASE: 'Within the base budget', USES_RESERVE: 'Uses the reserve', BLOCKED: 'Blocked' },
-        blockedReasons: {
-          PRICE_EXPIRED: 'The price quote is no longer valid',
-          NO_APPROVED_BUDGET: 'No approved budget in the current cost center',
-          OVER_RESERVE: 'Over the reserve'
-        },
-        routing: { oneStep: 'One-step request' },
-        kicker: 'Approvals assigned to you',
-        title: 'Spending approvals',
-        subtitle: 'Decide each item against its read-only budget snapshot. Batches and Finance work stay on the web.',
-        profileError: 'Could not load your account. Retry or sign out.',
-        retry: 'Retry',
-        refresh: 'Refresh list',
-        loading: 'Loading…',
-        unnamed: 'Unnamed software',
-        plan: 'Plan: {{plan}}',
-        months: '{{count}} months',
-        dateUnavailable: 'Date unavailable',
-        costUnavailable: 'Not available',
-        backToQueue: '← Back to the list',
-        assignedLabel: '{{count}} assigned',
-        card: {
-          open: 'Review {{name}} requested by {{person}}',
-          due: 'Due {{date}}'
-        },
-        spendQueue: {
-          title: 'Spending to approve',
-          hint: 'Paid requests that passed need approval and the budget check.',
-          empty: 'Nothing waiting for your spending decision.',
-          emptyHint: 'New items appear here as soon as they are assigned to you.',
-          error: 'Could not load the spending queue. Please try again.'
-        },
-        managerQueue: {
-          title: 'Manager requests',
-          hint: 'A head’s own request goes to you as one step (need and spending together).',
-          empty: 'No manager request is waiting for you.',
-          emptyHint: 'Requests from heads, or from departments without a head, appear here.',
-          error: 'Could not load manager requests. Please try again.'
-        },
-        manager: {
-          oneStep: 'One-step request',
-          sodNote: 'A head cannot approve their own request, so the need decision is yours.',
-          department: 'Department',
-          costNotApplicable: 'No cost for this request',
-          costMissing: 'Price not yet recorded',
-          longTermBlocked: 'A term over 12 months cannot be approved on mobile because the confirmation is missing.'
-        },
-        classification: {
-          INTERNAL: 'Internal software',
-          PAID_LICENSED: 'Paid licensed software'
-        },
-        controlLevel: {
-          FULL: 'Fully controllable',
-          PARTIAL: 'Partly controllable',
-          UNCONTROLLABLE: 'Not controllable'
-        },
-        detail: {
-          spendKicker: 'Spending decision',
-          managerKicker: 'Manager request',
-          error: 'Could not load the details. Please try again.',
-          request: 'Request',
-          reference: 'Reference',
-          requester: 'Requested by',
-          beneficiary: 'For',
-          costCenter: 'Cost center',
-          term: 'Term',
-          reason: 'Business reason',
-          due: 'Due date',
-          cost: 'Cost',
-          estimatedCost: 'Estimated cost',
-          preTax: 'Before tax',
-          tax: 'Tax',
-          totalPayable: 'Total payable',
-          noProfile: 'Estimated with the default price because no price profile is set.',
-          assessment: 'IT assessment',
-          classification: 'Software type',
-          controlLevel: 'Control level',
-          riskNote: 'Control risk note',
-          needDecided: 'Need decision',
-          decidedAt: 'Decided on',
-          budgetBlocked: 'The budget check says this cannot be approved. The server decides again when you confirm.'
-        },
-        budget: {
-          title: 'Budget snapshot',
-          accessibleLabel: 'Read-only budget snapshot',
-          readOnly: 'Read-only',
-          readOnlyHint: 'Reference data from the latest check. It cannot be edited on mobile.',
-          unavailable: 'No budget snapshot is available for this request.',
-          year: 'Year {{year}}',
-          base: 'Base budget',
-          reserve: 'Reserve',
-          committed: 'Committed',
-          pending: 'Waiting for a decision',
-          remainingBase: 'Left in the base',
-          remainingWithReserve: 'Left with the reserve',
-          overBase: 'Over the base by',
-          overReserve: 'Over the reserve by',
-          reserveConfirmed: 'Reserve confirmed by {{name}}',
-          reserveUnconfirmed:
-            'This request uses the reserve and the head has not confirmed it. The server may send it back.',
-          loading: 'Loading the budget snapshot…',
-          error: 'Could not load the budget snapshot. You can still decide; the server checks again.',
-          bindingTotal: 'Binds {{amount}}',
-          noYears: 'No year figures were recorded for this check.',
-          yearLabel: 'Year {{year}}',
-          budget: 'Budget',
-          held: 'Held',
-          spent: 'Spent',
-          thisRequest: 'This request',
-          remaining: 'Left after this request',
-          noBudget: 'No budget for this year.',
-          noFigure: '—'
-        },
-        decision: {
+        live: {
+          amountUnavailable: 'Amount unavailable',
           approve: 'Approve',
+          assignedOnly: 'Only items currently assigned to you are shown.',
+          assessmentTitle: 'Business and security assessment',
+          backToQueue: 'Back to assigned decisions',
+          beneficiary: 'For {{name}}',
+          blockedReasons: {
+            NO_APPROVED_BUDGET: 'No approved budget is available.',
+            OVER_RESERVE: 'The estimated cost exceeds the approved reserve.',
+            PRICE_EXPIRED: 'The price quote has expired.'
+          },
+          budgetFields: {
+            budgetBase: 'Approved budget',
+            committed: 'Committed',
+            overBaseBy: 'Amount above base budget',
+            overBy: 'Amount over budget',
+            pending: 'Pending',
+            remainingBase: 'Remaining base budget',
+            remainingWithReserve: 'Remaining including reserve',
+            reserve: 'Reserve',
+            spent: 'Spent'
+          },
+          budgetOutcomes: {
+            blocked: 'Budget check blocked',
+            usesReserve: 'Uses reserve · reference only',
+            withinBase: 'Within base budget · reference only'
+          },
+          budgetReadOnly: 'Current server snapshot for this cost center',
+          budgetTitle: 'Budget snapshot · {{year}}',
+          budgetTitleGeneric: 'Budget snapshot',
+          budgetUnavailable: 'A budget snapshot was not returned.',
+          budgetYear: 'Budget year',
+          checklistError: 'Could not load the current policy checklist.',
+          checklistIncomplete: 'Answer every person-assigned checklist question before deciding.',
+          checklistLoading: 'Loading the current policy checklist…',
+          classification: 'Classification',
+          classifications: {
+            internal: 'Internal',
+            paidLicensed: 'Paid licensed software'
+          },
+          confirmDecision: 'Confirm individual decision',
+          controlLevels: {
+            FULL: 'Full control',
+            PARTIAL: 'Partial control',
+            UNCONTROLLABLE: 'Uncontrollable'
+          },
+          controlLevel: 'Control level',
+          controlRisk: 'Control risk note',
+          costCenter: 'Cost center · {{code}}',
+          costCenterLabel: 'Cost center',
+          currentYearCost: 'Cost in {{year}}',
+          annualVendorAmount: 'Vendor annual amount',
+          decisionSucceeded: 'Decision submitted. The queue will be refreshed.',
+          decisionTitle: 'Policy 1.7 checklist and decision',
+          detailError: 'Could not load this item. It may no longer be assigned to you.',
+          detailLoading: 'Loading assigned item…',
+          detailTitle: 'Assigned spending decision',
+          dueDateLabel: 'Decision due date',
+          dueDateUnavailable: 'Due date unavailable',
+          dueOn: 'Due {{date}}',
+          emptyQueue: 'No spending decisions are assigned to you.',
+          emptyQueueHint: 'Assigned items will appear here when the server routes them to you.',
+          emptySearch: 'No items match this search.',
+          emptySearchHint: 'Try a software name, requester, cost center, or request ID.',
+          equivalentTool: 'Equivalent tool',
+          errors: {
+            budgetBlocked:
+              'The server rejected this decision because of a budget rule. Refresh and review the current request.',
+            commitment:
+              'The decision was not confirmed because the budget commitment could not be recorded. Do not retry; refresh the queue and verify the current status.',
+            checklistIncomplete:
+              'The server requires all policy checklist answers. Refresh the checklist and try again.',
+            checklistNo: 'The server rejected approval because a required checklist answer is No.',
+            notCheckable: 'The request has no current VND price that can be checked. No decision was recorded.',
+            notAssigned: 'This item is no longer available for your decision. Refresh your assigned queue.',
+            policyChanged:
+              'The policy changed before the decision was recorded. Reload the current checklist and review it again.',
+            returned:
+              'The server rechecked the budget and returned this request to its requester or department head. No decision was recorded.',
+            stale: 'This item changed or is no longer awaiting your decision. Refresh the queue before proceeding.',
+            uncertain:
+              'The server did not confirm the result. Do not retry; refresh the queue and verify the current status.'
+          },
+          estimatedCost: 'Estimated total cost',
+          expectedEndDate: 'Expected end date',
+          groupContinue: 'Continue with individual decisions',
+          groupCount: '{{formattedCount}} people',
+          groupError: 'Could not load the people in this request. Decisions are disabled until they can be verified.',
+          groupLoading: 'Loading people in this request…',
+          groupNoPendingLines:
+            'No people are currently waiting for a spending decision. Refresh the request before continuing.',
+          groupTitle: 'Individual decisions for each person',
+          individualDecisionOnly: 'Each person is decided separately',
+          oneStepReasons: {
+            REQUESTER_IS_HEAD: 'The requester is the department head.',
+            NO_DEPARTMENT_HEAD: 'No department head is assigned.',
+            HEAD_LEFT: 'The department head is no longer active.'
+          },
+          kicker: 'Assigned spending work',
+          needDecision: 'Need step decided by',
+          slaWorkingDays: 'Decision time limit',
+          needReason: 'Need-step reason',
+          nextPage: 'Next',
+          nextYearApproved: 'Approved next-year budget',
+          nextYearBudget: 'Next-year budget · {{year}}',
+          nextYearCost: 'Next-year cost',
+          nextYearRemaining: 'Remaining next-year budget',
+          nextYearRemainingAfter: 'Remaining after this request',
+          nextYearWarning: 'Next-year budget requires attention.',
+          no: 'No',
+          noApprovedBudget:
+            'No approved base budget was returned. The snapshot is reference-only and does not authorize a decision.',
+          noBlocksApproval: 'A No answer blocks approval. You may reject or return the request.',
+          noTerm: 'No fixed end date',
+          notAvailable: 'Not available',
+          notificationError: 'Could not verify this notification in your assigned queue.',
+          notificationUnavailable: 'This item is no longer assigned to you or cannot be reviewed in the app.',
+          oneStep: 'One-step route',
+          oneStepReason: 'One-step routing: {{reason}}',
+          primaryCodes: {
+            budgetOk: 'Budget check passed',
+            closedOrExpiredBudgetPeriod: 'Budget period is closed or expired',
+            highValue: 'High-value request',
+            insufficientBudget: 'Insufficient budget',
+            noActiveBudget: 'No active budget',
+            staleCostEvidence: 'Cost evidence needs review'
+          },
+          openRequest: 'Review {{requestId}} for {{software}}',
+          openQueue: 'Open spending approvals',
+          page: 'Page {{page}} of {{totalPages}}',
+          previousPage: 'Previous',
+          profileError: 'Could not load your account or verify your Spending Approver role.',
+          preTax: 'Pre-tax amount',
+          queueCount: '{{formattedCount}} assigned items',
+          queueError: 'Could not load your assigned decisions.',
+          queueLoading: 'Loading your assigned decisions…',
+          queueTitle: 'Assigned decisions',
+          readOnly: 'Read-only',
+          reasonLabel: 'Reason (required unless a No answer supplies it)',
+          reasonPlaceholder: 'Enter the reason for rejecting or returning this request',
+          reasonRequired: 'Enter a reason, or answer No in the checklist so the server can derive it.',
+          reserveConfirmation: 'Reserve confirmation',
+          reserveConfirmedBy: 'Confirmed by {{name}}',
           reject: 'Reject',
-          confirmApprove: 'Approve this request?',
-          confirmReject: 'Reject this request?',
-          confirmNote: 'The decision is recorded as an approval record and cannot be changed.',
-          reasonLabel: 'Reason for rejection',
-          reasonPlaceholder: 'Write why you reject this request',
-          reasonRequired: 'A reason of 1 to 1,000 characters is required.',
-          cancel: 'Cancel',
-          confirm: 'Confirm',
-          sending: 'Sending…',
-          saved: 'Decision saved. The list is refreshed.',
-          stale: 'This item is no longer waiting for your decision. Go back and refresh the list.'
+          reloadPolicy: 'Reload current policy and request',
+          policyReloadFailed:
+            'The current policy or assigned request could not be verified. Reload or return to the queue.',
+          requester: 'Requested by {{name}}',
+          requestId: 'Request {{requestId}}',
+          requestIdLabel: 'Request ID',
+          requestSummary: 'Request context',
+          refreshQueue: 'Refresh assigned decisions',
+          rejectAll: 'Reject selected people',
+          returnAllNotice: 'Return sends the entire group back to its head, not individual members.',
+          returnToHead: 'Return to department head',
+          returnToRequester: 'Return to requester',
+          searchLabel: 'Search current page by software, requester, cost center, or request ID',
+          searchPlaceholder: 'Search this page',
+          submitting: 'Submitting…',
+          subtitle: 'Review each assigned item, the policy checklist, and the read-only budget snapshot.',
+          systemYes: 'System check · Yes',
+          tabs: {
+            queue: 'Approvals'
+          },
+          term: 'Request duration',
+          termCostTitle: 'Cost by contract year',
+          termCutAt: 'Contract-adjusted end date',
+          tax: 'Estimated tax',
+          totalPayable: 'Estimated total payable',
+          workingDays_one: '{{count}} working day',
+          workingDays_other: '{{count}} working days',
+          termMonths_one: '{{count}} month',
+          termMonths_other: '{{count}} months',
+          title: 'Spending approvals',
+          unnamed: 'Unnamed software',
+          usesReserve: 'Uses reserve',
+          withinBase: 'Within base budget',
+          yes: 'Yes',
+          budgetBase: 'Approved budget',
+          reserve: 'Reserve',
+          spent: 'Spent'
         },
-        errors: {
-          forbidden: 'You cannot decide this item. It is not assigned to you or it is your own request.',
-          stale: 'This item was already decided or changed. Go back and refresh the list.',
-          recheck: 'The request was checked again and went back to Finance or its head. Nothing was decided.',
-          sod: 'You cannot decide a request whose Finance review you completed.',
-          invalid: 'The decision was not accepted. Check the reason and try again from the list.',
-          uncertain: 'Could not confirm the decision. Refresh the list to see the current status before trying again.'
+        committed: 'Spent and committed',
+        department: 'Cost center',
+        filters: {
+          all: 'All',
+          spending: 'Spending step'
+        },
+        openRequest: 'Review {{id}} for {{software}}',
+        requestId: 'Request ID',
+        reason: 'Reason',
+        tabs: {
+          queue: 'Approvals'
         }
       },
       inbox: {
@@ -525,16 +484,16 @@ export const resources = {
           countUnavailable: 'Unread count unavailable',
           countError: 'Could not load the unread count.',
           markAll: 'Mark all as read',
-          markRead: 'Mark as read',
-          markNamed: 'Mark {{code}} as read',
           loading: 'Loading notifications',
           loadError: 'Could not load notifications. Please try again.',
           writeError: 'Could not confirm the update. Check the inbox before trying again.',
+          openNamed: 'Open notification: {{name}}',
+          dismiss: 'Dismiss',
+          newNotification: 'New notification',
+          webOnly: 'This can only be done on the web application. Open the web application to continue.',
           empty: 'No notifications on this page.',
           read: 'Read',
           unread: 'Unread',
-          requestReference: 'Request: {{id}}',
-          unknown: 'Other update ({{code}})',
           codes: {
             REQUEST_SUBMITTED: 'Request submitted',
             REQUEST_GRANTED: 'Access granted',
@@ -544,62 +503,32 @@ export const resources = {
             REQUEST_SPEND_REJECTED: 'Spending rejected',
             STEP_ASSIGNED: 'A workflow step needs your attention',
             REQUEST_WITHDRAWN: 'Request withdrawn',
-            HANDOVER_REQUIRED: 'A data handover needs confirmation'
+            HANDOVER_REQUIRED: 'A data handover needs confirmation',
+            LICENSE_EXPIRY_REMINDER: 'Software access ending soon',
+            RENEWAL_WINDOW_OPENED: 'Software access can be renewed',
+            REVOCATION_UPCOMING: 'Software access will be revoked',
+            REVOCATION_CANCELLED: 'Access revocation cancelled',
+            TRANSFER_RIGHTS_REVOKING: 'Revoking access from the old department'
           }
         },
-        approverEmpty: 'No demo notifications are available for this role yet.',
-        demoNote: 'Demo notifications only · no push notifications',
-        items: {
-          assignedNeed: {
-            body: 'Request {{requestId}} was submitted for need review.',
-            title: 'New need review'
-          },
-          withdrawn: {
-            body: 'Request {{requestId}} was withdrawn by the employee.',
-            title: 'Request withdrawn'
-          },
-          otherNeedApproved: {
-            body: 'The need step for request {{requestId}} was approved by the spending approver.',
-            title: 'Need approved'
-          },
-          otherRejected: {
-            title: 'Need rejected'
-          },
-          needApproved: {
-            body: 'The need for request {{requestId}} was approved and moved to manager submission on the web.',
-            title: 'Need approved'
-          },
-          spendApproved: {
-            body: 'Spending was approved for request {{requestId}} and it moved to waiting for IT.',
-            title: 'Spending approved'
-          },
-          approved: {
-            body: 'The need for request {{requestId}} was approved and then sent for Finance review.',
-            title: 'Need approved'
-          },
-          expired: {
-            body: 'The {{software}} license has expired.',
-            title: 'License expired'
-          },
-          ready: {
-            body: 'Request {{requestId}} for {{software}} was ready for IT to start provisioning.',
-            title: 'Ready to provision'
-          },
-          rejected: {
-            title: 'Request rejected'
-          }
-        },
-        openNotification: 'Open notification about {{software}}',
-        reasonUnavailable: 'The demo rejection reason is unavailable.',
-        read: 'Read',
-        title: 'Inbox',
-        unread: 'Unread · {{count}}'
+        title: 'Inbox'
       },
       licenses: {
         live: {
           kicker: 'My workspace',
           description: 'Software rights held or starting later, from your account.',
           noDepartment: 'No department assigned',
+          views: {
+            current: 'Current',
+            ended: 'Ended'
+          },
+          endedEmpty: 'No ended software rights on this page.',
+          detailTitle: 'Software access',
+          detailNotFound: 'This software access is not available in your account.',
+          openNamed: 'Open software access: {{name}}, {{plan}}',
+          grantedOn: 'Granted on: {{date}}',
+          validUntil: 'Valid until: {{date}}',
+          renewed: 'Renewed',
           loading: 'Loading your account and software…',
           error: 'Could not load your information. Please check your connection and try again.',
           retry: 'Try again',
@@ -609,7 +538,6 @@ export const resources = {
           currentRights: 'Current and upcoming',
           expiringLabel: 'Expiring within 7 days',
           summaryError: 'The expiring total could not be loaded.',
-          unavailableHint: 'This feature is not connected yet.',
           pageFilterNote: 'The expiring filter applies only to the current page. Use the page controls to see more.',
           noExpiringPage: 'No expiring rights on this page.',
           emptyHint: 'Your assigned software will appear here when available.',
@@ -625,58 +553,34 @@ export const resources = {
           previous: 'Previous',
           next: 'Next',
           page: 'Page {{page}}',
-          otherFeatures: 'Approvals are not connected yet.',
           logout: 'Sign out',
           logoutError: 'Could not confirm sign out with the server. Check your connection and try again.',
           status: {
             UPCOMING: 'Upcoming',
             PROVISIONING: 'Provisioning',
-            ACTIVE: 'Active',
+            ACTIVE: 'In use',
             EXPIRED: 'Expired',
             REVOKING: 'Revoking',
             ENDING: 'Ending',
             ENDED: 'Ended'
           }
         },
-        accessTypes: {
-          licenseKey: 'License key (K4)',
-          workspaceSeat: 'Workspace seat'
-        },
-        back: 'Back to my software',
-        categories: {
-          all: 'All',
-          design: 'Design',
-          development: 'Development',
-          productivity: 'Productivity'
-        },
-        detail: {
-          account: 'Company account',
-          email: 'Company email',
-          key: 'License key',
-          keyMasked: 'Masked license key',
-          noPassword: 'Passwords are not shown in this app.',
-          status: 'Status',
-          workspace: 'Workspace'
-        },
-        demoData: 'Demo data · not connected to live accounts',
-        empty: 'No software found in this category.',
-        activeCount: '{{count}} software',
-        expiringCount: '{{count}} expiring',
-        employeeDepartment: 'CC-TECH',
-        employeeName: 'Nguyen Van A',
-        employeeRole: 'Product Dev',
         filterLabel: 'Filter software',
-        kicker: 'Employee workspace · demo',
         listFilters: {
           all: 'All software',
           expiring: 'Expiring'
         },
         listTitle: 'Your software',
-        noExpiring: 'No software is marked as expiring in this demo.',
-        openSoftware: 'Open {{name}} details',
-        securityNote: 'One company account or seat per employee. Credentials are not shared (QĐ-75).',
         screenTitle: 'My software',
-        screenSubtitle: 'Your company-provided software and access',
+        back: 'Back to my software',
+        categories: {
+          all: 'All'
+        },
+        detail: {
+          email: 'Company email',
+          key: 'License key',
+          status: 'Status'
+        },
         status: {
           active: 'Active',
           expiring: 'Expires in {{days}} days'
@@ -690,43 +594,138 @@ export const resources = {
         createLive: {
           title: 'Request software',
           intro: 'Select a plan from the catalog, enter a reason and review the server preview before sending.',
-          search: 'Search software or plans',
+          catalog: {
+            search: 'Search applications',
+            searchPlaceholder: 'Search application or vendor',
+            department: 'Department software',
+            all: 'View full catalog',
+            departmentHint: 'These are department suggestions. You may also choose from the full catalog.',
+            backToApps: 'Back to applications',
+            plansFor: 'Plans for {{name}}',
+            openApp: 'View plans for {{name}}',
+            openSuggestion: 'View plans for {{name}}, suggested plan {{plan}}',
+            vendor: 'Vendor: {{name}}',
+            planCount: '{{count}} plans',
+            paid: 'Paid software',
+            free: 'Free software',
+            empty: {
+              department: 'Your department has no software suggestions on this page.',
+              applications: 'No applications on this page.',
+              plans: 'No requestable plans on this page.'
+            },
+            pricing: {
+              PRICED: 'Pricing available',
+              MISSING: 'Pricing not yet available',
+              NOT_APPLICABLE: 'Pricing not applicable'
+            }
+          },
+          selectedHeading: 'Selected software',
+          changePlan: 'Change plan',
+          keepPlan: 'Keep selected plan',
           loading: 'Loading catalog',
           catalogError: 'Could not load the catalog.',
-          empty: 'No plans on this page.',
           choosePlan: 'Select {{app}}, {{plan}}',
+          leaveTitle: 'Leave this request?',
+          leaveMessage: 'Your selections and entered details will be lost.',
+          leaveConfirm: 'Leave request',
+          leaveCancel: 'Keep editing',
           planBlocked: 'This plan cannot currently be submitted.',
+          ineligible:
+            'Your account cannot create a software request. Contact your administrator if this is unexpected.',
           selected: '{{app}} · {{plan}}',
-          changePlan: 'Choose another plan',
-          endDate: 'Use until',
-          endDatePlaceholder: 'Pick a date (optional)',
-          endDateRequired: 'This plan needs a "Use until" date.',
-          maxEndDate: 'It can be used until {{date}} at the latest.',
-          openLimit: 'Open requests for new access: {{count}} of {{max}}.',
-          refusal: {
-            HAS_OPEN_REQUEST: 'You already have an open request for this plan.',
-            OPEN_LIMIT_REACHED: 'You already have as many open requests as you may.'
+          termRequired: 'Duration in months (required, 1–9)',
+          termOptional: 'Duration in months (1–12; leave empty for long-term use)',
+          unsupportedType: 'This plan type cannot currently be requested in the app.',
+          termRefusals: {
+            TERM_REQUIRED: 'Enter the duration in months.',
+            TERM_MONTHS_OUT_OF_RANGE: 'The duration is outside the permitted range.',
+            TERM_NOT_ASKED: 'This plan does not require a duration.',
+            TERM_LONG_TERM_NOT_ALLOWED: 'Your account must request a fixed duration.',
+            TERM_CONTRACT_ENDED: 'Your contract has ended. Contact your administrator.'
           },
-          manyPaid: 'You use {{count}} paid applications (threshold {{threshold}}). Explain why you need another.',
-          manyPaidLabel: 'Reason for another paid application',
-          term: 'Duration in months (1–12)',
+          refusals: {
+            HAS_OPEN_REQUEST: 'You already have an open request for this plan.',
+            OPEN_LIMIT_REACHED: 'You have reached the weekly request limit.'
+          },
           reason: 'Business reason (required)',
-          validation: 'Enter a reason of 1–1000 characters.',
+          validation: 'Enter a valid duration for this plan and a reason of 1–1000 characters.',
           preview: 'Review request',
           previewLoading: 'Checking request',
-          previewError: 'Could not check the request. Please try again.',
+          previewNoCostCenter: 'Your department has no active cost center. Contact Finance to set it up.',
+          previewNoDepartment: 'Your account has no eligible department. Contact your administrator.',
           review: 'Server preview',
+          reviewDetails: {
+            edit: 'Edit request details',
+            reason: 'Business reason: {{reason}}',
+            longTerm: 'Long-term use',
+            limit: 'Open new requests this week: {{count}}/{{max}}. Resets on {{date}}.',
+            priceTitle: 'Pricing',
+            priceMissing: 'Pricing is not available yet.',
+            referencePrice:
+              'This price is the plan reference price, not a purchased subscription price. The final cost is confirmed later.',
+            priceNotApplicable: 'Pricing does not apply.',
+            amountUnavailable: 'Amount unavailable',
+            blockedSpending: 'Spending approvers cannot submit this request.',
+            blockedUnplaced: 'Your account is not assigned to a department.',
+            monthly: '{{amount}} per month × {{months}} months',
+            price: 'Price: {{amount}}',
+            currentYear: 'Current year {{year}}: {{amount}}',
+            costMonths: 'Current-year duration: {{months}} months',
+            nextYear: 'From {{date}}: {{amount}} (estimate, not a current cost)',
+            nextCostMonths: 'Estimated next-year duration: {{months}} months',
+            termCut: 'Duration shortened by contract end: {{date}}',
+            totalEstimate: 'Estimated total payable: {{amount}}',
+            noTaxProfile: 'Estimate based on default tax assumptions; no tax profile is available.',
+            taxEstimate: 'Estimated non-deductible tax: {{amount}}',
+            annualVendor: 'Annual vendor payment: {{amount}}',
+            chainTitle: 'Expected approval route',
+            assignee: 'Assigned to: {{name}}',
+            openAccess: 'View existing access',
+            openRequest: 'View existing request',
+            kinds: {
+              NEED: 'Need approval',
+              SPEND_SUBMISSION: 'Spend submission',
+              SPEND_APPROVAL: 'Spending approval',
+              IT_EXECUTION: 'IT execution'
+            },
+            roles: {
+              MANAGER: 'Manager',
+              SPENDING_APPROVER: 'Spending approver',
+              IT_ADMIN: 'IT administrator'
+            },
+            explanations: {
+              DEPARTMENT_HEAD: 'Department head reviews the need.',
+              HEAD_ASKS_FOR_SELF: 'A manager’s own request goes directly to spending approval.',
+              WAITS_FOR_DEPARTMENT_HEAD: 'Waiting for a department head.',
+              WAITING_FOR_AN_APPROVER: 'Waiting for an approver.'
+            },
+            waiting: {
+              NO_SPENDING_APPROVER: 'Waiting for a spending approver.',
+              NO_DEPARTMENT_HEAD: 'Waiting for a department head.'
+            }
+          },
           canSubmit: 'The request can be submitted. The server will check again on submission.',
           cannotSubmit: 'This request cannot currently be submitted.',
           blockedCode: 'Blocked reason: {{reason}}',
           existingAccess: 'You already hold access to this software.',
-          maxTerm: 'Maximum duration: {{months}} months',
           pricingBlocked: 'The spending step cannot proceed until pricing is available.',
           expectedDays: 'Estimated processing time: {{days}} working days',
           submit: 'Send request',
           sending: 'Sending request. Please wait.',
           submitUncertain:
             'The result could not be confirmed. Check your requests before trying again to avoid duplicates.',
+          submitRejected: {
+            existingAccess: 'The server rejected this request because you already have access to this plan.',
+            openRequest: 'The server rejected this request because another request for this plan is already open.',
+            costCenter: 'The server rejected this request because your department has no active cost center.',
+            department: 'The server rejected this request because your account has no eligible department.',
+            plan: 'The server rejected this request because the selected plan is no longer available.',
+            ineligible: 'The server rejected this request because your account is not eligible.',
+            limit: 'The server rejected this request because the weekly limit has been reached.',
+            term: 'The server rejected the requested duration. Check the duration and review again.',
+            invalid: 'The server rejected the request details. Check them and review again.'
+          },
+          recheckRejected: 'Edit and check again',
           withdraw: 'Withdraw',
           withdrawNamed: 'Withdraw request for {{name}}',
           confirmWithdraw: 'Withdraw this request?',
@@ -734,83 +733,96 @@ export const resources = {
             'The server will check whether withdrawal is allowed. Some requests must wait for IT to close the task.',
           withdrawAction: 'Confirm withdrawal',
           withdrawSuccess: 'Withdrawal recorded. Check the current request status; it may still be waiting for IT.',
-          withdrawError: 'The result could not be confirmed. Check the refreshed request status before trying again.'
+          withdrawResultState: 'Status returned by the server:',
+          withdrawError: 'The result could not be confirmed. Check the refreshed request status before trying again.',
+          withdrawAfterDecision: 'A decision was already made on this request, so it can no longer be withdrawn.',
+          search: 'Search software or plans',
+          term: 'Duration in months (1–12)',
+          previewError: 'Could not check the request. Please try again.',
+          previewPlanUnavailable: 'This plan is no longer available. Choose another plan.',
+          previewAuthentication: 'Your session is no longer valid. Sign in again.',
+          previewInvalid: 'The server rejected the request details. Check them and try again.'
         },
         live: {
-          subtitle: 'Requests you sent, from your account.',
-          views: { open: 'In progress', ended: 'Ended' },
+          timeline: {
+            title: 'Request history',
+            loading: 'Loading history…',
+            error: 'Could not load request history.',
+            empty: 'No history is available.',
+            system: 'System',
+            unknownActor: 'Unknown actor',
+            unknown: 'Event: {{kind}}',
+            person: 'For {{name}}',
+            reason: 'Reason: {{reason}}',
+            kinds: {
+              SUBMITTED: 'Request submitted',
+              RESUBMITTED: 'Request resubmitted',
+              NEED_APPROVED: 'Need approved',
+              NEED_REJECTED: 'Need rejected',
+              LINE_NEED_DECIDED: 'Need decision recorded',
+              RESERVE_CONFIRMED: 'Reserve confirmed',
+              SPEND_APPROVED: 'Spending approved',
+              SPEND_REJECTED: 'Spending rejected',
+              LINE_SPEND_DECIDED: 'Spending decision recorded',
+              RETURNED_TO_REQUESTER: 'Returned for revision',
+              ASSESSMENT_COMPLETED: 'Assessment completed',
+              ASSESSMENT_REJECTED: 'Assessment rejected',
+              GRANT_STARTED: 'Provisioning started',
+              GRANT_COMPLETED: 'Access granted',
+              GRANT_FAILED: 'Provisioning failed',
+              WITHDRAWAL_REQUESTED: 'Withdrawal requested',
+              WITHDRAWN: 'Withdrawn',
+              CANCELLED: 'Cancelled',
+              RENEWAL_APPLIED: 'Renewal applied'
+            }
+          },
+          subtitle: 'Requests you sent or that were made for you.',
+          createShort: 'New',
+          forMe: 'Requested for you',
+          revisionWebOnly:
+            'This request was returned for revision. Editing and resubmitting it is only available on the web application.',
+          requestAgain: 'Request again',
+          requestAgainNamed: 'Request {{name}} again',
+          route: {
+            title: 'Approval route',
+            stepLabel: 'Step {{index}}: {{step}}, {{status}}',
+            holder: 'Held by {{name}}',
+            steps: {
+              NEED: 'Need review by department head',
+              SPEND: 'Spending decision',
+              IT: 'IT provisioning'
+            },
+            status: {
+              done: 'Completed',
+              current: 'In progress',
+              upcoming: 'Not started',
+              stopped: 'Stopped'
+            },
+            notes: {
+              REQUESTER_IS_HEAD: 'One step: you are the department head, so the request goes straight to spending.',
+              NO_DEPARTMENT_HEAD: 'One step: the department has no head, so the request goes straight to spending.',
+              HEAD_LEFT: 'One step: the department head left, so the request goes straight to spending.',
+              WAITING_NO_HEAD: 'Waiting until the department has a head.',
+              WAITING_NO_SPENDING_APPROVER: 'Waiting until a spending approver is available.'
+            }
+          },
+          informationHeading: 'Request information',
+          endDate: 'Expected end date',
+          noEndDate: 'No expected end date',
+          views: {
+            open: 'In progress',
+            ended: 'Ended'
+          },
           loading: 'Loading requests',
           listError: 'Could not load requests. Please try again.',
           detailError: 'Could not load this request. It may be unavailable to your account.',
+          detailNotFound: 'This request was not found or you cannot view it. If needed, check it on the web.',
           empty: 'No requests on this page.',
           unnamed: 'Software request',
           openNamed: 'Open request for {{name}}',
           submitted: 'Submitted: {{date}}',
           back: 'Back to requests',
           detailsTitle: 'Request details',
-          noTerm: 'No "use until" date set',
-          reviseOnWeb: 'This request was sent back for changes. Revise it on the web.',
-          manyPaid: 'Reason for using {{count}} paid applications',
-          involvement: { SENT: 'Sent by me', FOR_ME: 'For me' },
-          routing: {
-            DEFAULT: 'This request goes straight to the spending approver in one step.',
-            REQUESTER_IS_HEAD: 'You head the department, so it goes straight to the spending approver in one step.',
-            NO_DEPARTMENT_HEAD:
-              'Your department has no head, so it goes straight to the spending approver in one step.',
-            HEAD_LEFT: 'The head of your department left, so it goes straight to the spending approver in one step.'
-          },
-          spendStages: {
-            NOT_SUBMITTED: 'Waiting to be sent for a spending decision',
-            RETURNED_TO_REQUESTER: 'Returned to you for changes',
-            RESERVE_CONFIRMATION: 'Waiting for the head to confirm use of the reserve',
-            BLOCKED: 'Blocked by the budget check',
-            WAITING_SPEND_DECISION: 'Waiting for the spending decision',
-            REFUSED: 'Spending refused'
-          },
-          lineStates: {
-            AWAITING_NEED: 'Your line: waiting for need approval',
-            NEED_CONFIRMED: 'Your line: need confirmed',
-            NEED_REJECTED: 'Your line: need rejected',
-            SPEND_REJECTED: 'Your line: spending rejected',
-            APPROVED: 'Your line: approved',
-            EXECUTING: 'Your line: being set up',
-            AWAITING_IT_CLOSE: 'Your line: waiting for IT to close',
-            COMPLETED: 'Your line: completed',
-            FAILED: 'Your line: failed',
-            WITHDRAWN: 'Your line: withdrawn',
-            DROPPED: 'Your line: dropped',
-            CANCELLED: 'Your line: cancelled'
-          },
-          cost: 'Cost',
-          progress: {
-            title: 'Progress',
-            steps: {
-              submitted: 'Request sent',
-              need: 'Need approval',
-              spend: 'Spending approval',
-              execution: 'IT carries it out'
-            },
-            status: {
-              done: 'Done',
-              current: 'In progress',
-              pending: 'Not started',
-              failed: 'Stopped',
-              skipped: 'Not needed'
-            },
-            notes: {
-              noDepartmentHead: 'your department has no head yet',
-              noSpendingApprover: 'no spending approver is set',
-              financeReview: 'Finance is reviewing it',
-              budget: 'waiting for the budget',
-              notRequired: 'not needed, you head the department',
-              reserveConfirmation: 'waiting for the head to confirm the reserve',
-              blocked: 'blocked by the budget check',
-              revision: 'sent back to you for changes',
-              spendSubmission: 'waiting to be sent to the spending approver',
-              itAssessment: 'IT is assessing it'
-            }
-          },
-          viewRequest: 'View request',
           reference: 'Request: {{id}}',
           reason: 'Business reason',
           term: 'Requested duration',
@@ -838,9 +850,9 @@ export const resources = {
             AWAITING_IT_ASSESSMENT: 'Waiting for IT assessment',
             AWAITING_SPEND_SUBMISSION: 'Waiting for spending submission',
             AWAITING_FINANCE_REVIEW: 'Waiting for Finance review',
-            AWAITING_REQUESTER_REVISION: 'Sent back for changes',
             AWAITING_BUDGET: 'Waiting for budget',
             AWAITING_SPEND_DECISION: 'Waiting for spending decision',
+            AWAITING_REQUESTER_REVISION: 'Returned for revision',
             REJECTED: 'Rejected',
             IT_REJECTED: 'Rejected by IT',
             EXECUTING: 'In execution',
@@ -851,137 +863,16 @@ export const resources = {
             CANCELLED: 'Cancelled'
           }
         },
-        back: 'Back',
-        backToSoftware: 'Back to my software',
-        annualCost: '{{amount}} VND/year',
-        catalogCount: '{{count}} items',
-        catalogEmptyDescription: 'Try another software name or clear the search.',
-        catalogEmptyTitle: 'No matching software',
-        catalogFilters: 'Filter catalog',
-        catalogHint: 'Choose a tool already included in the company catalog.',
-        catalogSubtitle: 'Select a catalog tool and tell us how you will use it.',
-        categories: {
-          ai: 'AI tools',
-          productivity: 'Productivity'
-        },
         cancel: 'Keep request',
-        chooseCatalogTool: 'Choose software from the catalog',
-        chooseTool: 'Choose {{name}}',
-        confirm: 'Withdraw request',
-        confirmWithdraw: 'Withdraw request {{id}}?',
-        cost: '{{amount}} VND',
-        createNew: 'Request software',
-        continue: 'Continue',
-        detailsSubtitle: 'Choose a duration and explain the work need.',
-        detailsTitle: 'Request details',
-        demoData: 'Demo data · actions stay in this session only',
-        duration: '{{months}} months',
-        durationDefault: 'Standard period',
-        durationExtended: 'Extended period',
-        durationHint: 'Choose 12 or 18 months.',
-        durationLabel: 'Requested duration',
-        edit: 'Edit',
-        estimatedCost: 'Estimated amount',
-        errors: {
-          reasonRequired: 'Add a business reason for software outside the standard toolset.'
-        },
-        financeReview: 'Finance review',
+        title: 'My requests',
+        back: 'Back',
         filters: {
-          all: 'All',
-          outside: 'Outside standard',
-          standard: 'Standard'
-        },
-        kicker: 'Employee request',
-        listKicker: 'Employee workspace · demo',
-        listSubtitle: 'Track your requests and review their current status.',
-        managerName: 'Le Hoang',
-        longTermWarning: 'OI-07a · Requests over 12 months need additional review.',
-        newTitle: 'New software request',
-        noDemoQuote: 'No demo quote provided',
-        noMobileBatch:
-          'Mobile does not submit spending batches. A manager may submit a batch on the web when applicable.',
-        noBudgetCode: 'Budget check codes and balances are not shown. Rejected requests cannot be withdrawn.',
-        notices: {
-          financeReview: 'Finance is reviewing this request. It is not yet in the spending approver queue.',
-          longTerm: 'OI-07a · 18-month request; additional review applies.',
-          submittedWeb: 'Lê Hoàng submitted the spending batch on the web.'
-        },
-        rejectedBy: 'Rejected by manager {{name}} · {{date}}',
-        rejectedBySpending: 'Rejected by spending approver {{name}} · {{date}}',
-        rejectionReasons: {
-          adobeBudgetOptimized:
-            'The department budget has been optimized this quarter. Use Figma Pro or Canva Team from the standard toolset.'
+          all: 'All'
         },
         openRequest: 'Open request {{id}} for {{name}}',
-        outOfStandard: 'Outside the standard toolset',
-        outOfStandardReason: 'A business reason is required for software outside the standard toolset.',
-        personalOnly: 'This mobile request is for your own access only.',
-        planReference: 'Plan reference',
-        possibleSteps:
-          'Possible steps: need review, web batch submission when applicable, Finance review when required, spending approval when required, and IT provisioning. The actual route depends on the request.',
-        possibleStepsTitle: 'Possible review steps',
-        personalAccess: 'For my own access',
-        progress: 'Request progress: step {{current}} of {{total}}',
-        reasonOptional: 'Optional for software in the standard toolset.',
-        reasonLabel: 'Business reason',
-        reasonPlaceholder: 'Describe how this software supports your work',
-        review: 'Review request',
-        reviewSubtitle: 'Check the request details before sending it for review.',
-        reviewTitle: 'Review before submitting',
-        requestFor: 'Request for',
-        searchCatalog: 'Search software',
-        selectedTool: 'Selected software',
-        standardTool: 'Standard toolset',
         steps: {
-          catalog: 'Catalog',
-          details: 'Details',
-          review: 'Review'
-        },
-        summaryTitle: 'Request summary',
-        status: {
-          awaitingExecution: 'Waiting for IT to start',
-          awaitingManagerSubmission: 'Waiting for manager to submit',
-          awaitingNeed: 'Waiting for need approval',
-          completed: 'Completed',
-          executing: 'IT is provisioning · cannot withdraw',
-          financeReview: 'Finance review',
-          provisioningFailed: 'Provisioning failed',
-          rejected: 'Rejected',
-          spendApproval: 'Waiting for spending approval',
-          waitingInvitation: 'Waiting for invitation acceptance',
-          withdrawn: 'Withdrawn'
-        },
-        submit: 'Submit request',
-        submittedWeb: 'Submitted on the web',
-        changeTool: 'Change',
-        catalog: {
-          descriptions: {
-            claude: 'AI workspace for analysis, writing and coding tasks.',
-            raycast: 'Productivity launcher for tools and everyday workflows.'
-          }
-        },
-        timeline: {
-          awaitingExecution: 'IT has not started provisioning yet',
-          created: 'Request submitted',
-          executionStarted: 'IT started provisioning',
-          financeReview: 'Finance review started',
-          needApproved: 'Need approved',
-          needReviewPending: 'Waiting for need review',
-          rejected: 'Request rejected',
-          spendApproved: 'Spending approved',
-          spendReviewPending: 'Waiting for spending decision',
-          submittedWeb: 'Lê Hoàng submitted the spending batch on the web',
-          withdrawn: 'Request withdrawn'
-        },
-        timelineTitle: 'Request timeline',
-        title: 'My requests',
-        withdraw: 'Withdraw',
-        withdrawPolicy:
-          'Withdraw while pending approval, awaiting execution, failed, or waiting for an invitation. Do not withdraw while provisioning or after completion. A queue shows assigned work, not the full visibility scope.',
-        withdrawNamed: 'Withdraw request {{id}}',
-        withdrawResult: 'The request will be marked withdrawn in this demo.',
-        withdrawn: 'Withdrawn',
-        standard: 'Standard toolset'
+          details: 'Details'
+        }
       }
     }
   },
@@ -989,29 +880,90 @@ export const resources = {
     translation: {
       common: {
         back: 'Quay lại',
-        datePicker: {
-          title: 'Chọn ngày từ lịch',
-          clear: 'Xóa ngày',
-          close: 'Đóng',
-          today: 'Hôm nay',
-          previousMonth: 'Tháng trước',
-          nextMonth: 'Tháng sau'
-        },
-        brand: 'SAAS-SENTRY MOBILE',
         brandInitial: 'S',
         brandName: 'SaaS-Sentry',
-        demo: 'giả lập',
-        demoDecisionError: 'Yêu cầu demo không còn hợp lệ cho thao tác này. Vui lòng xem lại trạng thái hiện tại.',
+        errorReference: 'Mã tham chiếu: {{id}}',
+        theme: {
+          open: 'Giao diện',
+          title: 'Chọn giao diện',
+          system: 'Theo thiết bị',
+          light: 'Sáng',
+          dark: 'Tối',
+          close: 'Đóng',
+          storageError: 'Không thể lưu hoặc tải lựa chọn giao diện.'
+        },
         language: {
           english: 'Tiếng Anh',
           englishShort: 'EN',
-          selector: 'Ngôn ngữ',
           switchTo: 'Chuyển sang {{language}}',
           vietnamese: 'Tiếng Việt',
           vietnameseShort: 'VI'
         }
       },
+      account: {
+        openProfile: 'Mở thông tin tài khoản của {{name}}',
+        title: 'Thông tin tài khoản',
+        subtitle: 'Tài khoản bạn đang đăng nhập',
+        details: 'Chi tiết tài khoản',
+        settings: 'Cài đặt',
+        appearance: 'Ngôn ngữ và giao diện',
+        changePassword: 'Đổi mật khẩu',
+        edit: {
+          title: 'Chỉnh sửa hồ sơ',
+          photoAlt: 'Ảnh đại diện của bạn',
+          changePhoto: 'Đổi ảnh',
+          removePhoto: 'Gỡ ảnh',
+          photoHint: 'PNG, JPEG hoặc WebP tối đa 1 MB. Ứng dụng thu nhỏ ảnh và xóa dữ liệu vị trí trước khi tải lên.',
+          workPhone: 'Số điện thoại công việc',
+          workPhonePlaceholder: '+84 912 345 678',
+          workPhoneHint: '8 đến 15 chữ số, có thể bắt đầu bằng dấu +. Để trống để xóa số.',
+          save: 'Lưu số điện thoại',
+          saved: 'Đã lưu.',
+          errors: {
+            invalidPhone: 'Số điện thoại công việc gồm 8 đến 15 chữ số, có thể bắt đầu bằng dấu +.',
+            avatarTooLarge: 'Ảnh lớn hơn 1 MB. Vui lòng chọn ảnh nhỏ hơn.',
+            avatarType: 'Ảnh phải là định dạng PNG, JPEG hoặc WebP.',
+            general: 'Chưa thể lưu thay đổi. Kiểm tra kết nối và thử lại.'
+          }
+        },
+        name: 'Họ và tên',
+        email: 'Email đăng nhập',
+        employeeCode: 'Mã nhân viên',
+        department: 'Phòng ban',
+        jobTitle: 'Chức danh',
+        managerScope: 'Phòng ban phụ trách',
+        noValue: 'Chưa cập nhật',
+        loading: 'Đang tải thông tin tài khoản…',
+        error: 'Không thể tải thông tin tài khoản. Kiểm tra kết nối và thử lại.',
+        retry: 'Thử lại',
+        logoutTitle: 'Đăng xuất?',
+        logoutMessage: 'Bạn sẽ cần đăng nhập lại để truy cập tài khoản.',
+        logoutCancel: 'Hủy',
+        logoutConfirm: 'Xác nhận đăng xuất'
+      },
+      policy: {
+        title: 'Xem chính sách',
+        intro: 'Vui lòng đọc và xác nhận từng chính sách trước khi tiếp tục.',
+        loading: 'Đang tải chính sách…',
+        loadError: 'Không thể tải chính sách hiện hành. Hãy thử lại hoặc tải lại tài khoản.',
+        refreshAccount: 'Tải lại tài khoản',
+        changed: 'Chính sách đã thay đổi khi bạn xác nhận. Hãy đọc phiên bản hiện hành và xác nhận lại.',
+        writeError: 'Chưa thể xác nhận kết quả. Tài khoản sẽ được tải lại trước khi bạn thử lại.',
+        version: 'Phiên bản {{version}}',
+        published: 'Ban hành {{date}}',
+        confirm: 'Tôi đã đọc và hiểu'
+      },
       navigation: {
+        tab: {
+          home: 'Trang chủ',
+          'my-software': 'Phần mềm',
+          'live-need-approvals': 'Cần duyệt',
+          'spending-approvals': 'Duyệt chi',
+          'live-requests': 'Yêu cầu',
+          'live-inbox': 'Thông báo',
+          profile: 'Tôi'
+        },
+        home: 'Trang chủ',
         createRequest: 'Tạo yêu cầu',
         inbox: 'Thông báo',
         openTab: 'Mở mục {{tab}}',
@@ -1020,174 +972,96 @@ export const resources = {
         tabs: 'Điều hướng chính'
       },
       auth: {
-        back: 'Quay lại',
         profileLoading: 'Đang tải thông tin tài khoản…',
         profileError: 'Không thể tải thông tin tài khoản. Hãy thử lại hoặc đăng xuất.',
-        demoNote: 'UF-17 / QĐ-46a: email và mật khẩu nội bộ, không đăng nhập qua nhà cung cấp ngoài. Dữ liệu giả lập.',
         email: 'Email công ty',
         emailPlaceholder: 'ten@company.tech',
         forgotPassword: 'Quên mật khẩu?',
-        recoveryUnavailable: 'Đặt lại mật khẩu chưa có trên ứng dụng. Vui lòng sử dụng trang web.',
+        forgot: {
+          title: 'Đặt lại mật khẩu',
+          subtitle: 'Nhập email công việc. Nếu khớp với một tài khoản, chúng tôi sẽ gửi liên kết đặt lại.',
+          emailRequired: 'Hãy nhập email công việc.',
+          submit: 'Gửi liên kết đặt lại',
+          sent: 'Nếu email khớp với một tài khoản, liên kết đặt lại đã được gửi. Hãy kiểm tra hộp thư và mở liên kết trên thiết bị này.',
+          backToLogin: 'Quay lại đăng nhập'
+        },
+        setPassword: {
+          invitation: {
+            title: 'Kích hoạt tài khoản',
+            invalidLink: 'Liên kết kích hoạt không còn dùng được. Hãy nhờ quản trị viên gửi lại lời mời.',
+            done: 'Tài khoản đã được kích hoạt. Hãy đăng nhập bằng mật khẩu mới.'
+          },
+          reset: {
+            title: 'Đặt mật khẩu mới',
+            invalidLink: 'Liên kết đặt lại không còn dùng được. Hãy yêu cầu liên kết mới.',
+            done: 'Mật khẩu đã được đổi và mọi phiên đã kết thúc. Hãy đăng nhập lại.'
+          },
+          rules: 'Dùng từ 12 đến 128 ký tự và không trùng với email của bạn.',
+          newPassword: 'Mật khẩu mới',
+          confirm: 'Nhập lại mật khẩu mới',
+          tooShort: 'Mật khẩu phải có từ 12 đến 128 ký tự.',
+          mismatch: 'Hai mật khẩu không khớp.',
+          submit: 'Lưu mật khẩu',
+          goToLogin: 'Đến trang đăng nhập',
+          requestNewLink: 'Yêu cầu liên kết mới'
+        },
+        change: {
+          title: 'Đổi mật khẩu',
+          subtitle: 'Nhập mật khẩu hiện tại và chọn mật khẩu mới.',
+          current: 'Mật khẩu hiện tại',
+          currentRequired: 'Hãy nhập mật khẩu hiện tại.',
+          sameAsCurrent: 'Mật khẩu mới phải khác mật khẩu hiện tại.',
+          signOutNotice: 'Sau khi đổi, mọi phiên sẽ kết thúc và bạn phải đăng nhập lại.',
+          submit: 'Đổi mật khẩu',
+          done: 'Mật khẩu đã được đổi. Hãy đăng nhập lại bằng mật khẩu mới.'
+        },
         loading: 'Vui lòng đợi…',
         errors: {
           credentials: 'Vui lòng kiểm tra email và mật khẩu.',
           rateLimit: 'Quá nhiều lần thử. Vui lòng đợi rồi thử lại.',
           general: 'Không thể đăng nhập. Kiểm tra kết nối và thử lại.',
           configuration: 'Địa chỉ API của ứng dụng không hợp lệ hoặc không an toàn. Vui lòng liên hệ quản trị viên.',
-          restore: 'Không thể khôi phục phiên trước. Vui lòng đăng nhập lại.'
+          restore: 'Không thể khôi phục phiên trước. Vui lòng đăng nhập lại.',
+          password: {
+            policy: 'Mật khẩu mới chưa đạt yêu cầu về mật khẩu.',
+            currentInvalid: 'Mật khẩu hiện tại không đúng.',
+            rateLimit: 'Bạn đã thử quá nhiều lần. Vui lòng chờ rồi thử lại.',
+            general: 'Chưa thể hoàn tất yêu cầu. Kiểm tra kết nối và thử lại.',
+            linkInvalid: 'Liên kết này không còn dùng được.'
+          }
         },
         login: 'Đăng nhập',
         loginTitle: 'Đăng nhập tài khoản nội bộ',
+        loginSubtitle: 'Xem phần mềm và theo dõi yêu cầu của bạn tại một nơi.',
+        noAccount: 'Chưa có tài khoản? Liên hệ quản trị viên của tổ chức.',
+        secureSession: 'Phiên làm việc được bảo vệ bằng mã truy cập ngắn hạn.',
+        tagline: 'Mọi ứng dụng. Một điểm quản trị.',
         password: 'Mật khẩu',
         passwordPlaceholder: 'Nhập mật khẩu',
-        recovery: {
-          backToLogin: 'Về đăng nhập',
-          done: {
-            description: 'Mật khẩu giả lập đã được cập nhật. Bạn có thể quay lại đăng nhập.',
-            title: 'Đã cập nhật mật khẩu'
-          },
-          email: {
-            description: 'Nhập email công ty để nhận hướng dẫn đặt lại mật khẩu.',
-            title: 'Đặt lại mật khẩu'
-          },
-          newPassword: 'Mật khẩu mới',
-          openLink: 'Mở liên kết đặt lại giả lập',
-          resetButton: 'Đặt mật khẩu mới',
-          send: 'Gửi hướng dẫn',
-          sent: {
-            description:
-              'Nếu email khớp với tài khoản, hướng dẫn đặt lại sẽ được gửi. Phản hồi này giống nhau với mọi địa chỉ.',
-            title: 'Kiểm tra email'
-          },
-          passwordStep: {
-            description: 'Chọn mật khẩu mới cho tài khoản nội bộ.',
-            title: 'Tạo mật khẩu mới'
-          }
-        }
+        showPassword: 'Hiện mật khẩu',
+        hidePassword: 'Ẩn mật khẩu',
+        back: 'Quay lại'
       },
       home: {
-        capabilitiesHeading: 'Phạm vi Mobile',
-        capabilities: {
-          myRequests: {
-            title: 'Phần mềm và yêu cầu của tôi',
-            description:
-              'Nhân viên xem phần mềm, yêu cầu của mình và gửi hoặc rút yêu cầu đơn giản cho phần mềm đã có trong danh mục.'
-          },
-          needApproval: {
-            title: 'Duyệt nhu cầu',
-            description: 'Trưởng phòng quyết định bước duyệt nhu cầu cho yêu cầu của phòng mình.'
-          },
-          spendApproval: {
-            title: 'Duyệt chi',
-            description:
-              'Người duyệt chi quyết định từng mục trên snapshot ngân sách chỉ đọc, đồng thời duyệt bước nhu cầu khi trưởng phòng tự gửi yêu cầu.'
-          },
-          inbox: {
-            title: 'Hộp thông báo trong ứng dụng',
-            description: 'Người dùng xem cập nhật quy trình trong ứng dụng, không dùng thông báo đẩy.'
-          }
-        },
-        contractNote:
-          'Đây là bốn tác vụ mobile của BRD 3.53. OpenAPI hiện chỉ có endpoint trạng thái hệ thống nên các thao tác nghiệp vụ chưa được kết nối.',
-        description: 'Ứng dụng native iOS và Android cho bốn luồng được xác định trong BRD.',
-        openEmployeeDemo: 'Mở demo nhân viên',
-        title: 'SaaS-Sentry trên di động'
+        live: {
+          eyebrow: 'KHÔNG GIAN CỦA BẠN',
+          greeting: 'Xin chào, {{name}}',
+          subtitle: 'Phần mềm, yêu cầu và cập nhật của bạn tại một nơi.',
+          actions: 'Truy cập nhanh',
+          software: 'Phần mềm của tôi',
+          softwareDescription: 'Xem quyền sử dụng phần mềm.',
+          createDescription: 'Yêu cầu phần mềm từ danh mục.',
+          requests: 'Yêu cầu của tôi',
+          requestsDescription: 'Theo dõi các yêu cầu liên quan đến bạn.',
+          approvalsDescription: 'Xem các nhu cầu được giao cho bạn duyệt.',
+          noManagerScope: 'Phạm vi trưởng phòng của bạn hiện chưa có hiệu lực.',
+          spendingDescription: 'Rà soát quyết định được giao và thông tin ngân sách.',
+          unread_other: '{{formattedCount}} thông báo chưa đọc',
+          countError: 'Không thể tải số thông báo chưa đọc',
+          countLoading: 'Đang tải số thông báo chưa đọc'
+        }
       },
       manager: {
-        spend: {
-          title: 'Trình lên người duyệt chi',
-          hint: 'Yêu cầu trả phí của phòng đã được duyệt nhu cầu. Trình đi theo một lô.',
-          empty: 'Không có yêu cầu nào chờ trình.',
-          emptyHint: 'Yêu cầu trả phí đã duyệt nhu cầu của phòng sẽ hiện ở đây.',
-          error: 'Không tải được hàng đợi. Vui lòng thử lại.',
-          uncertain: 'Chưa xác nhận được việc trình. Hãy làm mới hàng đợi để kiểm tra trước khi thử lại.',
-          selectReady: 'Chọn tất cả mục sẵn sàng ({{count}})',
-          budgetOutcomes: { WITHIN_BASE: 'Trong ngân sách cơ sở', USES_RESERVE: 'Dùng dự phòng', BLOCKED: 'Bị chặn' },
-          overBy: 'Vượt {{amount}}',
-          reserveReason: 'Lý do dùng dự phòng (một dòng)',
-          reserveReasonFor: 'Lý do dùng dự phòng cho {{name}}',
-          reservePlaceholder: 'Vì sao cần dùng dự phòng',
-          reserveRequired: 'Hãy nhập lý do một dòng (tối đa 500 ký tự) cho mọi yêu cầu dùng dự phòng.',
-          reserveIgnored: 'Lý do bị bỏ qua vì yêu cầu này không dùng dự phòng.',
-          select: 'Chọn {{name}} do {{person}} yêu cầu',
-          reference: 'Yêu cầu: {{id}}',
-          waited: 'Đã chờ {{days}} ngày làm việc',
-          submit: 'Trình {{count}} yêu cầu lên người duyệt chi',
-          confirmTitle: 'Trình {{count}} yêu cầu ngay bây giờ?',
-          confirmNote: 'Mỗi yêu cầu được kiểm tra với ngân sách. Yêu cầu không đạt sẽ ở lại hàng đợi kèm lý do.',
-          sending: 'Đang gửi…',
-          confirmSend: 'Gửi ngay',
-          sent: 'Đã gửi lô gồm {{count}} yêu cầu.',
-          backToQueue: 'Về hàng đợi',
-          stages: {
-            NOT_SUBMITTED: 'Sẵn sàng trình',
-            RESERVE_CONFIRMATION: 'Cần bạn xác nhận dùng dự phòng',
-            BLOCKED: 'Đang bị chặn',
-            RETURNED_BY_FINANCE: 'Finance trả về'
-          },
-          stopReasons: {
-            STALE_COST_EVIDENCE: 'Bằng chứng giá đã cũ',
-            CLOSED_OR_EXPIRED_BUDGET_PERIOD: 'Kỳ ngân sách đã đóng',
-            PRICE_MISSING: 'Thiếu giá',
-            PRICE_EXPIRED: 'Báo giá không còn hiệu lực',
-            NO_APPROVED_BUDGET: 'Cost center hiện tại chưa có ngân sách đã duyệt',
-            OVER_RESERVE: 'Vượt quá dự phòng',
-            RATE_MISSING: 'Thiếu tỷ giá'
-          },
-          outcomes: {
-            SENT_TO_APPROVER: 'Đã chuyển tới người duyệt chi',
-            SENT_TO_FINANCE: 'Chuyển Finance rà soát trước',
-            STOPPED: 'Bị dừng, ở lại hàng đợi',
-            AWAITING_RESERVE_CONFIRMATION: 'Chờ bạn xác nhận dùng dự phòng'
-          }
-        },
-        group: {
-          title: 'Yêu cầu cho người trong phòng',
-          hint: 'Xin một gói trả phí cho từ hai người trở lên trong phòng của bạn.',
-          stepPlan: '1. Chọn gói',
-          changePlan: 'Chọn gói khác',
-          endDate: 'Dùng đến ngày',
-          endDatePlaceholder: 'Chọn ngày (không bắt buộc)',
-          endDateOutOfRange: 'Ngày dùng đến quá muộn. Muộn nhất là {{date}}.',
-          manyPaid:
-            '{{name}} đang dùng {{count}} phần mềm trả phí (ngưỡng {{threshold}}). Hãy giải thích vì sao cần thêm.',
-          manyPaidFor: 'Lý do cho {{name}}',
-          stepDetails: '2. Chi tiết cho {{app}} · {{plan}}',
-          stepPeople: '3. Chọn người ({{count}} người đã chọn)',
-          searchPeople: 'Tìm người theo tên hoặc email',
-          noPeople: 'Không tìm thấy ai.',
-          peopleError: 'Không tải được danh sách người. Vui lòng thử lại.',
-          validation: 'Hãy chọn gói, nhập lý do và chọn ít nhất một người.',
-          check: 'Kiểm tra trước khi gửi',
-          checking: 'Đang kiểm tra…',
-          checkError: 'Không kiểm tra được yêu cầu. Vui lòng thử lại.',
-          checkTitle: 'Kết quả kiểm tra',
-          planNotEligible: 'Gói này không nhận yêu cầu cho nhóm.',
-          tooMany: 'Quá nhiều người. Tối đa {{max}} người.',
-          tooFew: 'Quá ít người. Tối thiểu {{min}} người.',
-          termLimit: 'Thời hạn quá dài. Tối đa {{max}} tháng.',
-          cost: 'Chi phí: tổng {{total}}, mỗi người {{each}}.',
-          hasSpend: 'Sau khi xác nhận nhu cầu, yêu cầu đi tiếp tới bước quyết định chi.',
-          noSpend: 'Yêu cầu này không có bước duyệt chi.',
-          submit: 'Gửi yêu cầu',
-          uncertain: 'Chưa xác nhận được việc gửi. Hãy kiểm tra danh sách yêu cầu trước khi thử lại.',
-          sent: 'Đã gửi yêu cầu.',
-          openRequest: 'Mở yêu cầu',
-          another: 'Tạo yêu cầu khác',
-          reasons: {
-            SPENDING_APPROVER: 'Là người duyệt chi',
-            OUTSIDE_DEPARTMENT: 'Không thuộc phòng của bạn',
-            NOT_ACTIVE: 'Đã nghỉ việc',
-            EMAIL_REQUIRED: 'Chưa có email công việc',
-            HAS_ACCESS: 'Đã có phần mềm này',
-            HAS_OPEN_REQUEST: 'Đang có yêu cầu mở',
-            DUPLICATE_LINE: 'Bị chọn hai lần',
-            HEAD_IN_GROUP: 'Trưởng phòng được quyết riêng',
-            TERM_REQUIRED: 'Gói này cần chọn ngày "Dùng đến ngày"',
-            OPEN_LIMIT_REACHED: 'Đã có số yêu cầu mở tối đa',
-            MANY_PAID_SOFTWARE_REASON_REQUIRED: 'Cần lý do cho phần mềm trả phí thêm'
-          }
-        },
         live: {
           openQueue: 'Duyệt nhu cầu',
           backSoftware: 'Về phần mềm của tôi',
@@ -1198,6 +1072,10 @@ export const resources = {
           scope: 'Yêu cầu cá nhân được giao cho bạn. Các loại yêu cầu khác và danh sách toàn phòng chưa có tại đây.',
           loading: 'Đang tải yêu cầu cần duyệt',
           queueError: 'Không thể tải danh sách được giao. Vui lòng thử lại.',
+          notificationLoading: 'Đang kiểm tra yêu cầu trong hàng đợi của bạn…',
+          notificationError: 'Không thể kiểm tra yêu cầu trong hàng đợi được giao. Vui lòng thử lại.',
+          notificationUnavailable:
+            'Yêu cầu không còn được giao cho bạn hoặc chưa thể duyệt trên ứng dụng. Hãy kiểm tra hàng đợi hoặc xem trên web.',
           detailError: 'Không thể tải yêu cầu này. Yêu cầu có thể không còn được giao cho bạn.',
           count: '{{formattedCount}} yêu cầu được giao',
           assignedLabel: 'Yêu cầu cá nhân được giao',
@@ -1205,8 +1083,24 @@ export const resources = {
           noScope: 'Tài khoản chưa có phạm vi trưởng phòng đang hiệu lực. Hãy tải lại hoặc liên hệ quản trị viên.',
           urgentUnavailable: 'Chưa có số đơn gấp',
           urgentHint: 'API chưa cung cấp thời điểm SLA chính xác.',
-          spendTab: 'Trình chi',
-          groupTab: 'Yêu cầu nhóm',
+          teamTab: 'Đội ngũ phòng',
+          teamTitle: 'Đội ngũ phòng',
+          group: {
+            title: 'Quyết định riêng cho từng người',
+            note: 'Hãy quyết định cho từng người trong nhóm này. Trả về sẽ gửi cả nhóm về.',
+            loading: 'Đang tải danh sách người trong yêu cầu…',
+            error: 'Không thể tải danh sách người trong yêu cầu. Chưa thể xác minh nên đã khóa quyết định.',
+            noPending: 'Không có ai trong yêu cầu này đang chờ bạn quyết định.',
+            APPROVENamed: 'Duyệt {{name}}',
+            REJECTNamed: 'Từ chối {{name}}',
+            reasonNamed: 'Lý do từ chối {{name}}',
+            returnAll: 'Trả về cả nhóm',
+            returnAllNote: 'Trả về sẽ gửi tất cả mọi người về người gửi, không trả riêng từng thành viên.',
+            saved: 'Đã ghi nhận quyết định cho nhóm. Hãy quay lại hàng đợi để xem các việc được giao mới nhất.',
+            mismatch: 'Danh sách người trong yêu cầu đã thay đổi. Hãy tải lại và quyết định lại.',
+            reload: 'Tải lại danh sách người'
+          },
+          teamWebOnly: 'Quản lý đội ngũ thực hiện trên web. Mobile hỗ trợ duyệt nhu cầu được giao.',
           personal: 'Phần mềm và yêu cầu của tôi',
           review: 'Thẩm định',
           refreshQueue: 'Làm mới yêu cầu được giao',
@@ -1225,277 +1119,232 @@ export const resources = {
           costMissing: 'Chưa có thông tin giá.',
           costUnavailable: 'Không thể hiển thị số tiền. Hãy xem trên web.',
           due: 'Hạn xử lý: {{date}}',
-          longTermBlocked:
-            'Duyệt thời hạn trên 12 tháng cần xác nhận chưa có trong API hiện tại. Hãy dùng web hoặc liên hệ hỗ trợ.',
           stale: 'Bước này không còn sẵn sàng để quyết định. Hãy quay lại và tải mới danh sách.',
+          notAssigned:
+            'Máy chủ từ chối vì bạn không có quyền quyết định yêu cầu này. Hãy quay lại danh sách được giao.',
           saved: 'Đã ghi nhận quyết định nhu cầu. Quay lại danh sách để xem các việc được giao mới nhất.',
           uncertain: 'Chưa thể xác nhận quyết định. Hãy quay lại danh sách và kiểm tra trước khi thử lại.',
           reject: 'Từ chối',
           approve: 'Duyệt nhu cầu',
           confirmApprove: 'Duyệt nhu cầu này?',
           confirmReject: 'Từ chối nhu cầu này?',
+          confirmReturn: 'Trả lại yêu cầu này?',
+          return: 'Trả về',
+          noTerm: 'Không có thời hạn cố định',
+          checklistLoading: 'Đang tải danh sách kiểm tra chính sách',
+          checklistError: 'Không thể tải danh sách kiểm tra chính sách.',
+          systemYes: 'Có (hệ thống kiểm tra)',
+          yes: 'Có',
+          no: 'Không',
+          noBlocksApproval: 'Không thể duyệt khi có câu trả lời Không.',
+          policyChanged: 'Chính sách đã thay đổi. Hãy tải lại checklist và trả lời lại trước khi quyết định.',
+          policyReloadError: 'Chưa thể xác minh checklist hoặc yêu cầu mới nhất. Vui lòng tải lại.',
+          reloadChecklist: 'Tải lại checklist',
           confirmNote: 'Thao tác này ghi quyết định thật trên máy chủ. Máy chủ kiểm tra quyền và trạng thái hiện tại.',
           rejectReason: 'Lý do từ chối',
           reasonRequired: 'Nhập lý do từ chối từ 1 đến 1000 ký tự.',
           confirm: 'Xác nhận quyết định'
         },
-        approveNeed: 'Duyệt nhu cầu',
-        approvedResult: 'Đã ghi nhận duyệt nhu cầu cho {{id}}.',
-        backToHome: 'Về trang demo',
-        backToQueue: 'Về hàng đợi phòng ban',
-        budgetLink: 'Kế hoạch ngân sách',
-        businessReason: 'Lý do nghiệp vụ',
-        cancel: 'Hủy',
-        confirmApproval: 'Xác nhận duyệt nhu cầu',
-        confirmRejection: 'Xác nhận từ chối',
-        closeRejectSheet: 'Đóng biểu mẫu từ chối',
-        department: 'Phòng ban',
-        departmentVisibleCount: 'Mục phòng ban có thể xem',
-        departmentVisibilityHint: 'Có thể xem để nắm tình hình nhưng không được giao cho bạn xử lý.',
-        departmentVisibilityTitle: 'Phạm vi phòng ban · không được giao',
-        demoActionNote: 'Chỉ là demo · thao tác lưu trong phiên này, chưa gửi lên API.',
-        demoNote: 'Dữ liệu tĩnh · SLA là ảnh chụp minh họa.',
-        detailSubtitle: 'Xem bối cảnh công việc và điều kiện yêu cầu trước khi quyết định.',
-        duration: '{{months}} tháng',
-        durationLabel: 'Thời hạn đề nghị',
-        emptyQueue: 'Không có yêu cầu đang chờ bạn quyết định.',
-        emptyQueueHint: 'Yêu cầu đã xử lý trong demo được gỡ khỏi hàng đợi được giao.',
-        emptySearch: 'Không có yêu cầu khớp bộ lọc.',
-        emptySearchHint: 'Thử tên nhân viên, phần mềm hoặc cờ yêu cầu khác.',
-        filters: {
-          all: 'Tất cả',
-          label: 'Lọc yêu cầu phòng ban',
-          longTerm: 'Trên 12 tháng',
-          outsideStandard: 'Ngoài bộ chuẩn'
-        },
-        initials: 'LH',
-        kicker: 'Trưởng phòng · demo',
-        longTermConfirmation: 'Tôi xác nhận nhu cầu này thực sự cần thiết kéo dài trên 12 tháng cho dự án.',
-        longTermFlag: 'OI-07a · Trên 12 tháng',
-        longTermNoticeBody:
-          'Yêu cầu trên 12 tháng cần rà soát bổ sung (OI-07a). Hãy xác nhận nhu cầu kéo dài trước khi duyệt.',
-        longTermNoticeTitle: 'Rà soát thời hạn dài',
-        managerMeta: 'Trưởng phòng · CC-TECH',
-        managerName: 'Lê Hoàng',
-        assignedCount: 'Được giao cho bạn',
-        openRequest: 'Xem yêu cầu {{id}} cho {{software}}',
-        outsideStandard: 'Ngoài bộ chuẩn',
-        outsideStandardDetail: 'Ngoài bộ công cụ chuẩn · nhân viên đã cung cấp lý do nghiệp vụ.',
-        plannedBudget: 'Dòng kế hoạch {{plan}}',
-        planUnavailable: 'Chưa có thông tin kế hoạch ngân sách trong demo',
-        queueHint: 'Chỉ yêu cầu được giao cho trưởng phòng mới xuất hiện trong hàng đợi này.',
-        queueTitle: 'Yêu cầu chờ duyệt nhu cầu',
-        requesterTitle: 'Nhân viên và bối cảnh phòng ban',
-        reasons: {
-          claude: 'Nhu cầu công việc phát triển và nghiên cứu cần workspace AI trong thời hạn 18 tháng (lý do demo).',
-          raycast: 'Nhân viên cần công cụ khởi chạy để hỗ trợ quy trình kỹ thuật hằng ngày (lý do demo).'
-        },
-        reject: 'Từ chối',
-        rejectDescription: 'Cần có lý do từ chối; lý do sẽ xuất hiện trong bản ghi quyết định demo.',
-        rejectReasonLabel: 'Lý do từ chối',
-        rejectReasonLength: '{{count}} / tối thiểu 10 ký tự',
-        rejectReasonPlaceholder: 'Giải thích vì sao nhu cầu công việc không được duyệt',
-        rejectTitle: 'Từ chối nhu cầu',
-        rejectedResult: 'Đã ghi nhận từ chối yêu cầu {{id}} trong demo.',
-        rejectionSuggestions: {
-          cost: 'Chi phí hiện chưa phù hợp với dự án này.',
-          projectTiming: 'Dự án chưa đến giai đoạn cần công cụ này.',
-          standardAlternative: 'Bộ công cụ chuẩn đã có phần mềm phù hợp để thay thế.'
-        },
-        searchLabel: 'Tìm theo nhân viên, phần mềm hoặc mã yêu cầu',
-        searchPlaceholder: 'Tìm yêu cầu phòng ban',
-        slaRemainingDays: 'SLA · còn {{days}} ngày {{hours}} giờ',
-        slaRemainingHours: 'SLA · còn {{hours}} giờ',
-        slaTitle: 'Thời hạn xử lý',
-        slaUnavailable: 'Chưa có SLA trong dữ liệu demo',
-        employeeVisibilityNote: 'Yêu cầu thuộc phạm vi phòng ban; hiện không nằm trong hàng đợi duyệt nhu cầu.',
-        standardUnknown: 'Chưa có thông tin bộ chuẩn',
-        statusUnavailable: 'Chưa có trạng thái demo',
-        reasonUnavailable: 'Dữ liệu demo chưa có lý do nghiệp vụ.',
-        standardTool: 'Bộ công cụ chuẩn',
-        subtitle: 'Rà soát nhu cầu phần mềm của phòng và xử lý các mục được giao.',
-        suggestionsTitle: 'Lý do gợi ý',
         tabs: {
-          department: 'Phòng ban',
-          queue: 'Hàng đợi'
+          queue: 'Hàng đợi',
+          department: 'Phòng ban'
         },
-        title: 'Hàng đợi duyệt nhu cầu',
-        unplannedBudget: 'Ngoài kế hoạch đã duyệt · demo',
-        visibility: {
-          otherApproved: {
-            label: 'Đã duyệt nhu cầu · phạm vi phòng',
-            note: 'Đã ghi nhận duyệt nhu cầu trong phiên demo.'
-          },
-          otherRejected: {
-            label: 'Đã từ chối · phạm vi phòng',
-            note: 'Trưởng phòng đã từ chối nhu cầu trong phiên demo.'
-          },
-          needApproved: {
-            label: 'Đã duyệt nhu cầu · phạm vi phòng',
-            note: 'Người duyệt chi đã duyệt bước nhu cầu của yêu cầu tự gửi. Các bước tiếp theo chưa được mô phỏng.'
-          },
-          rejected: {
-            label: 'Đã từ chối · phạm vi phòng',
-            note: 'Người duyệt chi đã từ chối bước nhu cầu của yêu cầu tự gửi.'
-          },
-          withdrawn: {
-            label: 'Đã rút · phạm vi phòng',
-            note: 'Nhân viên đã rút yêu cầu này.'
-          },
-          financeReview: {
-            label: 'Finance rà soát · phạm vi phòng',
-            note: 'Trưởng phòng xem được trong phạm vi phòng ban. Finance đang rà soát; yêu cầu chưa vào hàng đợi Người duyệt chi.'
-          },
-          selfRequest: {
-            label: 'SoD-4 · yêu cầu của chính mình',
-            note: 'Đây là yêu cầu của trưởng phòng. Bước duyệt nhu cầu được chuyển cho Người duyệt chi; trưởng phòng không thể tự quyết ở đây.'
-          }
-        }
+        department: 'Phòng ban',
+        filters: {
+          all: 'Tất cả'
+        },
+        openRequest: 'Xem yêu cầu {{id}} cho {{software}}'
       },
       spending: {
-        tabs: {
-          manager: 'Yêu cầu trưởng phòng',
-          spend: 'Duyệt chi'
-        },
-        role: 'Người duyệt chi',
-        noTerm: 'Chưa đặt ngày dùng đến',
-        outcome: { WITHIN_BASE: 'Trong ngân sách cơ sở', USES_RESERVE: 'Dùng dự phòng', BLOCKED: 'Bị chặn' },
-        blockedReasons: {
-          PRICE_EXPIRED: 'Báo giá không còn hiệu lực',
-          NO_APPROVED_BUDGET: 'Cost center hiện tại chưa có ngân sách đã duyệt',
-          OVER_RESERVE: 'Vượt quá dự phòng'
-        },
-        routing: { oneStep: 'Yêu cầu một bước' },
-        kicker: 'Việc được giao cho bạn',
-        title: 'Phê duyệt chi',
-        subtitle: 'Quyết định từng mục dựa trên snapshot ngân sách chỉ đọc. Lô và việc của Finance chỉ làm trên web.',
-        profileError: 'Không tải được tài khoản. Hãy thử lại hoặc đăng xuất.',
-        retry: 'Thử lại',
-        refresh: 'Làm mới danh sách',
-        loading: 'Đang tải…',
-        unnamed: 'Phần mềm chưa có tên',
-        plan: 'Gói: {{plan}}',
-        months: '{{count}} tháng',
-        dateUnavailable: 'Chưa có ngày',
-        costUnavailable: 'Chưa có',
-        backToQueue: '← Về danh sách',
-        assignedLabel: '{{count}} mục được giao',
-        card: {
-          open: 'Xem {{name}} do {{person}} yêu cầu',
-          due: 'Hạn {{date}}'
-        },
-        spendQueue: {
-          title: 'Cần duyệt chi',
-          hint: 'Yêu cầu trả phí đã qua bước nhu cầu và kiểm tra ngân sách.',
-          empty: 'Không có mục nào chờ bạn duyệt chi.',
-          emptyHint: 'Mục mới sẽ xuất hiện ngay khi được giao cho bạn.',
-          error: 'Không tải được hàng đợi duyệt chi. Vui lòng thử lại.'
-        },
-        managerQueue: {
-          title: 'Yêu cầu của trưởng phòng',
-          hint: 'Yêu cầu của chính trưởng phòng chuyển tới bạn một bước (nhu cầu và chi gộp lại).',
-          empty: 'Không có yêu cầu của trưởng phòng nào chờ bạn.',
-          emptyHint: 'Yêu cầu của trưởng phòng, hoặc của phòng chưa có trưởng phòng, sẽ hiện ở đây.',
-          error: 'Không tải được yêu cầu của trưởng phòng. Vui lòng thử lại.'
-        },
-        manager: {
-          oneStep: 'Yêu cầu một bước',
-          sodNote: 'Trưởng phòng không tự duyệt yêu cầu của mình nên bước nhu cầu do bạn quyết.',
-          department: 'Phòng ban',
-          costNotApplicable: 'Yêu cầu này không có chi phí',
-          costMissing: 'Chưa ghi nhận giá',
-          longTermBlocked: 'Thời hạn trên 12 tháng chưa thể duyệt trên mobile vì thiếu xác nhận cần có.'
-        },
-        classification: {
-          INTERNAL: 'Phần mềm nội bộ',
-          PAID_LICENSED: 'Phần mềm trả phí có bản quyền'
-        },
-        controlLevel: {
-          FULL: 'Kiểm soát đầy đủ',
-          PARTIAL: 'Kiểm soát một phần',
-          UNCONTROLLABLE: 'Không kiểm soát được'
-        },
-        detail: {
-          spendKicker: 'Quyết định chi',
-          managerKicker: 'Yêu cầu của trưởng phòng',
-          error: 'Không tải được chi tiết. Vui lòng thử lại.',
-          request: 'Yêu cầu',
-          reference: 'Mã yêu cầu',
-          requester: 'Người yêu cầu',
-          beneficiary: 'Người thụ hưởng',
-          costCenter: 'Cost center',
-          term: 'Thời hạn',
-          reason: 'Lý do nghiệp vụ',
-          due: 'Hạn xử lý',
-          cost: 'Chi phí',
-          estimatedCost: 'Chi phí ước tính',
-          preTax: 'Trước thuế',
-          tax: 'Thuế',
-          totalPayable: 'Tổng phải trả',
-          noProfile: 'Ước tính theo giá mặc định vì chưa có hồ sơ giá.',
-          assessment: 'Đánh giá của IT',
-          classification: 'Loại phần mềm',
-          controlLevel: 'Mức kiểm soát',
-          riskNote: 'Ghi chú rủi ro kiểm soát',
-          needDecided: 'Quyết định nhu cầu',
-          decidedAt: 'Quyết định ngày',
-          budgetBlocked:
-            'Kiểm tra ngân sách cho thấy mục này không thể duyệt. Máy chủ sẽ kiểm tra lại khi bạn xác nhận.'
-        },
-        budget: {
-          title: 'Snapshot ngân sách',
-          accessibleLabel: 'Snapshot ngân sách chỉ đọc',
-          readOnly: 'Chỉ đọc',
-          readOnlyHint: 'Dữ liệu tham chiếu từ lần kiểm tra gần nhất, không sửa được trên mobile.',
-          unavailable: 'Yêu cầu này chưa có snapshot ngân sách.',
-          year: 'Năm {{year}}',
-          base: 'Ngân sách cơ sở',
-          reserve: 'Dự phòng',
-          committed: 'Đã cam kết',
-          pending: 'Đang chờ quyết định',
-          remainingBase: 'Còn lại trong ngân sách cơ sở',
-          remainingWithReserve: 'Còn lại gồm cả dự phòng',
-          overBase: 'Vượt ngân sách cơ sở',
-          overReserve: 'Vượt dự phòng',
-          reserveConfirmed: 'Trưởng phòng {{name}} đã xác nhận dùng dự phòng',
-          reserveUnconfirmed:
-            'Yêu cầu này dùng dự phòng nhưng trưởng phòng chưa xác nhận. Máy chủ có thể trả yêu cầu về.',
-          loading: 'Đang tải snapshot ngân sách…',
-          error: 'Không tải được snapshot ngân sách. Bạn vẫn quyết được; máy chủ sẽ kiểm tra lại.',
-          bindingTotal: 'Ràng buộc {{amount}}',
-          noYears: 'Lần kiểm tra này chưa ghi số liệu theo năm.',
-          yearLabel: 'Năm {{year}}',
-          budget: 'Ngân sách',
-          held: 'Đang giữ',
-          spent: 'Đã chi',
-          thisRequest: 'Yêu cầu này',
-          remaining: 'Còn lại sau yêu cầu này',
-          noBudget: 'Năm này chưa có ngân sách.',
-          noFigure: '—'
-        },
-        decision: {
+        live: {
+          amountUnavailable: 'Không có thông tin số tiền',
           approve: 'Duyệt',
+          assignedOnly: 'Chỉ hiển thị mục hiện được giao cho bạn.',
+          assessmentTitle: 'Đánh giá nghiệp vụ và bảo mật',
+          backToQueue: 'Quay lại việc được giao',
+          beneficiary: 'Cho {{name}}',
+          blockedReasons: {
+            NO_APPROVED_BUDGET: 'Chưa có ngân sách được phê duyệt.',
+            OVER_RESERVE: 'Chi phí ước tính vượt phần dự phòng được duyệt.',
+            PRICE_EXPIRED: 'Báo giá đã hết hạn.'
+          },
+          budgetFields: {
+            budgetBase: 'Ngân sách được duyệt',
+            committed: 'Đã cam kết',
+            overBaseBy: 'Số tiền vượt ngân sách cơ bản',
+            overBy: 'Vượt ngân sách',
+            pending: 'Đang chờ',
+            remainingBase: 'Ngân sách cơ bản còn lại',
+            remainingWithReserve: 'Còn lại gồm dự phòng',
+            reserve: 'Dự phòng',
+            spent: 'Đã chi'
+          },
+          budgetOutcomes: {
+            blocked: 'Kiểm tra ngân sách bị chặn',
+            usesReserve: 'Sử dụng dự phòng · chỉ tham khảo',
+            withinBase: 'Trong ngân sách cơ bản · chỉ tham khảo'
+          },
+          budgetReadOnly: 'Snapshot hiện tại từ máy chủ cho cost center này',
+          budgetTitle: 'Snapshot ngân sách · {{year}}',
+          budgetTitleGeneric: 'Snapshot ngân sách',
+          budgetUnavailable: 'Máy chủ không trả về snapshot ngân sách.',
+          budgetYear: 'Năm ngân sách',
+          checklistError: 'Không thể tải checklist chính sách hiện hành.',
+          checklistIncomplete: 'Vui lòng trả lời tất cả câu hỏi dành cho người duyệt trước khi quyết định.',
+          checklistLoading: 'Đang tải checklist chính sách hiện hành…',
+          classification: 'Phân loại',
+          classifications: {
+            internal: 'Phần mềm nội bộ',
+            paidLicensed: 'Phần mềm trả phí có bản quyền'
+          },
+          confirmDecision: 'Xác nhận quyết định riêng lẻ',
+          controlLevels: {
+            FULL: 'Kiểm soát đầy đủ',
+            PARTIAL: 'Kiểm soát một phần',
+            UNCONTROLLABLE: 'Không thể kiểm soát'
+          },
+          controlLevel: 'Mức kiểm soát',
+          controlRisk: 'Ghi chú rủi ro kiểm soát',
+          costCenter: 'Cost center · {{code}}',
+          costCenterLabel: 'Cost center',
+          currentYearCost: 'Chi phí năm {{year}}',
+          annualVendorAmount: 'Chi phí năm của nhà cung cấp',
+          decisionSucceeded: 'Đã gửi quyết định. Hàng đợi sẽ được tải lại.',
+          decisionTitle: 'Checklist chính sách 1.7 và quyết định',
+          detailError: 'Không thể tải mục này. Có thể mục đã không còn được giao cho bạn.',
+          detailLoading: 'Đang tải mục được giao…',
+          detailTitle: 'Quyết định duyệt chi được giao',
+          dueDateLabel: 'Hạn quyết định',
+          dueDateUnavailable: 'Không có hạn xử lý',
+          dueOn: 'Hạn {{date}}',
+          emptyQueue: 'Không có quyết định chi được giao cho bạn.',
+          emptyQueueHint: 'Mục sẽ xuất hiện khi máy chủ phân công cho bạn.',
+          emptySearch: 'Không có mục nào khớp tìm kiếm.',
+          emptySearchHint: 'Thử tên phần mềm, người yêu cầu, cost center hoặc mã yêu cầu.',
+          equivalentTool: 'Công cụ tương đương',
+          errors: {
+            budgetBlocked: 'Máy chủ từ chối quyết định do quy tắc ngân sách. Hãy tải lại và kiểm tra yêu cầu hiện tại.',
+            commitment:
+              'Chưa thể xác nhận quyết định vì không ghi nhận được khoản cam kết ngân sách. Không gửi lại; hãy tải hàng đợi và kiểm tra trạng thái hiện tại.',
+            checklistIncomplete: 'Máy chủ yêu cầu đủ câu trả lời checklist. Tải lại checklist rồi thử lại.',
+            checklistNo: 'Máy chủ từ chối phê duyệt vì có câu trả lời checklist là Không.',
+            notCheckable: 'Yêu cầu không có giá VND hiện hành để kiểm tra. Chưa có quyết định nào được ghi nhận.',
+            notAssigned: 'Mục này không còn khả dụng để bạn quyết định. Hãy tải lại hàng đợi được giao.',
+            policyChanged: 'Chính sách đã thay đổi trước khi ghi nhận quyết định. Tải checklist hiện tại và xem lại.',
+            returned:
+              'Máy chủ đã kiểm tra lại ngân sách và trả yêu cầu về người gửi hoặc trưởng bộ phận. Chưa có quyết định nào được ghi nhận.',
+            stale: 'Mục đã thay đổi hoặc không còn chờ bạn quyết định. Tải hàng đợi trước khi tiếp tục.',
+            uncertain: 'Máy chủ chưa xác nhận kết quả. Không thử gửi lại; hãy tải hàng đợi và kiểm tra trạng thái.'
+          },
+          estimatedCost: 'Tổng chi phí ước tính',
+          expectedEndDate: 'Ngày kết thúc dự kiến',
+          groupContinue: 'Tiếp tục với các quyết định riêng lẻ',
+          groupCount: '{{formattedCount}} người',
+          groupError: 'Không thể tải danh sách người trong yêu cầu. Chưa thể xác minh nên đã khóa quyết định.',
+          groupLoading: 'Đang tải danh sách người trong yêu cầu…',
+          groupNoPendingLines:
+            'Hiện không có người nào đang chờ quyết định duyệt chi. Hãy tải lại yêu cầu trước khi tiếp tục.',
+          groupTitle: 'Quyết định riêng cho từng người',
+          individualDecisionOnly: 'Mỗi người được quyết định riêng',
+          oneStepReasons: {
+            REQUESTER_IS_HEAD: 'Người yêu cầu là trưởng bộ phận.',
+            NO_DEPARTMENT_HEAD: 'Phòng ban chưa có trưởng bộ phận.',
+            HEAD_LEFT: 'Trưởng bộ phận không còn hoạt động.'
+          },
+          kicker: 'Công việc duyệt chi được giao',
+          needDecision: 'Bước nhu cầu được quyết định bởi',
+          slaWorkingDays: 'Thời hạn quyết định',
+          needReason: 'Lý do ở bước nhu cầu',
+          nextPage: 'Sau',
+          nextYearApproved: 'Ngân sách năm sau được duyệt',
+          nextYearBudget: 'Ngân sách năm sau · {{year}}',
+          nextYearCost: 'Chi phí năm sau',
+          nextYearRemaining: 'Ngân sách năm sau còn lại',
+          nextYearRemainingAfter: 'Còn lại sau yêu cầu này',
+          nextYearWarning: 'Ngân sách năm sau cần được lưu ý.',
+          no: 'Không',
+          noApprovedBudget:
+            'Không có ngân sách cơ bản được phê duyệt. Snapshot chỉ để tham khảo, không phải căn cứ cho phép quyết định.',
+          noBlocksApproval: 'Câu trả lời Không chặn phê duyệt. Bạn có thể từ chối hoặc trả về yêu cầu.',
+          noTerm: 'Không có ngày kết thúc cố định',
+          notAvailable: 'Không có dữ liệu',
+          notificationError: 'Không thể xác minh thông báo này trong hàng đợi được giao.',
+          notificationUnavailable: 'Mục này không còn được giao cho bạn hoặc không thể xử lý trên ứng dụng.',
+          oneStep: 'Luồng một bước',
+          oneStepReason: 'Lý do xử lý một bước: {{reason}}',
+          primaryCodes: {
+            budgetOk: 'Ngân sách đạt yêu cầu',
+            closedOrExpiredBudgetPeriod: 'Kỳ ngân sách đã đóng hoặc hết hạn',
+            highValue: 'Yêu cầu giá trị cao',
+            insufficientBudget: 'Ngân sách không đủ',
+            noActiveBudget: 'Không có ngân sách đang hiệu lực',
+            staleCostEvidence: 'Cần rà soát lại căn cứ chi phí'
+          },
+          openRequest: 'Xem {{requestId}} cho {{software}}',
+          openQueue: 'Mở hàng đợi duyệt chi',
+          page: 'Trang {{page}} / {{totalPages}}',
+          previousPage: 'Trước',
+          profileError: 'Không thể tải tài khoản hoặc xác minh vai trò Người duyệt chi.',
+          preTax: 'Số tiền trước thuế',
+          queueCount: '{{formattedCount}} mục được giao',
+          queueError: 'Không thể tải các quyết định được giao.',
+          queueLoading: 'Đang tải quyết định được giao…',
+          queueTitle: 'Việc được giao',
+          readOnly: 'Chỉ đọc',
+          reasonLabel: 'Lý do (bắt buộc trừ khi checklist có câu trả lời Không)',
+          reasonPlaceholder: 'Nhập lý do từ chối hoặc trả về yêu cầu',
+          reasonRequired: 'Nhập lý do hoặc trả lời Không trong checklist để máy chủ tự xác định lý do.',
+          reserveConfirmation: 'Xác nhận sử dụng dự phòng',
+          reserveConfirmedBy: 'Người xác nhận: {{name}}',
           reject: 'Từ chối',
-          confirmApprove: 'Duyệt yêu cầu này?',
-          confirmReject: 'Từ chối yêu cầu này?',
-          confirmNote: 'Quyết định được ghi thành bản ghi phê duyệt và không thể sửa.',
-          reasonLabel: 'Lý do từ chối',
-          reasonPlaceholder: 'Nhập lý do từ chối yêu cầu này',
-          reasonRequired: 'Cần nhập lý do từ 1 đến 1.000 ký tự.',
-          cancel: 'Hủy',
-          confirm: 'Xác nhận',
-          sending: 'Đang gửi…',
-          saved: 'Đã lưu quyết định. Danh sách đã được làm mới.',
-          stale: 'Mục này không còn chờ bạn quyết định. Hãy quay lại và làm mới danh sách.'
+          reloadPolicy: 'Tải lại chính sách và yêu cầu hiện tại',
+          policyReloadFailed: 'Không thể xác minh chính sách hoặc yêu cầu được giao. Hãy tải lại hoặc về hàng đợi.',
+          requester: 'Người yêu cầu: {{name}}',
+          requestId: 'Yêu cầu {{requestId}}',
+          requestIdLabel: 'Mã yêu cầu',
+          requestSummary: 'Thông tin yêu cầu',
+          refreshQueue: 'Tải lại việc được giao',
+          returnAllNotice: 'Trả về sẽ gửi cả nhóm lại cho trưởng bộ phận, không phải từng người riêng lẻ.',
+          returnToHead: 'Trả về trưởng bộ phận',
+          returnToRequester: 'Trả về người yêu cầu',
+          searchLabel: 'Tìm trong trang hiện tại theo phần mềm, người yêu cầu, cost center hoặc mã yêu cầu',
+          searchPlaceholder: 'Tìm trong trang này',
+          submitting: 'Đang gửi…',
+          subtitle: 'Rà soát từng mục, checklist chính sách và snapshot ngân sách chỉ đọc.',
+          systemYes: 'Hệ thống kiểm tra · Có',
+          tabs: {
+            queue: 'Duyệt chi'
+          },
+          term: 'Thời hạn yêu cầu',
+          termCostTitle: 'Chi phí theo năm hợp đồng',
+          termCutAt: 'Ngày kết thúc theo hợp đồng',
+          tax: 'Thuế ước tính',
+          totalPayable: 'Tổng số tiền phải trả ước tính',
+          workingDays_one: '{{count}} ngày làm việc',
+          workingDays_other: '{{count}} ngày làm việc',
+          rejectAll: 'Từ chối những người đã chọn',
+          withinBase: 'Trong ngân sách cơ bản',
+          termMonths_one: '{{count}} tháng',
+          termMonths_other: '{{count}} tháng',
+          title: 'Duyệt chi',
+          unnamed: 'Phần mềm chưa xác định',
+          usesReserve: 'Sử dụng dự phòng',
+          yes: 'Có',
+          budgetBase: 'Ngân sách được duyệt',
+          reserve: 'Dự phòng',
+          spent: 'Đã chi'
         },
-        errors: {
-          forbidden: 'Bạn không thể quyết mục này. Mục không được giao cho bạn hoặc là yêu cầu của chính bạn.',
-          stale: 'Mục này đã được quyết hoặc đã thay đổi. Hãy quay lại và làm mới danh sách.',
-          recheck: 'Yêu cầu được kiểm tra lại và quay về Finance hoặc trưởng phòng. Chưa có quyết định nào được lưu.',
-          sod: 'Bạn không thể quyết yêu cầu mà bạn đã hoàn tất rà soát Finance.',
-          invalid: 'Quyết định không được chấp nhận. Kiểm tra lý do rồi thử lại từ danh sách.',
-          uncertain:
-            'Chưa xác nhận được quyết định. Hãy làm mới danh sách để xem trạng thái hiện tại trước khi thử lại.'
+        committed: 'Đã chi và đã cam kết',
+        department: 'Cost center',
+        filters: {
+          all: 'Tất cả',
+          spending: 'Bước duyệt chi'
+        },
+        openRequest: 'Xem {{id}} cho {{software}}',
+        requestId: 'Mã yêu cầu',
+        reason: 'Lý do',
+        tabs: {
+          queue: 'Duyệt chi'
         }
       },
       inbox: {
@@ -1504,16 +1353,16 @@ export const resources = {
           countUnavailable: 'Chưa có số thông báo chưa đọc',
           countError: 'Không thể tải số thông báo chưa đọc.',
           markAll: 'Đánh dấu tất cả đã đọc',
-          markRead: 'Đánh dấu đã đọc',
-          markNamed: 'Đánh dấu đã đọc: {{code}}',
           loading: 'Đang tải thông báo',
           loadError: 'Không thể tải thông báo. Vui lòng thử lại.',
           writeError: 'Chưa thể xác nhận kết quả. Hãy kiểm tra hộp thư trước khi thử lại.',
+          openNamed: 'Mở thông báo: {{name}}',
+          dismiss: 'Đóng',
+          newNotification: 'Thông báo mới',
+          webOnly: 'Việc này chỉ thực hiện được trên web. Hãy mở ứng dụng web để tiếp tục.',
           empty: 'Không có thông báo trên trang này.',
           read: 'Đã đọc',
           unread: 'Chưa đọc',
-          requestReference: 'Mã yêu cầu: {{id}}',
-          unknown: 'Cập nhật khác ({{code}})',
           codes: {
             REQUEST_SUBMITTED: 'Yêu cầu đã được gửi',
             REQUEST_GRANTED: 'Đã cấp quyền sử dụng',
@@ -1523,62 +1372,32 @@ export const resources = {
             REQUEST_SPEND_REJECTED: 'Đề nghị chi đã bị từ chối',
             STEP_ASSIGNED: 'Có bước xử lý được giao cho bạn',
             REQUEST_WITHDRAWN: 'Yêu cầu đã được rút',
-            HANDOVER_REQUIRED: 'Cần xác nhận bàn giao dữ liệu'
+            HANDOVER_REQUIRED: 'Cần xác nhận bàn giao dữ liệu',
+            LICENSE_EXPIRY_REMINDER: 'Quyền phần mềm sắp hết hạn',
+            RENEWAL_WINDOW_OPENED: 'Có thể gia hạn quyền phần mềm',
+            REVOCATION_UPCOMING: 'Quyền phần mềm sắp bị thu hồi',
+            REVOCATION_CANCELLED: 'Việc thu hồi quyền đã được hủy',
+            TRANSFER_RIGHTS_REVOKING: 'Đang thu hồi quyền của phòng cũ'
           }
         },
-        approverEmpty: 'Chưa có thông báo demo cho vai trò này.',
-        demoNote: 'Thông báo giả lập · không có thông báo đẩy',
-        items: {
-          assignedNeed: {
-            body: 'Yêu cầu {{requestId}} đã được gửi để duyệt nhu cầu.',
-            title: 'Yêu cầu cần duyệt nhu cầu'
-          },
-          withdrawn: {
-            body: 'Nhân viên đã rút yêu cầu {{requestId}}.',
-            title: 'Yêu cầu đã rút'
-          },
-          otherNeedApproved: {
-            body: 'Người duyệt chi đã duyệt bước nhu cầu của yêu cầu {{requestId}}.',
-            title: 'Nhu cầu đã được duyệt'
-          },
-          otherRejected: {
-            title: 'Nhu cầu bị từ chối'
-          },
-          needApproved: {
-            body: 'Nhu cầu của yêu cầu {{requestId}} đã được duyệt và chuyển sang chờ trưởng phòng trình trên web.',
-            title: 'Nhu cầu đã được duyệt'
-          },
-          spendApproved: {
-            body: 'Yêu cầu {{requestId}} đã được duyệt chi và chuyển sang chờ IT.',
-            title: 'Đã duyệt chi'
-          },
-          approved: {
-            body: 'Nhu cầu của yêu cầu {{requestId}} đã được duyệt và chuyển sang Finance rà soát.',
-            title: 'Nhu cầu đã được duyệt'
-          },
-          expired: {
-            body: 'Giấy phép {{software}} đã hết hạn.',
-            title: 'Giấy phép đã hết hạn'
-          },
-          ready: {
-            body: 'Yêu cầu {{requestId}} cho {{software}} đã sẵn sàng để IT bắt đầu cấp phát.',
-            title: 'Sẵn sàng cấp phát'
-          },
-          rejected: {
-            title: 'Yêu cầu bị từ chối'
-          }
-        },
-        openNotification: 'Mở thông báo về {{software}}',
-        reasonUnavailable: 'Dữ liệu demo chưa có lý do từ chối.',
-        read: 'Đã đọc',
-        title: 'Thông báo',
-        unread: 'Chưa đọc · {{count}}'
+        title: 'Thông báo'
       },
       licenses: {
         live: {
           kicker: 'Không gian của tôi',
           description: 'Quyền phần mềm hiện có hoặc sắp bắt đầu của tài khoản bạn.',
           noDepartment: 'Chưa có phòng ban',
+          views: {
+            current: 'Hiện có',
+            ended: 'Đã kết thúc'
+          },
+          endedEmpty: 'Không có quyền phần mềm đã kết thúc trên trang này.',
+          detailTitle: 'Chi tiết quyền phần mềm',
+          detailNotFound: 'Không tìm thấy quyền phần mềm này trong tài khoản của bạn.',
+          openNamed: 'Mở quyền phần mềm: {{name}}, {{plan}}',
+          grantedOn: 'Ngày được cấp: {{date}}',
+          validUntil: 'Có hiệu lực đến: {{date}}',
+          renewed: 'Đã gia hạn',
           loading: 'Đang tải tài khoản và phần mềm…',
           error: 'Không thể tải thông tin. Vui lòng kiểm tra kết nối và thử lại.',
           retry: 'Thử lại',
@@ -1588,7 +1407,6 @@ export const resources = {
           currentRights: 'Hiện có và sắp bắt đầu',
           expiringLabel: 'Sắp hết hạn trong 7 ngày',
           summaryError: 'Không thể tải tổng số quyền sắp hết hạn.',
-          unavailableHint: 'Tính năng này chưa được kết nối.',
           pageFilterNote: 'Bộ lọc chỉ áp dụng cho trang hiện tại. Chuyển trang để xem thêm.',
           noExpiringPage: 'Không có quyền sắp hết hạn trên trang này.',
           emptyHint: 'Phần mềm được cấp sẽ xuất hiện tại đây khi có dữ liệu.',
@@ -1604,58 +1422,34 @@ export const resources = {
           previous: 'Trang trước',
           next: 'Trang sau',
           page: 'Trang {{page}}',
-          otherFeatures: 'Chức năng duyệt chưa được kết nối.',
           logout: 'Đăng xuất',
           logoutError: 'Chưa thể xác nhận đăng xuất với máy chủ. Vui lòng kiểm tra kết nối và thử lại.',
           status: {
             UPCOMING: 'Sắp bắt đầu',
             PROVISIONING: 'Đang cấp',
-            ACTIVE: 'Đang hoạt động',
+            ACTIVE: 'Đang sử dụng',
             EXPIRED: 'Đã hết hạn',
             REVOKING: 'Đang thu hồi',
             ENDING: 'Sắp kết thúc',
             ENDED: 'Đã kết thúc'
           }
         },
-        accessTypes: {
-          licenseKey: 'Khóa bản quyền (K4)',
-          workspaceSeat: 'Workspace seat'
-        },
-        back: 'Quay lại phần mềm của tôi',
-        categories: {
-          all: 'Tất cả',
-          design: 'Thiết kế',
-          development: 'Lập trình',
-          productivity: 'Năng suất'
-        },
-        detail: {
-          account: 'Tài khoản công ty',
-          email: 'Email công ty',
-          key: 'Khóa bản quyền',
-          keyMasked: 'Khóa bản quyền đã che',
-          noPassword: 'Ứng dụng không hiển thị mật khẩu.',
-          status: 'Trạng thái',
-          workspace: 'Workspace'
-        },
-        demoData: 'Dữ liệu minh họa · chưa kết nối tài khoản thật',
-        empty: 'Không tìm thấy phần mềm trong danh mục này.',
-        activeCount: '{{count}} phần mềm',
-        expiringCount: '{{count}} mục',
-        employeeDepartment: 'CC-TECH',
-        employeeName: 'Nguyễn Văn A',
-        employeeRole: 'Product Dev',
         filterLabel: 'Lọc phần mềm',
-        kicker: 'Không gian nhân viên · demo',
         listFilters: {
           all: 'Tất cả',
           expiring: 'Sắp hết hạn'
         },
         listTitle: 'Phần mềm được cấp',
-        noExpiring: 'Không có phần mềm nào được đánh dấu sắp hết hạn trong demo.',
-        openSoftware: 'Mở chi tiết {{name}}',
-        securityNote: 'Mỗi người một tài khoản công ty / seat riêng. Không chia sẻ thông tin đăng nhập (QĐ-75).',
         screenTitle: 'Phần mềm của tôi',
-        screenSubtitle: 'Phần mềm và quyền truy cập do công ty cấp',
+        back: 'Quay lại phần mềm của tôi',
+        categories: {
+          all: 'Tất cả'
+        },
+        detail: {
+          email: 'Email công ty',
+          key: 'Khóa bản quyền',
+          status: 'Trạng thái'
+        },
         status: {
           active: 'Đang hiệu lực',
           expiring: 'Còn {{days}} ngày'
@@ -1669,126 +1463,234 @@ export const resources = {
         createLive: {
           title: 'Yêu cầu phần mềm',
           intro: 'Chọn gói trong danh mục, nhập lý do và xem kiểm tra từ máy chủ trước khi gửi.',
-          search: 'Tìm phần mềm hoặc gói',
+          catalog: {
+            search: 'Tìm ứng dụng',
+            searchPlaceholder: 'Tìm tên ứng dụng hoặc nhà cung cấp',
+            department: 'Phần mềm của phòng',
+            all: 'Xem toàn bộ danh mục',
+            departmentHint: 'Đây là gợi ý của phòng. Bạn vẫn có thể chọn trong toàn bộ danh mục.',
+            backToApps: 'Quay lại ứng dụng',
+            plansFor: 'Các gói của {{name}}',
+            openApp: 'Xem các gói của {{name}}',
+            openSuggestion: 'Xem các gói của {{name}}, gợi ý {{plan}}',
+            vendor: 'Nhà cung cấp: {{name}}',
+            planCount: '{{count}} gói',
+            paid: 'Phần mềm trả phí',
+            free: 'Phần mềm miễn phí',
+            empty: {
+              department: 'Phòng bạn không có gợi ý phần mềm trên trang này.',
+              applications: 'Không có ứng dụng trên trang này.',
+              plans: 'Không có gói có thể yêu cầu trên trang này.'
+            },
+            pricing: {
+              PRICED: 'Đã có dữ liệu giá',
+              MISSING: 'Chưa có dữ liệu giá',
+              NOT_APPLICABLE: 'Không áp dụng giá'
+            }
+          },
+          selectedHeading: 'Phần mềm đã chọn',
+          changePlan: 'Đổi gói',
+          keepPlan: 'Giữ gói đã chọn',
           loading: 'Đang tải danh mục',
           catalogError: 'Không thể tải danh mục.',
-          empty: 'Không có gói trên trang này.',
           choosePlan: 'Chọn {{app}}, {{plan}}',
+          leaveTitle: 'Rời khỏi yêu cầu này?',
+          leaveMessage: 'Gói đã chọn và thông tin bạn nhập sẽ không được lưu.',
+          leaveConfirm: 'Rời yêu cầu',
+          leaveCancel: 'Tiếp tục chỉnh sửa',
           planBlocked: 'Hiện chưa thể gửi yêu cầu cho gói này.',
+          ineligible: 'Tài khoản của bạn không thể tạo yêu cầu phần mềm. Hãy liên hệ quản trị viên nếu cần hỗ trợ.',
           selected: '{{app}} · {{plan}}',
-          changePlan: 'Chọn gói khác',
-          endDate: 'Dùng đến ngày',
-          endDatePlaceholder: 'Chọn ngày (không bắt buộc)',
-          endDateRequired: 'Gói này cần bạn chọn ngày "Dùng đến ngày".',
-          maxEndDate: 'Có thể dùng đến ngày {{date}} là muộn nhất.',
-          openLimit: 'Yêu cầu cấp mới đang mở: {{count}} trên {{max}}.',
-          refusal: {
-            HAS_OPEN_REQUEST: 'Bạn đã có một yêu cầu đang mở cho gói này.',
-            OPEN_LIMIT_REACHED: 'Bạn đã có số yêu cầu đang mở tối đa được phép.'
+          termRequired: 'Thời gian dùng theo tháng (bắt buộc, 1–9)',
+          termOptional: 'Thời gian dùng theo tháng (1–12; để trống nếu dùng lâu dài)',
+          unsupportedType: 'Loại gói này hiện chưa thể yêu cầu trên ứng dụng.',
+          termRefusals: {
+            TERM_REQUIRED: 'Vui lòng nhập thời gian dùng theo tháng.',
+            TERM_MONTHS_OUT_OF_RANGE: 'Thời gian dùng vượt giới hạn cho phép.',
+            TERM_NOT_ASKED: 'Gói này không yêu cầu thời gian dùng.',
+            TERM_LONG_TERM_NOT_ALLOWED: 'Tài khoản của bạn cần chọn thời gian dùng có thời hạn.',
+            TERM_CONTRACT_ENDED: 'Hợp đồng của bạn đã kết thúc. Vui lòng liên hệ quản trị viên.'
           },
-          manyPaid: 'Bạn đang dùng {{count}} phần mềm trả phí (ngưỡng {{threshold}}). Hãy giải thích vì sao cần thêm.',
-          manyPaidLabel: 'Lý do cần thêm phần mềm trả phí',
-          term: 'Thời hạn theo tháng (1–12)',
+          refusals: {
+            HAS_OPEN_REQUEST: 'Bạn đã có yêu cầu đang xử lý cho gói này.',
+            OPEN_LIMIT_REACHED: 'Bạn đã đạt giới hạn yêu cầu trong tuần.'
+          },
           reason: 'Lý do nghiệp vụ (bắt buộc)',
-          validation: 'Nhập lý do từ 1 đến 1000 ký tự.',
+          validation: 'Nhập thời gian hợp lệ cho gói và lý do từ 1 đến 1000 ký tự.',
           preview: 'Kiểm tra yêu cầu',
           previewLoading: 'Đang kiểm tra yêu cầu',
-          previewError: 'Không thể kiểm tra yêu cầu. Vui lòng thử lại.',
+          previewNoCostCenter: 'Phòng ban chưa có trung tâm chi phí đang hoạt động. Hãy liên hệ bộ phận tài chính.',
+          previewNoDepartment: 'Tài khoản chưa thuộc phòng ban hợp lệ. Hãy liên hệ quản trị viên.',
           review: 'Kết quả kiểm tra từ máy chủ',
+          reviewDetails: {
+            edit: 'Chỉnh sửa thông tin',
+            reason: 'Lý do nghiệp vụ: {{reason}}',
+            longTerm: 'Dùng lâu dài',
+            limit: 'Yêu cầu cấp mới đang xử lý trong tuần: {{count}}/{{max}}. Đếm lại từ {{date}}.',
+            priceTitle: 'Thông tin giá',
+            priceMissing: 'Chưa đủ dữ liệu giá.',
+            referencePrice:
+              'Đây là giá tham chiếu của gói, chưa phải giá của gói đã mua. Chi phí cuối cùng sẽ được xác nhận sau.',
+            priceNotApplicable: 'Không áp dụng giá.',
+            amountUnavailable: 'Không thể hiển thị số tiền',
+            blockedSpending: 'Người duyệt chi không thể gửi yêu cầu này.',
+            blockedUnplaced: 'Tài khoản của bạn chưa được xếp vào phòng ban.',
+            monthly: '{{amount}} mỗi tháng × {{months}} tháng',
+            price: 'Giá: {{amount}}',
+            currentYear: 'Năm hiện tại {{year}}: {{amount}}',
+            costMonths: 'Thời gian trong năm hiện tại: {{months}} tháng',
+            nextYear: 'Từ {{date}}: {{amount}} (dự kiến, chưa phải chi phí hiện tại)',
+            nextCostMonths: 'Thời gian dự kiến năm sau: {{months}} tháng',
+            termCut: 'Thời gian bị rút ngắn theo hợp đồng đến: {{date}}',
+            totalEstimate: 'Tổng tiền phải trả ước tính: {{amount}}',
+            noTaxProfile: 'Ước tính theo giả định thuế mặc định do chưa có hồ sơ thuế.',
+            taxEstimate: 'Thuế không được khấu trừ ước tính: {{amount}}',
+            annualVendor: 'Tiền trả nhà cung cấp cả năm: {{amount}}',
+            chainTitle: 'Tuyến xử lý dự kiến',
+            assignee: 'Người xử lý: {{name}}',
+            openAccess: 'Xem quyền đã có',
+            openRequest: 'Xem yêu cầu đang xử lý',
+            kinds: {
+              NEED: 'Duyệt nhu cầu',
+              SPEND_SUBMISSION: 'Trình duyệt chi',
+              SPEND_APPROVAL: 'Duyệt chi',
+              IT_EXECUTION: 'IT thực hiện'
+            },
+            roles: {
+              MANAGER: 'Trưởng phòng',
+              SPENDING_APPROVER: 'Người duyệt chi',
+              IT_ADMIN: 'Quản trị IT'
+            },
+            explanations: {
+              DEPARTMENT_HEAD: 'Trưởng phòng duyệt nhu cầu.',
+              HEAD_ASKS_FOR_SELF: 'Yêu cầu của trưởng phòng chuyển thẳng đến người duyệt chi.',
+              WAITS_FOR_DEPARTMENT_HEAD: 'Chờ phòng có trưởng phòng.',
+              WAITING_FOR_AN_APPROVER: 'Chờ người duyệt.'
+            },
+            waiting: {
+              NO_SPENDING_APPROVER: 'Chờ người duyệt chi.',
+              NO_DEPARTMENT_HEAD: 'Chờ phòng có trưởng phòng.'
+            }
+          },
           canSubmit: 'Có thể gửi yêu cầu. Máy chủ sẽ kiểm tra lại khi gửi.',
           cannotSubmit: 'Hiện không thể gửi yêu cầu này.',
           blockedCode: 'Mã lý do không thể gửi: {{reason}}',
           existingAccess: 'Bạn đã có quyền sử dụng phần mềm này.',
-          maxTerm: 'Thời hạn tối đa: {{months}} tháng',
           pricingBlocked: 'Bước duyệt chi chưa thể tiếp tục cho đến khi có giá.',
           expectedDays: 'Thời gian xử lý dự kiến: {{days}} ngày làm việc',
           submit: 'Gửi yêu cầu',
           sending: 'Đang gửi yêu cầu. Vui lòng chờ.',
           submitUncertain:
             'Chưa thể xác nhận kết quả. Hãy kiểm tra danh sách yêu cầu trước khi gửi lại để tránh trùng.',
+          submitRejected: {
+            existingAccess: 'Máy chủ từ chối vì bạn đã có quyền sử dụng gói này.',
+            openRequest: 'Máy chủ từ chối vì bạn đã có yêu cầu đang xử lý cho gói này.',
+            costCenter: 'Máy chủ từ chối vì phòng ban chưa có trung tâm chi phí đang hoạt động.',
+            department: 'Máy chủ từ chối vì tài khoản chưa thuộc phòng ban hợp lệ.',
+            plan: 'Máy chủ từ chối vì gói đã chọn không còn khả dụng.',
+            ineligible: 'Máy chủ từ chối vì tài khoản không đủ điều kiện gửi yêu cầu.',
+            limit: 'Máy chủ từ chối vì đã đạt giới hạn yêu cầu trong tuần.',
+            term: 'Máy chủ từ chối thời gian sử dụng. Hãy kiểm tra và xem lại yêu cầu.',
+            invalid: 'Máy chủ từ chối thông tin yêu cầu. Hãy kiểm tra và xem lại.'
+          },
+          recheckRejected: 'Chỉnh sửa và kiểm tra lại',
           withdraw: 'Rút yêu cầu',
           withdrawNamed: 'Rút yêu cầu cho {{name}}',
           confirmWithdraw: 'Rút yêu cầu này?',
           withdrawNote: 'Máy chủ sẽ kiểm tra quyền rút. Một số yêu cầu phải chờ IT đóng tác vụ.',
           withdrawAction: 'Xác nhận rút',
           withdrawSuccess: 'Đã ghi nhận yêu cầu rút. Hãy xem trạng thái hiện tại; yêu cầu có thể vẫn đang chờ IT.',
-          withdrawError: 'Chưa thể xác nhận kết quả. Hãy kiểm tra trạng thái yêu cầu sau khi tải lại trước khi thử lại.'
+          withdrawResultState: 'Trạng thái máy chủ trả về:',
+          withdrawError:
+            'Chưa thể xác nhận kết quả. Hãy kiểm tra trạng thái yêu cầu sau khi tải lại trước khi thử lại.',
+          withdrawAfterDecision: 'Yêu cầu đã có quyết định nên không rút được nữa.',
+          search: 'Tìm phần mềm hoặc gói',
+          term: 'Thời hạn theo tháng (1–12)',
+          previewError: 'Không thể kiểm tra yêu cầu. Vui lòng thử lại.',
+          previewPlanUnavailable: 'Gói này không còn khả dụng. Hãy chọn gói khác.',
+          previewAuthentication: 'Phiên đăng nhập không còn hợp lệ. Hãy đăng nhập lại.',
+          previewInvalid: 'Máy chủ không chấp nhận thông tin yêu cầu. Hãy kiểm tra và thử lại.'
         },
         live: {
-          subtitle: 'Các yêu cầu bạn đã gửi từ tài khoản của mình.',
-          views: { open: 'Đang xử lý', ended: 'Đã kết thúc' },
+          timeline: {
+            title: 'Lịch sử yêu cầu',
+            loading: 'Đang tải lịch sử…',
+            error: 'Không thể tải lịch sử yêu cầu.',
+            empty: 'Chưa có lịch sử.',
+            system: 'Hệ thống',
+            unknownActor: 'Không rõ người thực hiện',
+            unknown: 'Sự kiện: {{kind}}',
+            person: 'Cho {{name}}',
+            reason: 'Lý do: {{reason}}',
+            kinds: {
+              SUBMITTED: 'Đã gửi yêu cầu',
+              RESUBMITTED: 'Đã gửi lại yêu cầu',
+              NEED_APPROVED: 'Đã duyệt nhu cầu',
+              NEED_REJECTED: 'Đã từ chối nhu cầu',
+              LINE_NEED_DECIDED: 'Đã ghi nhận quyết định nhu cầu',
+              RESERVE_CONFIRMED: 'Đã xác nhận dự phòng',
+              SPEND_APPROVED: 'Đã duyệt chi',
+              SPEND_REJECTED: 'Đã từ chối duyệt chi',
+              LINE_SPEND_DECIDED: 'Đã ghi nhận quyết định chi',
+              RETURNED_TO_REQUESTER: 'Đã trả về để bổ sung',
+              ASSESSMENT_COMPLETED: 'Đã hoàn tất đánh giá',
+              ASSESSMENT_REJECTED: 'Đã từ chối đánh giá',
+              GRANT_STARTED: 'Đã bắt đầu cấp quyền',
+              GRANT_COMPLETED: 'Đã cấp quyền sử dụng',
+              GRANT_FAILED: 'Cấp quyền không thành công',
+              WITHDRAWAL_REQUESTED: 'Đã yêu cầu rút',
+              WITHDRAWN: 'Đã rút yêu cầu',
+              CANCELLED: 'Đã hủy',
+              RENEWAL_APPLIED: 'Đã áp dụng gia hạn'
+            }
+          },
+          subtitle: 'Các yêu cầu bạn đã gửi hoặc được tạo cho bạn.',
+          createShort: 'Tạo mới',
+          forMe: 'Yêu cầu được tạo cho bạn',
+          revisionWebOnly:
+            'Yêu cầu này đã được trả về để bổ sung. Việc chỉnh sửa và gửi lại chỉ thực hiện được trên web.',
+          requestAgain: 'Xin lại',
+          requestAgainNamed: 'Xin lại {{name}}',
+          route: {
+            title: 'Tuyến duyệt',
+            stepLabel: 'Bước {{index}}: {{step}}, {{status}}',
+            holder: 'Người đang giữ: {{name}}',
+            steps: {
+              NEED: 'Trưởng phòng duyệt nhu cầu',
+              SPEND: 'Duyệt chi',
+              IT: 'IT cấp quyền'
+            },
+            status: {
+              done: 'Đã xong',
+              current: 'Đang xử lý',
+              upcoming: 'Chưa bắt đầu',
+              stopped: 'Đã dừng'
+            },
+            notes: {
+              REQUESTER_IS_HEAD: 'Một bước: bạn là trưởng phòng nên yêu cầu đi thẳng tới bước duyệt chi.',
+              NO_DEPARTMENT_HEAD: 'Một bước: phòng chưa có trưởng phòng nên yêu cầu đi thẳng tới bước duyệt chi.',
+              HEAD_LEFT: 'Một bước: trưởng phòng đã nghỉ nên yêu cầu đi thẳng tới bước duyệt chi.',
+              WAITING_NO_HEAD: 'Đang chờ phòng có trưởng phòng.',
+              WAITING_NO_SPENDING_APPROVER: 'Đang chờ có Người duyệt chi.'
+            }
+          },
+          informationHeading: 'Thông tin yêu cầu',
+          endDate: 'Ngày dự kiến kết thúc',
+          noEndDate: 'Không có ngày dự kiến kết thúc',
+          views: {
+            open: 'Đang xử lý',
+            ended: 'Đã kết thúc'
+          },
           loading: 'Đang tải yêu cầu',
           listError: 'Không thể tải yêu cầu. Vui lòng thử lại.',
           detailError: 'Không thể tải yêu cầu này. Tài khoản của bạn có thể không có quyền xem.',
+          detailNotFound: 'Không tìm thấy yêu cầu này hoặc bạn không có quyền xem. Nếu cần, hãy kiểm tra trên web.',
           empty: 'Không có yêu cầu trên trang này.',
           unnamed: 'Yêu cầu phần mềm',
           openNamed: 'Xem yêu cầu cho {{name}}',
           submitted: 'Đã gửi: {{date}}',
           back: 'Quay lại yêu cầu',
           detailsTitle: 'Chi tiết yêu cầu',
-          noTerm: 'Chưa đặt ngày dùng đến',
-          reviseOnWeb: 'Yêu cầu này bị trả về để chỉnh sửa. Hãy sửa trên web.',
-          manyPaid: 'Lý do dùng {{count}} phần mềm trả phí',
-          involvement: { SENT: 'Tôi gửi', FOR_ME: 'Dành cho tôi' },
-          routing: {
-            DEFAULT: 'Yêu cầu này đi thẳng tới người duyệt chi trong một bước.',
-            REQUESTER_IS_HEAD: 'Bạn là trưởng phòng nên yêu cầu đi thẳng tới người duyệt chi trong một bước.',
-            NO_DEPARTMENT_HEAD:
-              'Phòng của bạn chưa có trưởng phòng nên yêu cầu đi thẳng tới người duyệt chi trong một bước.',
-            HEAD_LEFT: 'Trưởng phòng đã nghỉ nên yêu cầu đi thẳng tới người duyệt chi trong một bước.'
-          },
-          spendStages: {
-            NOT_SUBMITTED: 'Đang chờ được trình để quyết định chi',
-            RETURNED_TO_REQUESTER: 'Được trả về cho bạn để chỉnh sửa',
-            RESERVE_CONFIRMATION: 'Chờ trưởng phòng xác nhận dùng dự phòng',
-            BLOCKED: 'Bị chặn bởi kiểm tra ngân sách',
-            WAITING_SPEND_DECISION: 'Chờ quyết định chi',
-            REFUSED: 'Duyệt chi bị từ chối'
-          },
-          lineStates: {
-            AWAITING_NEED: 'Phần của bạn: chờ duyệt nhu cầu',
-            NEED_CONFIRMED: 'Phần của bạn: đã xác nhận nhu cầu',
-            NEED_REJECTED: 'Phần của bạn: nhu cầu bị từ chối',
-            SPEND_REJECTED: 'Phần của bạn: duyệt chi bị từ chối',
-            APPROVED: 'Phần của bạn: đã duyệt',
-            EXECUTING: 'Phần của bạn: đang cấp',
-            AWAITING_IT_CLOSE: 'Phần của bạn: chờ IT đóng',
-            COMPLETED: 'Phần của bạn: hoàn tất',
-            FAILED: 'Phần của bạn: thất bại',
-            WITHDRAWN: 'Phần của bạn: đã rút',
-            DROPPED: 'Phần của bạn: đã bỏ',
-            CANCELLED: 'Phần của bạn: đã hủy'
-          },
-          cost: 'Chi phí',
-          progress: {
-            title: 'Tiến trình',
-            steps: {
-              submitted: 'Đã gửi yêu cầu',
-              need: 'Duyệt nhu cầu',
-              spend: 'Duyệt chi',
-              execution: 'IT thực hiện'
-            },
-            status: {
-              done: 'Hoàn tất',
-              current: 'Đang xử lý',
-              pending: 'Chưa bắt đầu',
-              failed: 'Bị dừng',
-              skipped: 'Không cần'
-            },
-            notes: {
-              noDepartmentHead: 'phòng chưa có trưởng phòng',
-              noSpendingApprover: 'chưa có người duyệt chi',
-              financeReview: 'Finance đang rà soát',
-              budget: 'đang chờ ngân sách',
-              notRequired: 'không cần, bạn là trưởng phòng',
-              reserveConfirmation: 'chờ trưởng phòng xác nhận dùng dự phòng',
-              blocked: 'bị chặn bởi kiểm tra ngân sách',
-              revision: 'được trả về để bạn chỉnh sửa',
-              spendSubmission: 'đang chờ trình lên người duyệt chi',
-              itAssessment: 'IT đang đánh giá'
-            }
-          },
-          viewRequest: 'Xem yêu cầu',
           reference: 'Mã yêu cầu: {{id}}',
           reason: 'Lý do nghiệp vụ',
           term: 'Thời hạn yêu cầu',
@@ -1816,9 +1718,9 @@ export const resources = {
             AWAITING_IT_ASSESSMENT: 'Chờ IT đánh giá',
             AWAITING_SPEND_SUBMISSION: 'Chờ trình duyệt chi',
             AWAITING_FINANCE_REVIEW: 'Chờ Finance xem xét',
-            AWAITING_REQUESTER_REVISION: 'Bị trả về để chỉnh sửa',
             AWAITING_BUDGET: 'Chờ ngân sách',
             AWAITING_SPEND_DECISION: 'Chờ quyết định chi',
+            AWAITING_REQUESTER_REVISION: 'Đã trả về để bổ sung',
             REJECTED: 'Đã từ chối',
             IT_REJECTED: 'IT đã từ chối',
             EXECUTING: 'Đang thực hiện',
@@ -1829,135 +1731,16 @@ export const resources = {
             CANCELLED: 'Đã hủy'
           }
         },
-        back: 'Quay lại',
-        backToSoftware: 'Về phần mềm của tôi',
-        annualCost: '{{amount}} VNĐ/năm',
-        catalogCount: '{{count}} mục',
-        catalogEmptyDescription: 'Thử tên phần mềm khác hoặc xóa nội dung tìm kiếm.',
-        catalogEmptyTitle: 'Không tìm thấy phần mềm',
-        catalogFilters: 'Lọc danh mục phần mềm',
-        catalogHint: 'Chọn công cụ đã có trong danh mục của công ty.',
-        catalogSubtitle: 'Chọn phần mềm trong danh mục và mô tả nhu cầu sử dụng.',
-        categories: {
-          ai: 'Công cụ AI',
-          productivity: 'Năng suất'
-        },
         cancel: 'Giữ yêu cầu',
-        chooseCatalogTool: 'Chọn phần mềm trong danh mục',
-        chooseTool: 'Chọn {{name}}',
-        confirm: 'Xác nhận rút',
-        confirmWithdraw: 'Rút yêu cầu {{id}}?',
-        cost: '{{amount}} VNĐ',
-        createNew: 'Tạo yêu cầu phần mềm',
-        continue: 'Tiếp tục',
-        detailsSubtitle: 'Chọn thời hạn và nêu nhu cầu công việc.',
-        detailsTitle: 'Thông tin yêu cầu',
-        demoData: 'Dữ liệu minh họa · thao tác chỉ lưu trong phiên này',
-        duration: '{{months}} tháng',
-        durationDefault: 'Thời hạn chuẩn',
-        durationExtended: 'Thời hạn mở rộng',
-        durationHint: 'Chọn 12 hoặc 18 tháng.',
-        durationLabel: 'Thời hạn đề nghị',
-        edit: 'Chỉnh sửa',
-        estimatedCost: 'Số tiền dự kiến',
-        errors: {
-          reasonRequired: 'Hãy nhập lý do nghiệp vụ cho phần mềm ngoài bộ công cụ chuẩn.'
-        },
-        financeReview: 'Finance rà soát',
+        title: 'Yêu cầu của tôi',
+        back: 'Quay lại',
         filters: {
-          all: 'Tất cả',
-          outside: 'Ngoài bộ chuẩn',
-          standard: 'Bộ công cụ chuẩn'
-        },
-        kicker: 'Yêu cầu của nhân viên',
-        listKicker: 'Không gian nhân viên · demo',
-        listSubtitle: 'Theo dõi yêu cầu và trạng thái xử lý của bạn.',
-        managerName: 'Lê Hoàng',
-        longTermWarning: 'OI-07a · Yêu cầu trên 12 tháng cần rà soát bổ sung.',
-        newTitle: 'Yêu cầu phần mềm mới',
-        noDemoQuote: 'Chưa có báo giá minh họa',
-        noMobileBatch: 'Mobile không trình lô. Khi áp dụng, trưởng phòng có thể trình lô trên web.',
-        noBudgetCode: 'Không hiện mã kiểm tra ngân sách hay số dư. Không rút đơn đã kết thúc.',
-        notices: {
-          financeReview: 'Finance đang rà soát. Yêu cầu chưa vào hàng đợi Người duyệt chi.',
-          longTerm: 'OI-07a · Yêu cầu 18 tháng; cần rà soát bổ sung.',
-          submittedWeb: 'Lê Hoàng đã trình lô duyệt chi trên web.'
-        },
-        rejectedBy: 'Từ chối bởi trưởng phòng {{name}} · {{date}}',
-        rejectedBySpending: 'Từ chối bởi người duyệt chi {{name}} · {{date}}',
-        rejectionReasons: {
-          adobeBudgetOptimized: 'Ngân sách phòng quý này đã tối ưu. Dùng Figma Pro hoặc Canva Team trong bộ chuẩn.'
+          all: 'Tất cả'
         },
         openRequest: 'Mở yêu cầu {{id}} cho {{name}}',
-        outOfStandard: 'Ngoài bộ công cụ chuẩn',
-        outOfStandardReason: 'Phần mềm ngoài bộ chuẩn cần có lý do nghiệp vụ.',
-        personalOnly: 'Yêu cầu mobile chỉ dành cho quyền truy cập của chính bạn.',
-        planReference: 'Mã dòng kế hoạch',
-        possibleSteps:
-          'Các bước có thể có: duyệt nhu cầu, trình lô trên web khi áp dụng, Finance rà soát khi cần, duyệt chi khi cần và IT cấp phát. Tuyến thực tế tùy từng yêu cầu.',
-        possibleStepsTitle: 'Các bước có thể cần duyệt',
-        personalAccess: 'Cho quyền truy cập của tôi',
-        progress: 'Tiến trình yêu cầu: bước {{current}}/{{total}}',
-        reasonOptional: 'Không bắt buộc với phần mềm trong bộ công cụ chuẩn.',
-        reasonLabel: 'Lý do nghiệp vụ',
-        reasonPlaceholder: 'Mô tả phần mềm hỗ trợ công việc của bạn như thế nào',
-        review: 'Xem lại yêu cầu',
-        reviewSubtitle: 'Kiểm tra thông tin trước khi gửi yêu cầu.',
-        reviewTitle: 'Xem lại trước khi gửi',
-        requestFor: 'Yêu cầu cho',
-        searchCatalog: 'Tìm phần mềm',
-        selectedTool: 'Phần mềm đã chọn',
-        standardTool: 'Bộ công cụ chuẩn',
         steps: {
-          catalog: 'Danh mục',
-          details: 'Thông tin',
-          review: 'Xem lại'
-        },
-        summaryTitle: 'Tóm tắt yêu cầu',
-        status: {
-          awaitingExecution: 'Chờ IT thực thi',
-          awaitingManagerSubmission: 'Chờ trưởng phòng trình',
-          awaitingNeed: 'Chờ duyệt nhu cầu',
-          completed: 'Hoàn tất',
-          executing: 'Đang thực thi · không thể rút',
-          financeReview: 'Finance rà soát',
-          provisioningFailed: 'Cấp phát lỗi',
-          rejected: 'Từ chối',
-          spendApproval: 'Chờ duyệt chi',
-          waitingInvitation: 'Chờ chấp nhận lời mời',
-          withdrawn: 'Đã rút'
-        },
-        submit: 'Gửi yêu cầu',
-        submittedWeb: 'Đã trình trên web',
-        changeTool: 'Thay đổi',
-        catalog: {
-          descriptions: {
-            claude: 'Không gian AI hỗ trợ phân tích, viết nội dung và lập trình.',
-            raycast: 'Trình khởi chạy công cụ và thao tác thường dùng trong công việc.'
-          }
-        },
-        timeline: {
-          awaitingExecution: 'IT chưa bắt đầu cấp phát',
-          created: 'Đã gửi yêu cầu',
-          executionStarted: 'IT đã bắt đầu cấp phát',
-          financeReview: 'Bắt đầu rà soát Finance',
-          needApproved: 'Đã duyệt nhu cầu',
-          needReviewPending: 'Đang chờ duyệt nhu cầu',
-          rejected: 'Yêu cầu đã bị từ chối',
-          spendApproved: 'Đã duyệt chi',
-          spendReviewPending: 'Đang chờ quyết định duyệt chi',
-          submittedWeb: 'Lê Hoàng đã trình lô trên web',
-          withdrawn: 'Đã rút yêu cầu'
-        },
-        timelineTitle: 'Tiến trình yêu cầu',
-        title: 'Yêu cầu của tôi',
-        withdraw: 'Rút yêu cầu',
-        withdrawPolicy:
-          'Rút khi đang chờ duyệt, chờ thực thi, cấp phát lỗi hoặc chờ lời mời. Không rút khi đang thực thi hoặc đã xong. Hàng đợi là việc được giao, không phải toàn bộ phạm vi xem.',
-        withdrawNamed: 'Rút yêu cầu {{id}}',
-        withdrawResult: 'Yêu cầu sẽ được chuyển sang trạng thái Đã rút trong bản demo.',
-        withdrawn: 'Đã rút',
-        standard: 'Bộ công cụ chuẩn'
+          details: 'Thông tin'
+        }
       }
     }
   }

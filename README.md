@@ -1,35 +1,26 @@
 # SaaS-Sentry Mobile
 
-React Native app built with Expo SDK 54 and Expo Router. BRD 3.53 defines a
-native iOS/Android companion for four workflows: an employee's software and
-simple requests, manager need approval, individual spending approval, and an
+React Native app built with Expo SDK 54 and Expo Router. The mobile scope (BRD v4.13,
+QĐ-61b, EP-16) is a native iOS/Android companion for four workflows: an employee's
+software and simple requests, manager need approval, spending approval, and an
 in-app inbox. Web remains the full capability surface.
 
 The current source includes navigation/provider boundaries, typed Vietnamese
 and English copy, TanStack Query setup, and an Orval-generated API client.
-Every screen uses the backend: login, account profile, personal software, employee
-requests, the in-app inbox, manager approvals, spend-queue submission and group
-requests, and spending approvals. No static or demo data remains. See ARCHITECTURE.md for scope and limitations.
+Login, password recovery and change, the signed-in account and profile, personal software,
+employee requests, Manager need approvals (individual, group and renewal), Spending Approver
+decisions, the policy gate and the inbox all use the backend; no demo workflow remains.
 
 ## Setup
 
 Use Node.js 22.13 or newer and pnpm 11.1.3.
 
 ```bash
-git clone https://github.com/SEP490-FALL2026/Mobile.git
-cd Mobile
-corepack enable
-corepack prepare pnpm@11.1.3 --activate
 pnpm install --frozen-lockfile
 pnpm api:validate
 pnpm check
 pnpm start
 ```
-
-Copy .env.example to .env and configure the API origin before starting. Open the
-Expo QR code in Expo Go on a device on the same network, or press a for Android,
-i for the iOS simulator (macOS), or w for web. Live workflows require a backend
-and an authorized account.
 
 For the deployed API, set `EXPO_PUBLIC_API_BASE_URL` to the origin
 `https://wdp.novaproj.site` before starting Expo. Do not append `/api/v1`:

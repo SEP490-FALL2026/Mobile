@@ -1,13 +1,22 @@
 import { Feather } from '@expo/vector-icons'
 import { useTranslation } from 'react-i18next'
-import { StyleSheet, Text, View } from 'react-native'
+import { Pressable, StyleSheet, Text, View } from 'react-native'
 
-import type { MySoftwarePageResponseDtoDataItemsItem } from '@/shared/api/generated/model/me'
-import { MySoftwarePageResponseDtoDataItemsItemStatus } from '@/shared/api/generated/model/me'
-import { mobileColors } from '@/shared/theme/colors'
-import { StatusBadge } from '@/shared/ui/status-badge'
+import { SoftwareIcon } from '@/entities/software'
+import type { MySoftwarePageResponseDtoDataItemsItem } from '@/shared/api/generated/contracts/me'
+import { MySoftwarePageResponseDtoDataItemsItemStatus } from '@/shared/api/generated/contracts/me'
+import type { MobileColors } from '@/shared/theme/colors'
+import { useMobileTheme } from '@/shared/theme/theme-provider'
 
-export function LiveSoftwareCard({ item }: { item: MySoftwarePageResponseDtoDataItemsItem }) {
+export function LiveSoftwareCard({
+  item,
+  onPress
+}: {
+  item: MySoftwarePageResponseDtoDataItemsItem
+  onPress?: () => void
+}) {
+  const { colors: mobileColors } = useMobileTheme()
+  const styles = createStyles(mobileColors)
   const { t, i18n } = useTranslation()
   const status = Object.values(MySoftwarePageResponseDtoDataItemsItemStatus).includes(item.status)
     ? t(`licenses.live.status.${item.status}`)
@@ -19,97 +28,122 @@ export function LiveSoftwareCard({ item }: { item: MySoftwarePageResponseDtoData
       : new Intl.DateTimeFormat(i18n.language, { dateStyle: 'medium', timeZone: 'UTC' }).format(date)
   }
 
-  return (
-    <View style={[styles.card, item.expiringSoon && styles.cardWarning]}>
+  const content = (
+    <View style={styles.card}>
       <View style={styles.row}>
-        <View style={styles.icon}>
-          <Text style={styles.initial}>{item.application.name.trim().slice(0, 1).toLocaleUpperCase()}</Text>
-        </View>
+        <SoftwareIcon name={item.application.name} logoUrl={item.application.logoUrl} />
         <View style={styles.copy}>
-          <Text numberOfLines={1} style={styles.name}>
-            {item.application.name}
-          </Text>
-          <Text numberOfLines={1} style={styles.secondary}>
-            {t('licenses.live.plan', { plan: item.plan.name })}
-          </Text>
+          <Text style={styles.name}>{item.application.name}</Text>
+          <Text style={styles.secondary}>{t('licenses.live.plan', { plan: item.plan.name })}</Text>
         </View>
-        <StatusBadge
-          label={status}
-          tone={item.expiringSoon ? 'warning' : item.status === 'ACTIVE' ? 'success' : 'neutral'}
-        />
+      </View>
+      <View style={[styles.badge, item.status !== 'ACTIVE' && styles.badgeNeutral]}>
+        {item.status === 'ACTIVE' ? (
+          <View accessibilityElementsHidden importantForAccessibility='no' style={styles.dot} />
+        ) : null}
+        <Text style={[styles.badgeText, item.status !== 'ACTIVE' && styles.neutralText]}>{status}</Text>
       </View>
       <View style={styles.details}>
-        <Detail icon='settings' text={t('licenses.live.provisioning', { type: item.provisioningType })} />
-        <Detail icon='play-circle' text={t('licenses.live.start', { date: formatDate(item.effectiveFrom) })} />
-        {item.expectedEndDate ? (
-          <Detail icon='flag' text={t('licenses.live.end', { date: formatDate(item.expectedEndDate) })} />
-        ) : null}
-      </View>
-      {item.expiringSoon ? (
-        <View style={styles.warning}>
+        <View style={styles.detailRow}>
           <Feather
             accessibilityElementsHidden
-            color={mobileColors.warning}
             importantForAccessibility='no'
-            name='alert-triangle'
-            size={14}
+            name='key'
+            size={15}
+            color={mobileColors.primaryInk}
           />
-          <Text style={styles.warningText}>{t('licenses.live.expiringSoon')}</Text>
+          <Text style={styles.detailText}>{t('licenses.live.provisioning', { type: item.provisioningType })}</Text>
         </View>
-      ) : null}
+        <View style={styles.detailRow}>
+          <Feather
+            accessibilityElementsHidden
+            importantForAccessibility='no'
+            name='calendar'
+            size={15}
+            color={mobileColors.primaryInk}
+          />
+          <Text style={styles.detailText}>{t('licenses.live.start', { date: formatDate(item.effectiveFrom) })}</Text>
+        </View>
+        {item.expectedEndDate ? (
+          <View style={styles.detailRow}>
+            <Feather
+              accessibilityElementsHidden
+              importantForAccessibility='no'
+              name='clock'
+              size={15}
+              color={mobileColors.warning}
+            />
+            <Text style={styles.detailText}>{t('licenses.live.end', { date: formatDate(item.expectedEndDate) })}</Text>
+          </View>
+        ) : null}
+        {item.expiringSoon ? (
+          <View style={styles.warning}>
+            <Feather
+              accessibilityElementsHidden
+              importantForAccessibility='no'
+              name='alert-circle'
+              size={15}
+              color={mobileColors.warning}
+            />
+            <Text style={styles.warningText}>{t('licenses.live.expiringSoon')}</Text>
+          </View>
+        ) : null}
+      </View>
     </View>
+  )
+  return onPress ? (
+    <Pressable
+      accessibilityRole='button'
+      accessibilityLabel={t('licenses.live.openNamed', { name: item.application.name, plan: item.plan.name })}
+      onPress={onPress}
+    >
+      {content}
+    </Pressable>
+  ) : (
+    content
   )
 }
 
-function Detail({ icon, text }: { icon: keyof typeof Feather.glyphMap; text: string }) {
-  return (
-    <View style={styles.detail}>
-      <Feather
-        accessibilityElementsHidden
-        color={mobileColors.muted}
-        importantForAccessibility='no'
-        name={icon}
-        size={13}
-      />
-      <Text style={styles.secondary}>{text}</Text>
-    </View>
-  )
-}
-
-const styles = StyleSheet.create({
-  card: {
-    backgroundColor: mobileColors.white,
-    borderColor: mobileColors.border,
-    borderWidth: 1,
-    borderRadius: 18,
-    padding: 14,
-    gap: 12,
-    boxShadow: '0px 4px 10px rgba(93, 59, 32, 0.04)'
-  },
-  cardWarning: { borderColor: '#f1cf8d' },
-  row: { flexDirection: 'row', alignItems: 'center', gap: 12 },
-  icon: {
-    backgroundColor: mobileColors.primarySoft,
-    borderRadius: 14,
-    width: 46,
-    height: 46,
-    alignItems: 'center',
-    justifyContent: 'center'
-  },
-  initial: { color: mobileColors.primaryInk, fontSize: 18, fontWeight: '800' },
-  copy: { flex: 1, minWidth: 0, gap: 2 },
-  name: { color: mobileColors.foreground, fontSize: 15, fontWeight: '700' },
-  secondary: { color: mobileColors.muted, fontSize: 12, lineHeight: 18 },
-  details: { gap: 6, borderTopColor: mobileColors.border, borderTopWidth: 1, paddingTop: 10 },
-  detail: { flexDirection: 'row', alignItems: 'center', gap: 8 },
-  warning: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-    backgroundColor: mobileColors.warningBackground,
-    borderRadius: 10,
-    paddingHorizontal: 10,
-    paddingVertical: 8
-  },
-  warningText: { color: mobileColors.warning, fontSize: 12, fontWeight: '600', flex: 1 }
-})
+const createStyles = (mobileColors: MobileColors) =>
+  StyleSheet.create({
+    card: {
+      backgroundColor: mobileColors.surface,
+      borderColor: mobileColors.border,
+      borderWidth: 1,
+      borderRadius: 20,
+      padding: 18,
+      gap: 12
+    },
+    row: { flexDirection: 'row', alignItems: 'center', gap: 14 },
+    copy: { flex: 1, minWidth: 0 },
+    name: { color: mobileColors.foreground, fontSize: 16, fontWeight: '700' },
+    secondary: { color: mobileColors.muted, fontSize: 13, lineHeight: 20 },
+    badge: {
+      alignSelf: 'flex-start',
+      alignItems: 'center',
+      flexDirection: 'row',
+      gap: 6,
+      backgroundColor: mobileColors.successBackground,
+      borderRadius: 999,
+      paddingHorizontal: 10,
+      paddingVertical: 6
+    },
+    dot: { width: 7, height: 7, borderRadius: 4, backgroundColor: mobileColors.successDot },
+    badgeNeutral: { backgroundColor: mobileColors.surfaceSubtle },
+    badgeText: { color: mobileColors.success, fontSize: 12, fontWeight: '700' },
+    neutralText: { color: mobileColors.muted },
+    warningText: { color: mobileColors.warning, fontSize: 12, fontWeight: '600', flexShrink: 1 },
+    details: { gap: 8, paddingTop: 12, borderTopWidth: 1, borderTopColor: mobileColors.border },
+    detailRow: { flexDirection: 'row', alignItems: 'center', gap: 9 },
+    detailText: { color: mobileColors.muted, fontSize: 13, lineHeight: 20, flexShrink: 1 },
+    warning: {
+      alignSelf: 'flex-start',
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 6,
+      backgroundColor: mobileColors.warningBackground,
+      borderRadius: 10,
+      paddingHorizontal: 9,
+      paddingVertical: 7
+    }
+  })

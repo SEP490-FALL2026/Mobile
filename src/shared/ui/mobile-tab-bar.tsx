@@ -1,7 +1,8 @@
 import { Feather } from '@expo/vector-icons'
 import { Pressable, StyleSheet, Text, View } from 'react-native'
 
-import { mobileColors } from '@/shared/theme/colors'
+import type { MobileColors } from '@/shared/theme/colors'
+import { useMobileTheme } from '@/shared/theme/theme-provider'
 
 type FeatherIconName = keyof typeof Feather.glyphMap
 
@@ -14,6 +15,7 @@ export interface MobileTab {
   selected: boolean
   disabled?: boolean
   accessibilityHint?: string
+  badge?: number
 }
 
 interface MobileTabBarProps {
@@ -22,6 +24,8 @@ interface MobileTabBarProps {
 }
 
 export function MobileTabBar({ accessibilityLabel, tabs }: MobileTabBarProps) {
+  const { colors: mobileColors } = useMobileTheme()
+  const styles = createStyles(mobileColors)
   return (
     <View accessibilityLabel={accessibilityLabel} accessibilityRole='tablist' style={styles.container}>
       {tabs.map((tab) => (
@@ -33,16 +37,21 @@ export function MobileTabBar({ accessibilityLabel, tabs }: MobileTabBarProps) {
           disabled={tab.disabled}
           key={tab.id}
           onPress={tab.onPress}
-          style={[styles.tab, tab.disabled && styles.tabDisabled]}
+          style={({ pressed }) => [styles.tab, pressed && styles.tabPressed, tab.disabled && styles.tabDisabled]}
         >
           <View style={[styles.iconContainer, tab.selected && styles.iconContainerSelected]}>
             <Feather
               accessibilityElementsHidden
-              color={tab.selected ? mobileColors.primary : mobileColors.muted}
+              color={tab.selected ? mobileColors.primaryInk : mobileColors.muted}
               importantForAccessibility='no'
               name={tab.icon}
-              size={17}
+              size={20}
             />
+            {tab.badge ? (
+              <View style={styles.badge}>
+                <Text style={styles.badgeText}>{tab.badge > 99 ? '99+' : tab.badge}</Text>
+              </View>
+            ) : null}
           </View>
           <Text style={[styles.label, tab.selected && styles.labelSelected]}>{tab.label}</Text>
         </Pressable>
@@ -51,45 +60,62 @@ export function MobileTabBar({ accessibilityLabel, tabs }: MobileTabBarProps) {
   )
 }
 
-const styles = StyleSheet.create({
-  container: {
-    backgroundColor: mobileColors.surface,
-    borderTopColor: mobileColors.border,
-    borderTopWidth: 1,
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    paddingBottom: 5,
-    paddingHorizontal: 10,
-    paddingTop: 6
-  },
-  iconContainer: {
-    alignItems: 'center',
-    borderRadius: 16,
-    height: 30,
-    justifyContent: 'center',
-    width: 44
-  },
-  iconContainerSelected: {
-    backgroundColor: mobileColors.primarySoft
-  },
-  label: {
-    color: mobileColors.muted,
-    fontSize: 10,
-    fontWeight: '500',
-    marginTop: 1,
-    textAlign: 'center'
-  },
-  labelSelected: {
-    color: mobileColors.primaryInk,
-    fontWeight: '700'
-  },
-  tab: {
-    alignItems: 'center',
-    flex: 1,
-    justifyContent: 'center',
-    minHeight: 50
-  },
-  tabDisabled: {
-    opacity: 0.5
-  }
-})
+const createStyles = (mobileColors: MobileColors) =>
+  StyleSheet.create({
+    badge: {
+      position: 'absolute',
+      top: -2,
+      right: -4,
+      minWidth: 16,
+      height: 16,
+      borderRadius: 8,
+      paddingHorizontal: 4,
+      backgroundColor: mobileColors.danger,
+      alignItems: 'center',
+      justifyContent: 'center'
+    },
+    badgeText: { color: mobileColors.onDanger, fontSize: 10, fontWeight: '700' },
+    container: {
+      backgroundColor: mobileColors.sidebar,
+      borderTopColor: mobileColors.border,
+      borderTopWidth: 1,
+      flexDirection: 'row',
+      justifyContent: 'space-around',
+      paddingBottom: 7,
+      paddingHorizontal: 10,
+      paddingTop: 6
+    },
+    iconContainer: {
+      alignItems: 'center',
+      borderRadius: 16,
+      height: 32,
+      justifyContent: 'center',
+      width: 44
+    },
+    iconContainerSelected: {
+      backgroundColor: mobileColors.primarySoft
+    },
+    label: {
+      color: mobileColors.muted,
+      fontSize: 12,
+      fontWeight: '500',
+      marginTop: 1,
+      textAlign: 'center'
+    },
+    labelSelected: {
+      color: mobileColors.primaryInk,
+      fontWeight: '700'
+    },
+    tab: {
+      alignItems: 'center',
+      flex: 1,
+      justifyContent: 'center',
+      minHeight: 56
+    },
+    tabPressed: {
+      opacity: 0.65
+    },
+    tabDisabled: {
+      opacity: 0.5
+    }
+  })

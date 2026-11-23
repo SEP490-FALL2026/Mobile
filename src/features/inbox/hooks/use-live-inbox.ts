@@ -1,29 +1,31 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { useTranslation } from 'react-i18next'
 
 import {
   notificationList,
   notificationMarkAllRead,
   notificationMarkRead,
   notificationUnreadCount
-} from '@/shared/api/generated/operations/notifications'
+} from '@/shared/api/generated/api/notifications/notifications'
 import { useSession } from '@/shared/api/session-context'
 
 export function useLiveInbox(page: number) {
   const session = useSession()
   const client = useQueryClient()
+  const { i18n } = useTranslation()
+  const language = i18n.resolvedLanguage === 'en' ? 'en' : 'vi'
   const enabled = session.state === 'authenticated'
   const list = useQuery({
-    queryKey: ['session', 'notifications', 'list', page],
+    queryKey: ['session', 'notifications', 'list', page, language],
     enabled,
     queryFn: ({ signal }) =>
       session.read(async (token) => {
         const result = await notificationList(
           { page, pageSize: 20 },
-          { headers: { Authorization: `Bearer ${token}` } },
-          signal
+          { signal, headers: { Authorization: `Bearer ${token}`, 'Accept-Language': language } }
         )
-        if (!result.data) throw new Error('Missing notification list')
-        return result.data
+        if (!result.data.data) throw new Error('Missing notification list')
+        return result.data.data
       })
   })
   const count = useQuery({
@@ -31,9 +33,9 @@ export function useLiveInbox(page: number) {
     enabled,
     queryFn: ({ signal }) =>
       session.read(async (token) => {
-        const result = await notificationUnreadCount({ headers: { Authorization: `Bearer ${token}` } }, signal)
-        if (!result.data) throw new Error('Missing notification count')
-        return result.data.unread
+        const result = await notificationUnreadCount({ signal, headers: { Authorization: `Bearer ${token}` } })
+        if (!result.data.data) throw new Error('Missing notification count')
+        return result.data.data.unread
       })
   })
   const markRead = useMutation({

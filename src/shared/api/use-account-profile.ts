@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 
-import { meGet } from '@/shared/api/generated/operations/me'
+import { meGet } from '@/shared/api/generated/api/me/me'
 import { useSession } from '@/shared/api/session-context'
 
 export function useAccountProfile() {
@@ -8,11 +8,15 @@ export function useAccountProfile() {
   return useQuery({
     queryKey: ['session', 'me'],
     enabled: session.state === 'authenticated',
+    refetchOnWindowFocus: 'always',
     queryFn: ({ signal }) =>
       session.read(async (token) => {
-        const result = await meGet({ headers: { Authorization: `Bearer ${token}` } }, signal)
-        if (!result.data) throw new Error('Missing account response data')
-        return result.data
+        const result = await meGet({ signal, headers: { Authorization: `Bearer ${token}` } })
+        if (!result.data.data) throw new Error('Missing account response data')
+        if (!Array.isArray(result.data.data.pendingPolicyAcknowledgements)) {
+          throw new Error('Missing pending policy acknowledgements')
+        }
+        return result.data.data
       })
   })
 }
