@@ -321,6 +321,9 @@ export function LiveRequestCreateScreen({ initialApplication }: { initialApplica
               scrollTo={(y, animated) => scroll.current?.scrollTo({ y, animated })}
               initialApplication={initialApplication}
               onSearchChange={setHasSearch}
+              onOpenAccess={(softwareId) =>
+                navigateTo({ pathname: '/my-software/[softwareId]', params: { softwareId } })
+              }
               onSelect={(plan) => {
                 if (locked) return
                 setHasSearch(false)

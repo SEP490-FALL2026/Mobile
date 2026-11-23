@@ -9,6 +9,7 @@ import type { RequestablePlanPageResponseDtoDataItemsItem } from '@/shared/api/g
 import type { MobileColors } from '@/shared/theme/colors'
 import { useMobileTheme } from '@/shared/theme/theme-provider'
 
+import { useHeldPlans } from '../hooks/use-held-plans'
 import { isNoDepartment, useRequestCatalog } from '../hooks/use-request-catalog'
 
 export function RequestCatalog({
@@ -16,12 +17,14 @@ export function RequestCatalog({
   scrollTo,
   initialApplication,
   onSelect,
+  onOpenAccess,
   onSearchChange
 }: {
   initialApplication?: { id: string; name: string }
   getScrollY: () => number
   scrollTo: (y: number, animated: boolean) => void
   onSelect: (plan: RequestablePlanPageResponseDtoDataItemsItem) => void
+  onOpenAccess: (assignmentId: string) => void
   onSearchChange: (hasSearch: boolean) => void
 }) {
   const { t, i18n } = useTranslation()
@@ -32,6 +35,7 @@ export function RequestCatalog({
   const [application, setApplication] = useState<{ id: string; name: string } | undefined>(initialApplication)
   const [search, setSearch] = useState('')
   const [page, setPage] = useState(1)
+  const heldPlans = useHeldPlans()
   const { department, applications, plans } = useRequestCatalog(mode, search.trim(), page, application?.id)
   const query = mode === 'department' ? department : mode === 'applications' ? applications : plans
 
@@ -212,29 +216,52 @@ export function RequestCatalog({
           ))
         : null}
       {mode === 'plans' && !plans.isError
-        ? plans.data?.items.map((plan) => (
-            <PressableFeedback
-              key={plan.id}
-              accessibilityRole='button'
-              accessibilityLabel={t('requests.createLive.choosePlan', { app: plan.application.name, plan: plan.name })}
-              onPress={() => onSelect(plan)}
-              style={styles.card}
-            >
-              <Text style={styles.heading}>{plan.name}</Text>
-              <Text style={styles.muted}>{t('licenses.live.provisioning', { type: plan.provisioningType })}</Text>
-              <Text style={styles.muted}>{t(`requests.createLive.catalog.pricing.${plan.price.status}`)}</Text>
-              <Text style={styles.muted}>
-                {t(plan.costsMoney ? 'requests.createLive.catalog.paid' : 'requests.createLive.catalog.free')}
-              </Text>
-              {!plan.canSubmit ? (
-                <Text style={styles.error}>
-                  {plan.submitBlockedReason === 'FINANCE_SETUP_INCOMPLETE'
-                    ? t('requests.createLive.previewNoCostCenter')
-                    : t('requests.createLive.planBlocked')}
+        ? plans.data?.items.map((plan) => {
+            const heldAssignmentId = heldPlans.get(plan.id)
+            return (
+              <PressableFeedback
+                key={plan.id}
+                accessibilityRole='button'
+                accessibilityLabel={
+                  heldAssignmentId
+                    ? `${t('requests.createLive.choosePlan', { app: plan.application.name, plan: plan.name })}. ${t('requests.createLive.catalog.held')}`
+                    : t('requests.createLive.choosePlan', { app: plan.application.name, plan: plan.name })
+                }
+                accessibilityHint={heldAssignmentId ? t('requests.createLive.catalog.heldHint') : undefined}
+                onPress={() => (heldAssignmentId ? onOpenAccess(heldAssignmentId) : onSelect(plan))}
+                style={[styles.card, heldAssignmentId && styles.cardHeld]}
+              >
+                {heldAssignmentId ? (
+                  <View style={styles.heldBadge}>
+                    <Feather
+                      accessibilityElementsHidden
+                      color={colors.success}
+                      importantForAccessibility='no'
+                      name='check-circle'
+                      size={14}
+                    />
+                    <Text style={styles.heldText}>{t('requests.createLive.catalog.held')}</Text>
+                  </View>
+                ) : null}
+                <Text style={styles.heading}>{plan.name}</Text>
+                <Text style={styles.muted}>{t('licenses.live.provisioning', { type: plan.provisioningType })}</Text>
+                <Text style={styles.muted}>{t(`requests.createLive.catalog.pricing.${plan.price.status}`)}</Text>
+                <Text style={styles.muted}>
+                  {t(plan.costsMoney ? 'requests.createLive.catalog.paid' : 'requests.createLive.catalog.free')}
                 </Text>
-              ) : null}
-            </PressableFeedback>
-          ))
+                {!plan.canSubmit ? (
+                  <Text style={styles.error}>
+                    {plan.submitBlockedReason === 'FINANCE_SETUP_INCOMPLETE'
+                      ? t('requests.createLive.previewNoCostCenter')
+                      : t('requests.createLive.planBlocked')}
+                  </Text>
+                ) : null}
+                {heldAssignmentId ? (
+                  <Text style={styles.muted}>{t('requests.createLive.catalog.heldHint')}</Text>
+                ) : null}
+              </PressableFeedback>
+            )
+          })
         : null}
       {!query.isError && query.data && query.data.pagination.totalPages > 1 ? (
         <View style={styles.pagination}>
@@ -290,6 +317,19 @@ const createStyles = (colors: MobileColors) =>
       padding: 18,
       gap: 7
     },
+    cardHeld: { backgroundColor: colors.surfaceSubtle },
+    heldBadge: {
+      alignSelf: 'flex-start',
+      alignItems: 'center',
+      backgroundColor: colors.successBackground,
+      borderCurve: 'continuous',
+      borderRadius: 8,
+      flexDirection: 'row',
+      gap: 6,
+      paddingHorizontal: 8,
+      paddingVertical: 4
+    },
+    heldText: { color: colors.success, fontSize: 12, fontWeight: '700' },
     row: { flexDirection: 'row', alignItems: 'center', gap: 12 },
     copy: { flex: 1, gap: 4 },
     heading: { color: colors.foreground, fontSize: 16, fontWeight: '700' },
