@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next'
 import { StyleSheet, Text, TextInput, View } from 'react-native'
 
 import { SoftwareIcon } from '@/entities/software'
+import { BackButton } from '@/shared/ui/back-button'
 import { PressableFeedback } from '@/shared/ui/pressable-feedback'
 import type { RequestablePlanPageResponseDtoDataItemsItem } from '@/shared/api/generated/contracts/requestable-software'
 import type { MobileColors } from '@/shared/theme/colors'
@@ -101,18 +102,16 @@ export function RequestCatalog({
         </>
       ) : (
         <>
-          <PressableFeedback
-            accessibilityRole='button'
+          <BackButton
+            label={t('requests.createLive.catalog.backToApps')}
             onPress={() => {
               setMode(origin)
               setPage(listPosition.current.page)
               const { y } = listPosition.current
               setTimeout(() => scrollTo(y, false), 60)
             }}
-            style={styles.action}
-          >
-            <Text style={styles.link}>{t('requests.createLive.catalog.backToApps')}</Text>
-          </PressableFeedback>
+            variant='chip'
+          />
           <Text accessibilityRole='header' style={styles.heading}>
             {t('requests.createLive.catalog.plansFor', { name: application?.name })}
           </Text>

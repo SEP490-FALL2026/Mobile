@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { ScrollView, StyleSheet, Text } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
+import { BackButton } from '@/shared/ui/back-button'
 import { PressableFeedback } from '@/shared/ui/pressable-feedback'
 import { useSession } from '@/shared/api/session-context'
 import { goBackOr } from '@/shared/lib/go-back-or'
@@ -30,13 +31,7 @@ export function LiveSoftwareDetailsScreen({ assignmentId }: { assignmentId: stri
   return (
     <SafeAreaView style={styles.safe}>
       <ScrollView contentContainerStyle={styles.content}>
-        <PressableFeedback
-          accessibilityRole='button'
-          onPress={() => goBackOr(router, '/my-software')}
-          style={styles.action}
-        >
-          <Text style={styles.link}>{t('common.back')}</Text>
-        </PressableFeedback>
+        <BackButton label={t('common.back')} onPress={() => goBackOr(router, '/my-software')} />
         <Text accessibilityRole='header' style={styles.title}>
           {t('licenses.live.detailTitle')}
         </Text>

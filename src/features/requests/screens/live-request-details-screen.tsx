@@ -4,6 +4,7 @@ import { ScrollView, StyleSheet, Text, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 import { SoftwareIcon } from '@/entities/software'
+import { BackButton } from '@/shared/ui/back-button'
 import { PressableFeedback } from '@/shared/ui/pressable-feedback'
 import { mayCreateRequest } from '@/shared/api/request-eligibility'
 import { useSession } from '@/shared/api/session-context'
@@ -41,13 +42,7 @@ export function LiveRequestDetailsScreen({ requestId }: { requestId: string }) {
   return (
     <SafeAreaView style={styles.safe}>
       <ScrollView contentContainerStyle={styles.content}>
-        <PressableFeedback
-          accessibilityRole='button'
-          onPress={() => goBackOr(router, '/live-requests')}
-          style={styles.action}
-        >
-          <Text style={styles.actionText}>{t('common.back')}</Text>
-        </PressableFeedback>
+        <BackButton label={t('common.back')} onPress={() => goBackOr(router, '/live-requests')} />
         <Text accessibilityRole='header' style={styles.title}>
           {t('requests.live.detailsTitle')}
         </Text>

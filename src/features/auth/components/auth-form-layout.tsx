@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { ScrollView, StyleSheet, Text, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
-import { PressableFeedback } from '@/shared/ui/pressable-feedback'
+import { BackButton } from '@/shared/ui/back-button'
 import type { MobileColors } from '@/shared/theme/colors'
 import { useMobileTheme } from '@/shared/theme/theme-provider'
 import { PreferenceSwitches } from '@/shared/ui/preference-switches'
@@ -19,13 +19,7 @@ export function AuthFormLayout({ title, subtitle, onBack, children }: Props) {
     <SafeAreaView style={styles.safe}>
       <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps='handled'>
         <View style={styles.top}>
-          {onBack ? (
-            <PressableFeedback accessibilityRole='button' onPress={onBack} style={styles.back}>
-              <Text style={styles.backText}>{t('common.back')}</Text>
-            </PressableFeedback>
-          ) : (
-            <View />
-          )}
+          {onBack ? <BackButton label={t('common.back')} onPress={onBack} /> : <View />}
           <PreferenceSwitches />
         </View>
         <Text accessibilityRole='header' style={styles.title}>

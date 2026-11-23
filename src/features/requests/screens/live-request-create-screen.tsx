@@ -6,6 +6,7 @@ import { BackHandler, Modal, Platform, ScrollView, StyleSheet, Text, TextInput, 
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 import { SoftwareIcon } from '@/entities/software'
+import { BackButton } from '@/shared/ui/back-button'
 import { PressableFeedback } from '@/shared/ui/pressable-feedback'
 import type { RequestablePlanPageResponseDtoDataItemsItem } from '@/shared/api/generated/contracts/requestable-software'
 import { mayCreateRequest } from '@/shared/api/request-eligibility'
@@ -250,15 +251,7 @@ export function LiveRequestCreateScreen({ initialApplication }: { initialApplica
         }}
         scrollEventThrottle={32}
       >
-        <PressableFeedback
-          accessibilityRole='button'
-          accessibilityState={{ disabled: inFlight }}
-          disabled={inFlight}
-          onPress={() => navigateTo('back')}
-          style={styles.action}
-        >
-          <Text style={styles.actionText}>{t('requests.live.back')}</Text>
-        </PressableFeedback>
+        <BackButton disabled={inFlight} label={t('requests.live.back')} onPress={() => navigateTo('back')} />
         <Text accessibilityRole='header' style={styles.pageTitle}>
           {t('requests.createLive.title')}
         </Text>
