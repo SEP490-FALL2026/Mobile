@@ -9,6 +9,7 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 
 import { SoftwareIcon } from '@/entities/software'
 import { PressableFeedback } from '@/shared/ui/pressable-feedback'
+import { SegmentedControl } from '@/shared/ui/segmented-control'
 import { mayCreateRequest } from '@/shared/api/request-eligibility'
 import { useSession } from '@/shared/api/session-context'
 import { useAccountProfile } from '@/shared/api/use-account-profile'
@@ -86,27 +87,20 @@ export function LiveRequestsScreen() {
               </PressableFeedback>
             ) : null}
           </View>
-          <View style={styles.filters}>
-            {(['open', 'ended'] as const).map((value) => (
-              <PressableFeedback
-                key={value}
-                accessibilityRole='button'
-                accessibilityState={{ selected: view === value, disabled: inFlight }}
-                disabled={inFlight}
-                onPress={() => {
-                  if (withdrawing.current) return
-                  setView(value)
-                  setPage(1)
-                  setConfirmId(undefined)
-                }}
-                style={[styles.filter, view === value && styles.selected]}
-              >
-                <Text style={[styles.filterText, view === value && styles.selectedText]}>
-                  {t(`requests.live.views.${value}`)}
-                </Text>
-              </PressableFeedback>
-            ))}
-          </View>
+          <SegmentedControl
+            disabled={inFlight}
+            onChange={(value) => {
+              if (withdrawing.current) return
+              setView(value)
+              setPage(1)
+              setConfirmId(undefined)
+            }}
+            options={(['open', 'ended'] as const).map((value) => ({
+              label: t(`requests.live.views.${value}`),
+              value
+            }))}
+            value={view}
+          />
           {withdrawal.isError ? (
             <Text accessibilityRole='alert' style={styles.error}>
               {t('requests.createLive.withdrawError')}

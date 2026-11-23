@@ -6,6 +6,7 @@ import { RefreshControl, ScrollView, StyleSheet, Text, View } from 'react-native
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 import { PressableFeedback } from '@/shared/ui/pressable-feedback'
+import { SegmentedControl } from '@/shared/ui/segmented-control'
 import { useSession } from '@/shared/api/session-context'
 import type { MobileColors } from '@/shared/theme/colors'
 import { useMobileTheme } from '@/shared/theme/theme-provider'
@@ -120,25 +121,18 @@ export function MySoftwareScreen() {
               {t('licenses.listTitle')}
             </Text>
           </View>
-          <View style={styles.filters}>
-            {(['current', 'ended'] as const).map((value) => (
-              <PressableFeedback
-                key={value}
-                accessibilityRole='button'
-                accessibilityState={{ selected: view === value }}
-                onPress={() => {
-                  setView(value)
-                  setPage(1)
-                  setFilter('all')
-                }}
-                style={[styles.filterButton, view === value && styles.filterSelected]}
-              >
-                <Text style={[styles.filterText, view === value && styles.filterTextSelected]}>
-                  {t(`licenses.live.views.${value}`)}
-                </Text>
-              </PressableFeedback>
-            ))}
-          </View>
+          <SegmentedControl
+            onChange={(value) => {
+              setView(value)
+              setPage(1)
+              setFilter('all')
+            }}
+            options={(['current', 'ended'] as const).map((value) => ({
+              label: t(`licenses.live.views.${value}`),
+              value
+            }))}
+            value={view}
+          />
           {view === 'current' ? (
             <View accessibilityLabel={t('licenses.filterLabel')} style={styles.filters}>
               {(['all', 'expiring'] as const).map((value) => (

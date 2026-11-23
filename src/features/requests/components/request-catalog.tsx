@@ -6,6 +6,7 @@ import { StyleSheet, Text, TextInput, View } from 'react-native'
 import { SoftwareIcon } from '@/entities/software'
 import { BackButton } from '@/shared/ui/back-button'
 import { PressableFeedback } from '@/shared/ui/pressable-feedback'
+import { SegmentedControl } from '@/shared/ui/segmented-control'
 import type { RequestablePlanPageResponseDtoDataItemsItem } from '@/shared/api/generated/contracts/requestable-software'
 import type { MobileColors } from '@/shared/theme/colors'
 import { useMobileTheme } from '@/shared/theme/theme-provider'
@@ -73,29 +74,23 @@ export function RequestCatalog({
             }}
             style={styles.input}
           />
-          <View style={styles.tabs}>
-            <PressableFeedback
-              accessibilityRole='button'
-              accessibilityState={{ selected: mode === 'department' }}
-              onPress={() => {
+          <SegmentedControl
+            onChange={(value) => {
+              if (value === 'department') {
                 setMode('department')
                 setSearch('')
                 onSearchChange(false)
                 setPage(1)
-              }}
-              style={styles.action}
-            >
-              <Text style={styles.link}>{t('requests.createLive.catalog.department')}</Text>
-            </PressableFeedback>
-            <PressableFeedback
-              accessibilityRole='button'
-              accessibilityState={{ selected: mode === 'applications' }}
-              onPress={showApplications}
-              style={styles.action}
-            >
-              <Text style={styles.link}>{t('requests.createLive.catalog.all')}</Text>
-            </PressableFeedback>
-          </View>
+              } else {
+                showApplications()
+              }
+            }}
+            options={[
+              { label: t('requests.createLive.catalog.department'), value: 'department' },
+              { label: t('requests.createLive.catalog.all'), value: 'applications' }
+            ]}
+            value={mode === 'department' ? 'department' : 'applications'}
+          />
           {mode === 'department' ? (
             <Text style={styles.muted}>{t('requests.createLive.catalog.departmentHint')}</Text>
           ) : null}
