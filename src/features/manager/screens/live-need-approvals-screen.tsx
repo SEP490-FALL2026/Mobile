@@ -163,6 +163,14 @@ export function LiveNeedApprovalsScreen({
     sent.current = false
     decision.reset()
   }
+  // Leaving the tab ends the review, so coming back shows the queue instead of the last opened request.
+  const leaveRef = useRef<() => void>(() => undefined)
+  useEffect(() => {
+    leaveRef.current = () => {
+      if (selected) closeDetails()
+    }
+  })
+  useFocusEffect(useCallback(() => () => leaveRef.current(), []))
   async function reloadChangedPolicy() {
     if (recovering.current || !decision.isError || !policyVersionChanged(decision.error)) return
     const epoch = recoveryEpoch.current

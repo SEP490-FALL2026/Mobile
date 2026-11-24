@@ -192,6 +192,15 @@ export function LiveSpendingApprovalsScreen({ requestId }: { requestId?: string 
     void queue.refetch()
   }
 
+  // Leaving the tab ends the review, so coming back shows the queue instead of the last opened request.
+  const leaveRef = useRef<() => void>(() => undefined)
+  useEffect(() => {
+    leaveRef.current = () => {
+      if (selectedRequestId) closeRequest()
+    }
+  })
+  useFocusEffect(useCallback(() => () => leaveRef.current(), []))
+
   function answerAllYes() {
     setAnswers((current) => {
       const next = { ...current }
