@@ -1,26 +1,25 @@
 import { useQuery } from '@tanstack/react-query'
 
-import { employeeDashboardGet } from '@/shared/api/generated/operations/dashboards'
-import { meSoftwareRightList } from '@/shared/api/generated/operations/me'
+import { employeeDashboardGet } from '@/shared/api/generated/api/dashboards/dashboards'
+import { meSoftwareRightList } from '@/shared/api/generated/api/me/me'
 import { useSession } from '@/shared/api/session-context'
 import { useAccountProfile } from '@/shared/api/use-account-profile'
 
-export function useMySoftware(page: number) {
+export function useMySoftware(page: number, view: 'current' | 'ended' = 'current') {
   const session = useSession()
   const enabled = session.state === 'authenticated'
   const profile = useAccountProfile()
   const software = useQuery({
-    queryKey: ['session', 'software', page],
+    queryKey: ['session', 'software', view, page],
     enabled,
     queryFn: ({ signal }) =>
       session.read(async (token) => {
         const result = await meSoftwareRightList(
-          { view: 'current', page, pageSize: 20 },
-          { headers: { Authorization: `Bearer ${token}` } },
-          signal
+          { view, page, pageSize: 20 },
+          { signal, headers: { Authorization: `Bearer ${token}` } }
         )
-        if (!result.data) throw new Error('Missing software response data')
-        return result.data
+        if (!result.data.data) throw new Error('Missing software response data')
+        return result.data.data
       })
   })
   const summary = useQuery({
@@ -28,9 +27,9 @@ export function useMySoftware(page: number) {
     enabled,
     queryFn: ({ signal }) =>
       session.read(async (token) => {
-        const result = await employeeDashboardGet({ headers: { Authorization: `Bearer ${token}` } }, signal)
-        if (!result.data) throw new Error('Missing dashboard response data')
-        return result.data.sections
+        const result = await employeeDashboardGet({ signal, headers: { Authorization: `Bearer ${token}` } })
+        if (!result.data.data) throw new Error('Missing dashboard response data')
+        return result.data.data.sections
       })
   })
 

@@ -1,64 +1,160 @@
 # SaaS-Sentry Mobile architecture
 
-Status: all screens API-backed; demo data removed.
+Status: Expo foundation aligned with the mobile scope of BRD v4.13 (QĐ-61b, EP-16) and
+`mobile-api-map.md`, 2026-11-18.
 
 ## Context and scope boundary
 
-Mobile is a native iOS/Android companion that shares the backend's business rules, authorization
-and separation of duties. Every screen is backed by the API; no static or demo data remains.
-Push, offline mode, biometrics, file downloads, phone usage collection and IT Admin, Finance and
-Super Admin workflows are out of scope. The web client remains the full capability surface.
+The mobile scope (BRD 3.1, QĐ-61b, EP-16) is a native iOS/Android companion for four tasks: employees view
+their software and requests and submit or withdraw simple requests for software
+already in the catalog; managers approve the need step for their department;
+spending approvers decide individual items against a read-only budget snapshot;
+and users read an in-app inbox. The web client remains the full capability surface.
+Mobile shares backend business rules, authorization, and separation of duties.
 
-Login loads `/me` before routing and never guesses a role: SPENDING_APPROVER accounts enter
-`/spending-approvals`, MANAGER accounts enter `/live-need-approvals`, and everyone else enters
-`/my-software`. If the account cannot be loaded the user can retry or sign out.
-
-**Employee** (`/my-software`, `/live-requests`, `/live-requests/[requestId]`,
-`/live-request-create`, `/live-inbox`): current software (paginated, with the backend's
-seven-day expiring flag; the expiring filter applies to the current page only), requests the
-caller sent, or that were sent for them (`involvement` SENT or FOR_ME), with a progress timeline
-(sent, need, spend, execution) and a withdraw action only when the server says it is available,
-and individual requests for catalog plans. A request has an optional expected end date (required
-only when the preview says `termRequired`) instead of a term in months, and needs a current
-successful preview before sending; the preview reports the open-request limit and, when a person
-already uses many paid applications, a reason that must be given. A head's own request skips the
-need step (`routing` ONE_STEP). A request sent back for changes (`AWAITING_REQUESTER_REVISION`)
-is revised on the web.
-
-**Manager** (`/live-need-approvals`) has four tabs:
-
-- _Queue_: need approvals for assigned individual grants. Rejection needs a reason; terms over 12
-  months are blocked because the required confirmation is missing from the payload.
-- _Send to approver_: the head's spend queue (`spend-queue`). Ready requests are chosen and sent in
-  one batch (`spend-batches`). A request whose check says it uses the reserve is sent only with a
-  one-line reason (up to 500 characters) given in the same act; otherwise it stays in the queue
-  waiting for that confirmation. Blocked requests show their reasons and cannot be chosen. The
-  result lists how each request fared.
-- _Group request_: a request for two or more people of the department (`group-request-candidates`,
-  `group-requests/check`, `group-requests`). The request can only be sent after a check that is
-  current for the chosen plan, expected end date, reason and people, and in which every person
-  passed. A person who already uses many paid applications needs their own reason.
-- _Inbox_: the live notification feature.
-
-**Spending approver** (`/spending-approvals`) has three tabs: spending approvals
-(`spend-approvals` list/detail/decide, one item at a time), manager requests (the
-`need-decisions` GRANT queue routed to the approver as a one-step request, decided with
-`need-decision`) and the live inbox. The read-only budget snapshot is part of the spend detail
-(`budgetSnapshot`: base, reserve, committed, spent, waiting, what is left at both levels, the
-outcome WITHIN_BASE, USES_RESERVE or BLOCKED, and the head's reserve confirmation). A BLOCKED
-request is not offered for approval, there is no override, and `SPEND.*` server errors (including a
-request sent back to its head or requester) map to explicit messages. The Finance review step no
-longer exists in the contract.
-
-**Scope note.** BRD QĐ-61b and FR-3.21 place group-request creation and spend-batch submission on
-the web only. They were added to mobile on the product owner's request; the BRD and decisions
-should be updated to match, or these two tabs removed.
-
-Writes are never automatically retried, and the contract has no client idempotency key. A failed
-or uncertain write is reported as uncertain and the user must check the refreshed list before
-trying again. Backend authorization and stale-state checks stay authoritative. Paginated screens
-move back to the last page that exists when the current page empties after a decision.
-Password recovery on the login screen directs the user to the web.
+Push notifications, offline mode, biometrics, file downloads, phone usage
+collection, and IT Admin/Finance/Super Admin workflows are outside mobile scope.
+The committed OpenAPI snapshot contains the backend's business operations. Login,
+the signed-in account, personal software, inbox and employee requests use the backend.
+The live need-approval workspace supports assigned individual grants. The
+`/spending-approvals` workspace is API-backed and restricted to an account whose
+only role is `SPENDING_APPROVER`; its queue is server-assigned and paginated. It
+shows the read-only budget snapshot and policy 1.7 checklist, submits individual
+decisions, and decides only the people currently awaiting a group spending decision.
+Group `RETURN` is sent for every waiting person or none; batch decisions remain web-only.
+The detail's null beneficiary identifies a group even when only one person remains.
+Return closes the step without requiring a spend decision record and follows the
+server's one-step or head routing. Mutation responses must match the request, step,
+and expected outcome; inconsistent responses are treated as uncertain. Navigation
+and Android system back on the last route are blocked while a decision is in flight.
+On an explicit policy-version conflict, the user may reload the policy, request and
+group lines; a different version and the same pending step are required before
+answering again. Neither this recovery nor uncertain writes automatically retry.
+The former prototype request, Manager-demo, Spending-demo, inbox-demo and password-recovery screens
+and the in-memory `demo-requests` store were removed. Contract availability alone does not resolve
+the differences between the current backend and newer proposed business decisions.
+The authenticated landing loads `/me` and opens `/home`, which shows self-service
+shortcuts and the live Manager or Spending Approver queue only to the matching role.
+If the account cannot be loaded, the user can retry or sign out; the app does not guess the role.
+The personal software screen links Manager accounts
+back to the workspace but does not show that entry for employees. The live
+screen links to live request flows instead of opening the demo, to
+avoid presenting demo data as the signed-in user's data. The live inbox at `/live-inbox`
+uses the authenticated notification API. It requests server-rendered titles and
+messages in the active language, with a legacy code-label fallback when an older
+server omits them. Opening
+an unread notification marks it read once and opens a supported destination even if
+the update fails; a dismissible warning survives navigation. Request notifications
+open real request detail. Assigned Manager need notifications search the caller's
+current assigned queue across pages (up to 100 pages; exceeding that limit is an
+explicit error) and open an individual GRANT only when found;
+unavailable or group work is not sent to the individual decision route. A need
+reminder not in that queue opens request detail, where the backend checks visibility.
+Assigned and reminder Spending Approver notifications open the spending workspace only after
+the request is found in the caller's assigned queue; an unavailable item stays
+explicitly unavailable rather than opening an unverified decision detail.
+Personal expiry
+notices open the matching software access, and access revocation notices open the
+software list. Unsupported, malformed, and web-only
+notification destinations stay in the inbox with an explicit web guidance message.
+Live
+request list and detail routes are `/live-requests` and `/live-requests/[requestId]`.
+The list contains requests sent by or made for the caller, while notification detail
+access is authorized by the backend. Individual catalog requests use `/live-request-create`:
+the caller chooses a requestable plan and must receive a current successful preview
+before submitting. The review is a separate step showing server pricing, cost
+estimates, limits and the anticipated approval route. Editing the form discards the
+preview; opening an existing request or right confirms before discarding the form.
+The catalog starts with department suggestions, allows searching all requestable
+applications, then lists that application's requestable plans. Department suggestions
+are guidance, not a restriction. The request uses `termMonths`: K1 requires 1–9 months, K2/K5
+allow 1–12 months or an unspecified long-term duration, and K4 has no duration.
+The preview remains authoritative, including restrictions on long-term use. K3 is
+not submitted from this screen until its mobile request behavior is specified.
+Request detail displays the expected end date rather than interpreting the legacy
+`termMonths` field, shows the approval route (need review, spending, IT provisioning) from the
+routing mode, step state and holder, and loads the paginated server event history separately.
+The requester can withdraw from the detail (confirmation first) while the state allows it, a
+request returned for revision shows that revising and resubmitting is web-only, and a closed
+individual request offers "Request again", which opens the catalog on the same application.
+The list offers withdrawal only when the server indicates it is
+available, and displays the returned status rather than assuming immediate withdrawal.
+The withdrawal response must identify the same request; a missing or inconsistent
+response is treated as uncertain. Navigation and Android Back are blocked while
+withdrawal is in flight, but forced termination cannot be intercepted.
+The create screen includes the employee tabs and asks for confirmation before its
+back button, tabs, or navigation actions that remove the route discard entered details.
+On Android, system back also asks before exiting when this is the last route. Navigation
+is blocked while a submission is in flight. Forced app termination, closing a browser
+tab and parent unmounts outside navigation cannot be intercepted.
+Writes are never automatically retried; an uncertain result requires checking the list
+before trying again. The backend has no client-provided idempotency key in this contract,
+so this cannot guarantee prevention of duplicate submissions across navigation/restarts.
+Explicit, recognized validation/conflict responses are shown as rejections; a new
+submission requires the user to request a fresh preview first. Unknown or inconsistent
+failures remain uncertain and locked.
+The Manager landing is `/live-need-approvals`; it shows the authenticated account,
+department, assigned-work count, and a Manager-specific queue/team/inbox tab bar.
+The inbox uses the live notification feature; the team tab explains that department
+management is web-only, and the header links to personal self-service. A Manager without an active
+`managerScope` sees an explicit unavailable state rather than a fabricated queue.
+The queue is filtered by the backend to the caller's assigned GRANT steps; it is not an
+authorization check or a department-wide request list. This workspace is currently
+restricted to MANAGER accounts; Spending Approver work is handled by the separate
+`/spending-approvals` workspace, and fallback-decider workflows remain unconnected.
+The request detail queries the
+assignee-only similar seats endpoint separately, with pagination and explicit
+loading/error states. The contract supplies a due date but no exact deadline or
+all-queue urgent count; the UI does not invent an hourly SLA countdown.
+Group and renewal requests are decided on mobile (Owner decision, 2026-11-18): the queue
+lists every type the server assigns, a single GRANT or RENEWAL uses the individual decision
+route, and a GROUP_GRANT is decided person by person through `accessRequestLineNeedDecide`
+with one shared step 1.2 checklist; `RETURN` applies to every waiting person or none, and the
+similar-seats lookup is not shown for groups. Old SERVICE_ACCOUNT records have no mobile
+decision. Decisions
+are confirmed explicitly and include the current policy step 1.2 checklist.
+An answer of No blocks approval; rejection or return requires a reason unless the
+server can derive it from a No answer.
+Backend authorization and stale-state checks remain authoritative. Failed or uncertain
+decisions are never retried automatically and require checking the refreshed queue.
+Navigation and Android system back on the last route are blocked while a Manager
+decision is in flight.
+An explicit `POLICY.VERSION_CHANGED` rejection instead lets the Manager reload the
+request and a different checklist version, then answer again before deciding manually.
+Manager group request creation and spend-batch submission remain web-only; a GH-3 flag
+is not shown because the current detail contract does not expose it. The mobile app
+does not assume the newer proposed one-step manager-self-request routing has been
+implemented by the backend.
+Sibling tabs (software, create request, requests, inbox) switch with `router.replace`, so
+Back from any tab returns to the screen that opened it (normally Home) instead of walking
+through previously visited tabs. Header and card shortcuts still use `push`. The login and
+authenticated headers share `PreferenceSwitches` (language VI/EN toggle persisted in
+AsyncStorage plus theme); the login password field has a show/hide control.
+Password recovery, activation and password change run on mobile (Owner decision, 2026-11-18).
+`/forgot-password` requests a reset link and always shows the same notice. `/activate` and
+`/reset-password` read the one-time token from the URL fragment (`#token=…`, query accepted as a
+fallback) of a link opened through the app scheme; the web links `https://<host>/activate#token=…`
+open in the app only after Android App Links / iOS Universal Links are configured for the web
+domain, which still needs a domain-verification decision. `/change-password` calls `meChangePassword`
+and, because the server ends every session, clears the local session without a second logout call.
+The authenticated account header opens `/profile`, which shows the signed-in user's account details
+using the shared `/me` query, including the department managed by a Manager. The user can change the
+work phone (`meProfilePatch`) and the profile photo (`meAvatarPut` / `meAvatarDelete`); the photo is
+chosen with the system picker, resized and redrawn as JPEG (removing EXIF/GPS) until it is at most
+1 MiB before upload. Failed calls show the server `requestId` as a reference for support.
+Employee self-service opens a confirmation before signing out from the account
+screen; the profile remains reachable when account loading fails. The software list
+uses local brand icons where available, with a generic fallback for other names.
+The Manager and Spending Approver workspaces, inbox and software screens are all API-backed;
+no demo or session-only request state remains. Detail screens use a route fallback when opened
+without navigation history.
+The authenticated software list is paginated, supports current and ended access, and
+displays the backend's seven-day expiring flag. The dashboard supplies the overall
+expiring count; the filter explicitly applies only to the current page. Software
+details search the authenticated current and ended rights pages for the assignment;
+no separate detail endpoint exists. They do not expose invented accounts or keys.
+An all-pages expiring filter and return workflows are not provided.
+The former `/my-requests`, `/inbox` and `/manager` prototype redirects were removed.
 
 ## Runtime view
 
@@ -81,35 +177,39 @@ persistence, jobs, and financial/access decisions.
 app/
   _layout.tsx              root route/provider attachment
   index.tsx                thin route entry
+  home.tsx                 authenticated Home handoff
+  forgot-password.tsx      password reset request handoff
+  activate.tsx             invitation activation (token from URL fragment)
+  reset-password.tsx       password reset (token from URL fragment)
+  change-password.tsx      signed-in password change handoff
   live-inbox.tsx           authenticated inbox handoff
   live-requests.tsx        authenticated request list handoff
-  live-request-create.tsx  authenticated individual request handoff
+  live-request-create.tsx  authenticated individual request handoff (optional application preselection)
   live-need-approvals.tsx  authenticated need approval handoff
   live-requests/           authenticated request detail handoff
   my-software.tsx          employee software handoff
-  spending-approvals.tsx   authenticated spending-approver handoff
+  profile.tsx              signed-in account and profile editing handoff
+  spending-approvals.tsx   authenticated Spending Approver handoff
 src/
   providers/               application-wide framework providers
   features/
-    auth/                   backend login and password-recovery notice
+    account/                read-only signed-in account information
+    auth/                   backend login
     inbox/                  authenticated in-app notifications
     licenses/               employee software screens and models
-    manager/                need approvals, spend-queue submission and group requests
-    spending-approval/      per-item spending decisions and read-only budget snapshots
-    requests/               employee request list, details, progress and create
+    manager/                live need-approval workspace
+    policy/                 pending policy acknowledgement gate
+    spending-approval/      per-item spending queue and budget snapshots
+    requests/               employee request screens and session mocks
     <capability>/           screens, components, hooks, feature-local tests/models
   entities/
     <domain-concept>/       reusable domain presentation logic, only when needed
   shared/
     api/
       generated/
-        operations/<tag>/  one file per operation: Axios function and TanStack Query hook
-        model/<tag>/       request/response/domain contracts
-      axios-client.ts       shared Axios instance, 15 s timeout, optional auth adapter
-      mutator/              Orval request adapter over the shared Axios instance
-      http-error.ts         HTTP status and backend error code of a failed call
-      session.ts            token handling, refresh and the read/write boundary
-      session-context.tsx   React provider for the session
+        api/<tag>/         fetch functions and TanStack Query hooks
+        contracts/<tag>/   request/response/domain contracts
+        mocks/<tag>/       test-only Faker factories
       query-client.ts       TanStack Query defaults
     config/                 validated public application configuration
     i18n/                   typed vi/en resources and locale persistence
@@ -142,6 +242,13 @@ that a real advantage.
 - Remote state: TanStack Query.
 - Form and ephemeral UI state: local to the feature until broader ownership is real.
 - Authentication and permissions: returned by and enforced by the backend.
+- Appearance: `ThemeProvider` persists the system/light/dark preference in AsyncStorage
+  and follows the device when set to system. The authenticated live Employee and
+  Manager screens, login, and shared tab bar use the web-aligned palette. Legacy
+  prototype screens have not yet been converted to dark mode.
+
+The palette retains the web primary hues, but text on solid primary buttons uses a
+dark foreground for contrast rather than the web's white primary foreground.
 
 The session boundary uses the generated login, refresh and logout operations. The
 refresh token is stored using Expo SecureStore on native, with device-only iOS
@@ -155,6 +262,16 @@ user can retry; successful logout clears the query cache and local token. The re
 boundary retries a 401 only for reads, not business mutations. Authenticated writes
 refresh an already expired token before sending, but never retry a sent operation.
 Inbox read updates invalidate both list and count even after an uncertain failure.
+
+The root layout keeps the navigator mounted behind a policy gate. While `/me` is
+unavailable or lists pending acknowledgements, the gate blocks touch, accessibility
+and Android Back interactions with the underlying screens, including direct route
+entry. The underlying screens can still mount and issue reads; this client-side
+gate is not backend authorization. Acknowledgement uses the displayed policy and
+reloads `/me`; if the returned version differs, the gate requires the current text
+to be read again. The API does not accept a version precondition, so a version
+change between reading and acknowledgement cannot be prevented atomically by the
+client, including across a process restart.
 
 Use an HTTPS API origin without credentials or a path in release builds. HTTP is
 allowed only in development for local emulators/devices; traffic and credentials
@@ -182,38 +299,68 @@ openapi/openapi.yaml
       -> one declared tag/operation, unique operationId,
          *Request request body, *Response success body
   -> pnpm api:generate
-      -> src/shared/api/generated/operations/<tag>/<operation>.ts
-      -> src/shared/api/generated/model/<tag>
+      -> src/shared/api/generated/api/<tag>
+      -> src/shared/api/generated/contracts/<tag>
+      -> src/shared/api/generated/mocks/<tag>/*.faker.ts
 ```
 
-Orval uses Axios, `react-query` and `tags-operations`, with `src/shared/api/mutator/custom-axios.ts`
-as the request adapter. A generated function takes its arguments, then Axios request options,
-then an optional `AbortSignal`, and resolves to the response **body** (the `{ success, message,
-data }` envelope), so a payload is read as `result.data`. Failures reject with an `AxiosError`;
-read them with `httpStatusOf` and `apiErrorCodeOf` from `http-error.ts`. The runtime base
-expression is `env.API_BASE_URL`. Generated source is committed and reviewed with the contract,
-but never hand-edited.
-
-Authentication is deliberately **not** registered with `configureApiAuth`. Protected calls go
-through `Session.read` and `Session.write`, which attach the bearer token, refresh it once on a
-401 and expire the session. Registering the Axios refresh adapter as well would let two layers
-refresh the same single-use refresh token. Calls to the auth operations pass `skipAuth` and
-`skipAuthRefresh`. Other protected operations must not bypass the session boundary or assume that
+Orval uses `fetch`, `react-query`, and `tags-split`. Schema `splitByTags` mirrors the
+business tag hierarchy for contracts; types shared by several tags remain at the
+contracts root. The runtime base expression is
+`env.API_BASE_URL`. The built-in fetch generator preserves typed response data/status
+and throws for non-success HTTP responses so TanStack Query receives error states.
+Generated source is committed and reviewed with the contract, but never hand-edited.
+The generated fetch functions do not attach authentication automatically. The live
+personal-software screen calls them through the session's authenticated read
+boundary. Other protected operations must not bypass that boundary or assume that
 it supports safe mutation retries.
 
 The initial business snapshot was imported from the backend OpenAPI export reviewed
 on 2026-11-09 (SHA-256
 `8bc889bce6d092a25173c6eeb9e31da44847a4de1e7f024e08ab0a288672bda0`).
+On 2026-11-14, the `PreviewBodyDto`, `SubmitBodyDto`, and `PreviewResponseDto`
+schemas alone were updated from the deployed server's public `/api/docs-json`
+(SHA-256 `912512d998bec5651bc8abbe2a5f33398bf82d132c58b459d300eee531b27f92`)
+to match its individual request preview and submit contract. On 2026-11-17 the
+entire snapshot was imported from the deployed public `/api/docs-json` (SHA-256
+`c4191d0c0bffe69eea79617e2c07497720c76753c950de02eb891ec676e2f39d`).
+That hash differs from the mobile API guide's documented export; recheck the deployed
+contract before further integration. The live request list includes both requests
+sent by the caller and requests made for the caller.
+On 2026-11-18 the notification list and mark-read response schemas and language
+headers were updated from the local backend export (SHA-256
+`6d0d216b619da6aaaf094f73bb58bed7273fe0ced88634e3fccc39843ea4e200`);
+the corresponding response schemas matched the public `/api/docs-json` (SHA-256
+`9de2b7d504cadb306ee7881f4bb507a8f5f96fa85dae51db6972ed89e98b7a90`).
+The rest of the snapshot was not reimported at that time. On 2026-11-18 (evening) the
+whole snapshot was reimported from the same backend export
+(`BE/openapi.json`, SHA-256 `6d0d216b619da6aaaf094f73bb58bed7273fe0ced88634e3fccc39843ea4e200`),
+which adds the profile operations (`meProfilePatch`, `meAvatarPut`, `meAvatarDelete`,
+`employeeProfileLookup`). Contract shape alone does not prove
+On 2026-11-18 (late evening) the snapshot was reimported again from BE `origin/main` (QĐ-113): for the operations mobile uses, the only contract changes are the required `priceSource` on the request preview (`PLAN_REFERENCE` shows a reference-price notice) and the 409 `ACCESS_REQUEST.WITHDRAWAL_AFTER_DECISION` on withdrawal. Export file SHA-256 `8B0F4F7BA42D7F864A975853411050410A8A80F273533B9D2DBA87AA3E61D101` (as written by PowerShell, with BOM).
+the deployed backend's behavior.
 The import adds missing top-level tag declarations and request/response aliases
 to satisfy the mobile naming conventions without renaming the backend DTOs. It also
 adds the already-inherited string type to example-only `message` overlays, and
 extracts one inline group-line schema through a reference; these preserve the
-contract's constraints.
+contract's constraints while allowing Orval to generate type-correct Faker mocks.
 Alias collisions and missing source schemas fail the import. Import tests cover
-these transformations. Tests build their own fixtures and mock the generated operations or the shared Axios adapter at the
-test boundary. MSW device interception is not enabled. If a future workflow needs HTTP-level
-mocking across simulator/device builds, prefer a separately deployed mock server or an explicit
-development-only interceptor; never ship a hidden device-side mock switch.
+these transformations. Generated Faker data is test-only and may still need overrides
+for specific business scenarios; it is not evidence that a workflow is valid.
+Generation removes the generated mocks directory before Orval runs because Orval's
+output cleanup does not remove obsolete mock files when a tag disappears. Restart
+`api:watch` after removing a tag so that this cleanup runs again.
+
+Faker works in the Node/Jest development environment and is useful for factories and
+fixtures. It is deliberately a development dependency and must not enter a native
+production bundle. MSW device interception is not enabled; request mocking belongs
+in Jest unless a concrete end-to-end mock-server workflow is approved.
+
+Fake data can still be generated through Orval on Mobile. Import a generated Faker
+factory in Jest to produce a type-correct request/response object, then override only
+fields relevant to the behavior under test. If a future workflow needs HTTP-level
+mocking across simulator/device builds, prefer a separately deployed mock server or
+explicit development-only interceptor; never ship a hidden device-side mock switch.
 
 Backend Swagger tags and component names are architecture inputs. Every operation has
 one stable business tag; the imported snapshot declares the tags and adds
@@ -345,7 +492,7 @@ to `entities/license` or keep separate components for different workflows.
 `hooks/use-license-list.ts`:
 
 ```ts
-import { useGetLicenses } from '@/shared/api/generated/operations/licenses'
+import { useGetLicenses } from '@/shared/api/generated/api/licenses/licenses'
 
 import { toLicenseListItems } from '../model/license-list.model'
 
@@ -369,7 +516,7 @@ it must not render UI.
 `model/license-list.model.ts` is the same kind of pure boundary as on Web:
 
 ```ts
-import type { LicenseDto } from '@/shared/api/generated/model/licenses'
+import type { LicenseDto } from '@/shared/api/generated/contracts/licenses'
 
 export interface LicenseListItem {
   id: string
@@ -483,8 +630,8 @@ demand them; do not prebuild generic frameworks.
 - Device smoke: safe area, keyboard, back behavior, deep link, and native module usage
   when those concerns exist.
 
-Build test fixtures in Jest only; never ship fixtures or mock data in `screens/`, `components/`,
-hooks, route files, or providers.
+Use generated Faker factories in Jest, not in `screens/`, `components/`, hooks, route
+files, or providers.
 
 ### Mobile naming and growth rules
 
@@ -585,7 +732,7 @@ overloading `NODE_ENV`.
 
 1. Pure unit tests for mapping and formatting logic.
 2. Screen/component tests with Jest Expo and React Native Testing Library.
-3. API behavior tests with hand-written fixtures and test-boundary mocks of the generated operations or the Axios adapter.
+3. API behavior tests using generated Faker data and test-boundary fetch mocks.
 4. `expo export` to catch Router/Metro/static-rendering errors.
 5. Device or emulator smoke tests for any native interaction, deep link, permission,
    storage, keyboard, or platform-specific layout.
@@ -641,7 +788,9 @@ upgrade/removal procedure.
 - [Expo unit testing with Jest](https://docs.expo.dev/develop/unit-testing/)
 - [TanStack Query React Native guidance](https://tanstack.com/query/latest/docs/framework/react/react-native)
 - [Orval React Query client](https://orval.dev/docs/guides/react-query/)
+- [Orval Faker generation](https://orval.dev/docs/guides/faker/)
 - [Orval output configuration](https://orval.dev/docs/reference/configuration/output/)
+- [Faker usage and bundle-size guidance](https://fakerjs.dev/guide/usage)
 - [Expo localization](https://docs.expo.dev/guides/localization/)
 - [React i18next `useTranslation`](https://react.i18next.com/latest/usetranslation-hook)
 - [pnpm dependency overrides](https://pnpm.io/settings/dependency-resolution)

@@ -5,7 +5,8 @@ in this repository. Read `ARCHITECTURE.md` before changing structure or data flo
 
 ## Product scope
 
-- BRD 3.53 includes a native iOS/Android companion for four tasks: an employee's
+- The mobile scope (BRD v4.13, QĐ-61b, EP-16, `mobile-api-map.md` in the Docs repo) is a native
+  iOS/Android companion for four tasks: an employee's
   software and simple requests, manager need approval, spending approval, and an
   in-app inbox. The web client remains the full capability surface.
 - Mobile shares backend business rules, authorization, and separation of duties.
@@ -20,7 +21,7 @@ in this repository. Read `ARCHITECTURE.md` before changing structure or data flo
 - Expo SDK 54, React Native 0.81, React 19.1, Expo Router 6
 - Expo new architecture, typed routes, and React Compiler
 - TanStack Query 5 for remote/server state
-- Orval 8 and Axios for the OpenAPI client and TanStack Query hooks
+- Orval 8 for OpenAPI client, hook, and test-only Faker factory generation
 - Jest Expo and React Native Testing Library
 - TypeScript strict mode, ESLint flat config, Prettier, pnpm
 
@@ -88,7 +89,7 @@ this table before creating a file.
 | Generic native primitive      | `src/shared/ui/`                              | License/user/approval-specific behavior           |
 | Native/device adapter         | `src/shared/native/`                          | Screen rendering or feature policy                |
 | Generic utility/config        | `src/shared/lib/`, `src/shared/config/`       | Imports from app/features/entities                |
-| Generated client and types    | `src/shared/api/generated/`                   | Hand edits                                        |
+| Generated client/types/mocks  | `src/shared/api/generated/`                   | Hand edits or runtime Faker imports               |
 
 A mature feature follows this shape:
 
@@ -119,10 +120,9 @@ new authored code must not be placed there. See `ARCHITECTURE.md` for full examp
 - Everything below `src/shared/api/generated/` is generated. Never edit it by hand.
 - Every operation has one declared OpenAPI tag and a unique `operationId`. Request
   body components end in `Request`; successful response components end in
-  `Response`. Generated output is `operations/<tag>` and `model/<tag>`.
-- Generated operations resolve to the response body and reject with an `AxiosError`; read a
-  payload as `result.data` and failures with `httpStatusOf`/`apiErrorCodeOf`. Protected calls go
-  through `Session.read`/`Session.write`; do not register the Axios auth adapter as well.
+  `Response`. Generated output is `api/<tag>`, `contracts/<tag>`, and `mocks/<tag>`.
+- Generated Faker factories are for Jest, fixtures, and explicit development tools.
+  Never import Faker from a production screen/provider/route.
 - Do not enable a device-side MSW layer by default; mock at the test boundary.
 - `EXPO_PUBLIC_*` values are inlined into the app and readable by users. Never put
   secrets, private keys, or privileged service credentials there.
@@ -172,7 +172,7 @@ new authored code must not be placed there. See `ARCHITECTURE.md` for full examp
 ## AI workflow
 
 1. Read this file and `ARCHITECTURE.md`.
-2. Confirm the request fits the four mobile tasks in BRD 3.53; flag web-only
+2. Confirm the request fits the four mobile tasks (BRD v4.13 / QĐ-61b); flag web-only
    workflows and API contracts that have not been supplied yet.
 3. Inspect the closest route, feature public entry, generated API surface, and test.
    Search before inventing a new pattern.
@@ -182,6 +182,6 @@ new authored code must not be placed there. See `ARCHITECTURE.md` for full examp
    hook/model -> component -> test. Treat generated/downloaded
    binary assets as untrusted until reviewed and converted.
 6. Re-read the diff for business code in `app/`, cross-feature private imports,
-   `useEffect` fetching, hardcoded copy, duplicated styles, and `any`.
+   `useEffect` fetching, runtime Faker, hardcoded copy, duplicated styles, and `any`.
 7. Generate rather than hand-edit API files; run relevant checks.
 8. Report exact verification results and device/platform limitations.

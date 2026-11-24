@@ -1,0 +1,285 @@
+import { Feather } from '@expo/vector-icons'
+import { Redirect, useRouter } from 'expo-router'
+import { useRef, useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import { Modal, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
+import { SafeAreaView } from 'react-native-safe-area-context'
+
+import { useSession } from '@/shared/api/session-context'
+import { useAccountProfile } from '@/shared/api/use-account-profile'
+import type { MobileColors } from '@/shared/theme/colors'
+import { useMobileTheme } from '@/shared/theme/theme-provider'
+import { PreferenceSwitches } from '@/shared/ui/preference-switches'
+
+import { ProfileHero, WorkPhoneRow } from '../components/profile-hero'
+
+export function AccountProfileScreen() {
+  const { t } = useTranslation()
+  const { colors } = useMobileTheme()
+  const styles = createStyles(colors)
+  const router = useRouter()
+  const session = useSession()
+  const profile = useAccountProfile()
+  const [confirmLogout, setConfirmLogout] = useState(false)
+  const [loggingOut, setLoggingOut] = useState(false)
+  const [logoutError, setLogoutError] = useState(false)
+  const logoutPending = useRef(false)
+  const account = !profile.isError && session.state === 'authenticated' ? profile.data : undefined
+
+  async function logout() {
+    if (logoutPending.current) return
+    logoutPending.current = true
+    setLoggingOut(true)
+    setLogoutError(false)
+    try {
+      await session.logout()
+    } catch {
+      setLogoutError(true)
+    } finally {
+      logoutPending.current = false
+      setLoggingOut(false)
+    }
+  }
+
+  if (session.state === 'anonymous') return <Redirect href='/' />
+
+  const fields = account
+    ? [
+        { label: t('account.name'), value: account.employee.fullName },
+        { label: t('account.email'), value: account.loginEmail },
+        { label: t('account.employeeCode'), value: account.employee.employeeCode },
+        { label: t('account.department'), value: account.employee.department?.name },
+        { label: t('account.jobTitle'), value: account.employee.jobTitle },
+        ...(account.roles.includes('MANAGER')
+          ? [{ label: t('account.managerScope'), value: account.managerScope?.departmentName }]
+          : [])
+      ]
+    : []
+
+  return (
+    <SafeAreaView style={styles.safe}>
+      <ScrollView contentContainerStyle={styles.content}>
+        <Text accessibilityRole='header' style={styles.pageTitle}>
+          {t('account.title')}
+        </Text>
+        {session.state === 'loading' || profile.isLoading ? (
+          <Text accessibilityRole='progressbar' style={styles.subtitle}>
+            {t('account.loading')}
+          </Text>
+        ) : null}
+        {profile.isError ? (
+          <View style={styles.card}>
+            <Text accessibilityRole='alert' style={styles.error}>
+              {t('account.error')}
+            </Text>
+            <Pressable accessibilityRole='button' onPress={() => void profile.refetch()} style={styles.retry}>
+              <Text style={styles.retryText}>{t('account.retry')}</Text>
+            </Pressable>
+          </View>
+        ) : null}
+        {account ? (
+          <>
+            <ProfileHero
+              name={account.employee.fullName}
+              jobTitle={account.employee.jobTitle}
+              avatarUrl={account.avatar?.url}
+              onAvatarError={() => void profile.refetch()}
+            />
+            <View style={styles.card}>
+              <Text accessibilityRole='header' style={styles.cardTitle}>
+                {t('account.details')}
+              </Text>
+              {fields.map((field) => (
+                <View key={field.label} style={styles.row}>
+                  <Text style={styles.label}>{field.label}</Text>
+                  <Text style={styles.value}>{field.value || t('account.noValue')}</Text>
+                </View>
+              ))}
+              <WorkPhoneRow workPhone={account.workPhone} />
+            </View>
+            <View style={styles.card}>
+              <Text accessibilityRole='header' style={styles.cardTitle}>
+                {t('account.settings')}
+              </Text>
+              <View style={styles.settingRow}>
+                <Text style={styles.value}>{t('account.appearance')}</Text>
+                <PreferenceSwitches />
+              </View>
+            </View>
+            <Pressable
+              accessibilityRole='button'
+              accessibilityLabel={t('account.changePassword')}
+              onPress={() => router.push('/change-password')}
+              style={styles.changePassword}
+            >
+              <Feather
+                accessibilityElementsHidden
+                importantForAccessibility='no'
+                name='lock'
+                size={19}
+                color={colors.primaryInk}
+              />
+              <Text style={styles.changePasswordText}>{t('account.changePassword')}</Text>
+            </Pressable>
+          </>
+        ) : null}
+        {session.state === 'authenticated' ? (
+          <Pressable
+            accessibilityRole='button'
+            accessibilityLabel={t('licenses.live.logout')}
+            onPress={() => {
+              setLogoutError(false)
+              setConfirmLogout(true)
+            }}
+            style={styles.logout}
+          >
+            <Feather
+              accessibilityElementsHidden
+              importantForAccessibility='no'
+              name='log-out'
+              size={19}
+              color={colors.danger}
+            />
+            <Text style={styles.logoutText}>{t('licenses.live.logout')}</Text>
+          </Pressable>
+        ) : null}
+      </ScrollView>
+      <Modal
+        transparent
+        animationType='fade'
+        visible={confirmLogout}
+        onRequestClose={() => {
+          if (!loggingOut) setConfirmLogout(false)
+        }}
+      >
+        <View style={styles.backdrop}>
+          <View accessibilityViewIsModal style={styles.dialog}>
+            <Text accessibilityRole='header' style={styles.dialogTitle}>
+              {t('account.logoutTitle')}
+            </Text>
+            <Text style={styles.subtitle}>{t('account.logoutMessage')}</Text>
+            {logoutError ? (
+              <Text accessibilityRole='alert' style={styles.error}>
+                {t('licenses.live.logoutError')}
+              </Text>
+            ) : null}
+            <Pressable
+              accessibilityRole='button'
+              disabled={loggingOut}
+              accessibilityState={{ disabled: loggingOut, busy: loggingOut }}
+              onPress={() => void logout()}
+              style={[styles.confirmButton, loggingOut && styles.disabled]}
+            >
+              <Text style={styles.confirmText}>{loggingOut ? t('auth.loading') : t('account.logoutConfirm')}</Text>
+            </Pressable>
+            <Pressable
+              accessibilityRole='button'
+              disabled={loggingOut}
+              accessibilityState={{ disabled: loggingOut }}
+              onPress={() => setConfirmLogout(false)}
+              style={[styles.cancelButton, loggingOut && styles.disabled]}
+            >
+              <Text style={styles.cancelText}>{t('account.logoutCancel')}</Text>
+            </Pressable>
+          </View>
+        </View>
+      </Modal>
+    </SafeAreaView>
+  )
+}
+
+const createStyles = (colors: MobileColors) =>
+  StyleSheet.create({
+    pageTitle: { color: colors.foreground, fontSize: 26, fontWeight: '800', letterSpacing: -0.4 },
+    settingRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      gap: 12,
+      paddingTop: 10
+    },
+    safe: { flex: 1, backgroundColor: colors.background },
+    content: { padding: 20, paddingBottom: 36, gap: 20 },
+    topRow: { alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between' },
+    back: { alignSelf: 'flex-start', alignItems: 'center', flexDirection: 'row', gap: 8, minHeight: 44 },
+    backText: { color: colors.foreground, fontSize: 14, fontWeight: '600' },
+    heading: { gap: 5 },
+    title: { color: colors.foreground, fontSize: 27, fontWeight: '700', letterSpacing: -0.5 },
+    subtitle: { color: colors.muted, fontSize: 14, lineHeight: 21 },
+    hero: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 16,
+      padding: 20,
+      borderRadius: 20,
+      backgroundColor: colors.primarySoft
+    },
+    avatar: {
+      width: 58,
+      height: 58,
+      borderRadius: 20,
+      backgroundColor: colors.surface,
+      alignItems: 'center',
+      justifyContent: 'center'
+    },
+    initials: { color: colors.primaryInk, fontSize: 23, fontWeight: '700' },
+    heroCopy: { flex: 1, minWidth: 0, gap: 4 },
+    heroName: { color: colors.foreground, fontSize: 19, fontWeight: '700' },
+    heroMeta: { color: colors.foreground, fontSize: 14, lineHeight: 20 },
+    card: {
+      backgroundColor: colors.surface,
+      borderColor: colors.border,
+      borderWidth: 1,
+      borderRadius: 20,
+      padding: 20
+    },
+    cardTitle: { color: colors.foreground, fontSize: 16, fontWeight: '700', marginBottom: 4 },
+    row: { borderBottomColor: colors.border, borderBottomWidth: StyleSheet.hairlineWidth, gap: 5, paddingVertical: 15 },
+    label: { color: colors.muted, fontSize: 13 },
+    value: { color: colors.foreground, fontSize: 15, fontWeight: '600', lineHeight: 22 },
+    error: { color: colors.danger, fontSize: 14, lineHeight: 21 },
+    retry: { alignSelf: 'flex-start', justifyContent: 'center', minHeight: 44, marginTop: 4 },
+    retryText: { color: colors.primaryInk, fontWeight: '700' },
+    changePassword: {
+      alignItems: 'center',
+      flexDirection: 'row',
+      gap: 10,
+      minHeight: 52,
+      paddingHorizontal: 16,
+      borderRadius: 16,
+      backgroundColor: colors.primarySoft
+    },
+    changePasswordText: { color: colors.primaryInk, fontSize: 15, fontWeight: '700' },
+    logout: {
+      minHeight: 52,
+      borderWidth: 1,
+      borderColor: colors.border,
+      borderRadius: 16,
+      backgroundColor: colors.surface,
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      gap: 10
+    },
+    logoutText: { color: colors.danger, fontSize: 15, fontWeight: '700' },
+    backdrop: { flex: 1, backgroundColor: 'rgba(0, 0, 0, 0.55)', justifyContent: 'flex-end' },
+    dialog: {
+      backgroundColor: colors.surface,
+      borderTopLeftRadius: 24,
+      borderTopRightRadius: 24,
+      padding: 24,
+      gap: 12
+    },
+    dialogTitle: { color: colors.foreground, fontSize: 20, fontWeight: '700' },
+    confirmButton: {
+      backgroundColor: colors.danger,
+      borderRadius: 14,
+      minHeight: 48,
+      justifyContent: 'center',
+      alignItems: 'center'
+    },
+    confirmText: { color: colors.onDanger, fontWeight: '700' },
+    cancelButton: { minHeight: 48, justifyContent: 'center', alignItems: 'center' },
+    cancelText: { color: colors.primaryInk, fontWeight: '700' },
+    disabled: { opacity: 0.5 }
+  })
