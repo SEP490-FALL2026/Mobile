@@ -43,6 +43,11 @@ jest.mock('@/shared/api/generated/api/requestable-software/requestable-software'
   requestablePlanList: jest.fn(),
   requestableApplicationList: jest.fn()
 }))
+jest.mock('@/shared/api/generated/api/me/me', () => ({
+  meSoftwareRightList: jest.fn().mockResolvedValue({
+    data: { data: { items: [], pagination: { page: 1, pageSize: 100, totalItems: 0, totalPages: 1 } } }
+  })
+}))
 jest.mock('@/shared/api/generated/api/access-requests/access-requests', () => ({
   accessRequestPreview: jest.fn(),
   accessRequestSubmit: jest.fn()
