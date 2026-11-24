@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next'
 import { RefreshControl, ScrollView, StyleSheet, Text, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
+import { LoadingState } from '@/shared/ui/loading-state'
 import { PressableFeedback } from '@/shared/ui/pressable-feedback'
 import type { NotificationListResponseDtoDataItemsItem } from '@/shared/api/generated/contracts/notifications'
 import { useSession } from '@/shared/api/session-context'
@@ -137,11 +138,7 @@ export function LiveInboxScreen() {
               {t('inbox.live.webOnly')}
             </Text>
           ) : null}
-          {session.state === 'loading' || list.isLoading ? (
-            <Text accessibilityRole='progressbar' style={styles.muted}>
-              {t('inbox.live.loading')}
-            </Text>
-          ) : null}
+          {session.state === 'loading' || list.isLoading ? <LoadingState label={t('inbox.live.loading')} /> : null}
           {list.isError ? (
             <View style={styles.card}>
               <Text accessibilityRole='alert' style={styles.error}>

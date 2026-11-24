@@ -8,6 +8,7 @@ import { BackHandler, Platform, RefreshControl, ScrollView, StyleSheet, Text, Vi
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 import { SoftwareIcon } from '@/entities/software'
+import { LoadingState } from '@/shared/ui/loading-state'
 import { PressableFeedback } from '@/shared/ui/pressable-feedback'
 import { SegmentedControl } from '@/shared/ui/segmented-control'
 import { mayCreateRequest } from '@/shared/api/request-eligibility'
@@ -148,11 +149,7 @@ export function LiveRequestsScreen() {
               </PressableFeedback>
             </View>
           ) : null}
-          {session.state === 'loading' || query.isLoading ? (
-            <Text accessibilityRole='progressbar' style={styles.muted}>
-              {t('requests.live.loading')}
-            </Text>
-          ) : null}
+          {session.state === 'loading' || query.isLoading ? <LoadingState label={t('requests.live.loading')} /> : null}
           {query.isError ? (
             <View style={styles.card}>
               <Text accessibilityRole='alert' style={styles.error}>

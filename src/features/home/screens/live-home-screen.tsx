@@ -12,6 +12,8 @@ import { useAccountProfile } from '@/shared/api/use-account-profile'
 import type { MobileColors } from '@/shared/theme/colors'
 import { useMobileTheme } from '@/shared/theme/theme-provider'
 import { Avatar } from '@/shared/ui/avatar'
+import { LoadingState } from '@/shared/ui/loading-state'
+import { SentryMascot } from '@/shared/ui/sentry-mascot'
 
 export function LiveHomeScreen() {
   const { t, i18n } = useTranslation()
@@ -27,6 +29,13 @@ export function LiveHomeScreen() {
   const role = account?.roles.length === 1 ? account.roles[0] : undefined
   const mayRequest = mayCreateRequest(account)
   const manager = role === 'MANAGER' && !!account?.managerScope
+  const tipRole = role === 'MANAGER' ? 'manager' : role === 'SPENDING_APPROVER' ? 'spendingApprover' : 'employee'
+  const mascotMessages = [
+    t('mascot.hello'),
+    t(`mascot.tips.${tipRole}.first`),
+    t(`mascot.tips.${tipRole}.second`),
+    t('mascot.goodbye')
+  ]
 
   return (
     <SafeAreaView style={styles.safe}>
@@ -49,6 +58,7 @@ export function LiveHomeScreen() {
                   {account.employee.department?.name ?? t('licenses.live.noDepartment')}
                 </Text>
               </View>
+              <SentryMascot interactive={{ label: t('mascot.label'), messages: mascotMessages }} size={64} />
             </View>
             {manager ? (
               <PressableFeedback
@@ -162,9 +172,7 @@ export function LiveHomeScreen() {
             </PressableFeedback>
           </View>
         ) : (
-          <Text accessibilityRole='progressbar' style={styles.subtitle}>
-            {t('account.loading')}
-          </Text>
+          <LoadingState label={t('account.loading')} />
         )}
       </ScrollView>
     </SafeAreaView>

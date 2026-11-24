@@ -91,6 +91,12 @@ email attachment, or AI-generated binary can attack developer/CI availability.
 The patch reduces the known parser paths but does not make arbitrary binary input
 trusted. Asset review remains mandatory.
 
+Reviewed assets:
+
+- `assets/mascot/sentry-mascot-sprite.webp` (2026-11-24): the Sentry mascot sprite from the web repository
+  (`FE-dev/app/assets/mascot`), 1920x576, 10x3 frames of 192px. It was decoded to raw pixels with `sharp` 0.34
+  and written again as a fresh lossless WebP (no metadata carried over), then inspected visually.
+
 ## Patch removal and review workflow
 
 1. Run raw `pnpm audit` and review each dependency path/advisory.

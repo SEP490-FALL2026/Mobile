@@ -14,6 +14,7 @@ import type {
 import { Collapsible } from '@/shared/ui/collapsible'
 import { ChecklistQuestion } from '@/shared/ui/checklist-question'
 import { ChecklistToolbar } from '@/shared/ui/checklist-toolbar'
+import { LoadingState } from '@/shared/ui/loading-state'
 import { PressableFeedback } from '@/shared/ui/pressable-feedback'
 import type { LinesResponseDtoDataItemsItem } from '@/shared/api/generated/contracts/group-requests'
 import type { PolicyStepResponseDtoDataStepChecklistItem } from '@/shared/api/generated/contracts/policies'
@@ -584,9 +585,7 @@ export function LiveSpendingApprovalsScreen({ requestId }: { requestId?: string 
                 />
               </View>
               {queue.isPending ? (
-                <Text accessibilityRole='progressbar' style={styles.muted}>
-                  {t('spending.live.queueLoading')}
-                </Text>
+                <LoadingState label={t('spending.live.queueLoading')} />
               ) : filteredItems.length ? (
                 <View style={styles.list}>
                   {filteredItems.map((item) => (

@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next'
 import { RefreshControl, ScrollView, StyleSheet, Text, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
+import { LoadingState } from '@/shared/ui/loading-state'
 import { PressableFeedback } from '@/shared/ui/pressable-feedback'
 import { SegmentedControl } from '@/shared/ui/segmented-control'
 import { useSession } from '@/shared/api/session-context'
@@ -156,9 +157,7 @@ export function MySoftwareScreen() {
           ) : null}
           {filter === 'expiring' ? <Text style={styles.subtitle}>{t('licenses.live.pageFilterNote')}</Text> : null}
           {session.state === 'loading' || profile.isLoading || software.isLoading ? (
-            <Text accessibilityRole='progressbar' style={styles.subtitle}>
-              {t('licenses.live.loading')}
-            </Text>
+            <LoadingState label={t('licenses.live.loading')} />
           ) : null}
           {profile.isError || software.isError ? (
             <View style={styles.messageCard}>

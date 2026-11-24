@@ -11,6 +11,7 @@ import { BackButton } from '@/shared/ui/back-button'
 import { ChecklistQuestion } from '@/shared/ui/checklist-question'
 import { ChipButton } from '@/shared/ui/chip-button'
 import { ChecklistToolbar } from '@/shared/ui/checklist-toolbar'
+import { LoadingState } from '@/shared/ui/loading-state'
 import { PressableFeedback } from '@/shared/ui/pressable-feedback'
 import type { NeedQueueResponseDtoDataItemsItem } from '@/shared/api/generated/contracts/need-decisions'
 import { useSession } from '@/shared/api/session-context'
@@ -331,9 +332,7 @@ export function LiveNeedApprovalsScreen({
                 </View>
               ) : null}
               {hasScope && (session.state === 'loading' || queue.isLoading) ? (
-                <Text accessibilityRole='progressbar' style={styles.muted}>
-                  {t('manager.live.loading')}
-                </Text>
+                <LoadingState label={t('manager.live.loading')} />
               ) : null}
               {hasScope && queue.isError ? (
                 <View style={styles.card}>
@@ -420,11 +419,7 @@ export function LiveNeedApprovalsScreen({
             </>
           ) : hasScope && selected ? (
             <>
-              {detail.isLoading ? (
-                <Text accessibilityRole='progressbar' style={styles.muted}>
-                  {t('manager.live.loading')}
-                </Text>
-              ) : null}
+              {detail.isLoading ? <LoadingState label={t('manager.live.loading')} /> : null}
               {detail.isError ? (
                 <View style={styles.card}>
                   <Text accessibilityRole='alert' style={styles.error}>

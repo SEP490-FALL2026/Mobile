@@ -165,6 +165,25 @@ export const resources = {
         hidePassword: 'Hide password',
         back: 'Back'
       },
+      mascot: {
+        label: 'Sentry, the licence-watching bird. Tap to hear a tip',
+        hello: 'I am Sentry, the bird who watches over your software licences with you.',
+        goodbye: 'Have a smooth working day.',
+        tips: {
+          employee: {
+            first: 'Need new software? Open Create request to send a proposal.',
+            second: 'The end date of each software is under My software.'
+          },
+          manager: {
+            first: 'Your team’s needs are waiting in the Approvals tab.',
+            second: 'Your latest updates are in the Notifications tab.'
+          },
+          spendingApprover: {
+            first: 'Spending decisions are waiting in the Spending tab.',
+            second: 'Check the remaining budget before deciding each item.'
+          }
+        }
+      },
       home: {
         live: {
           eyebrow: 'YOUR WORKSPACE',
@@ -1051,6 +1070,25 @@ export const resources = {
         showPassword: 'Hiện mật khẩu',
         hidePassword: 'Ẩn mật khẩu',
         back: 'Quay lại'
+      },
+      mascot: {
+        label: 'Sentry, chú chim canh bản quyền. Chạm để nghe gợi ý',
+        hello: 'Mình là Sentry, chú chim canh chừng bản quyền phần mềm cùng bạn.',
+        goodbye: 'Chúc bạn một ngày làm việc suôn sẻ.',
+        tips: {
+          employee: {
+            first: 'Cần phần mềm mới? Mở Tạo yêu cầu để gửi đề xuất.',
+            second: 'Hạn dùng của từng phần mềm nằm trong mục Phần mềm của tôi.'
+          },
+          manager: {
+            first: 'Nhu cầu của nhân viên đang chờ bạn ở tab Cần duyệt.',
+            second: 'Thông báo mới nhất của bạn nằm ở tab Thông báo.'
+          },
+          spendingApprover: {
+            first: 'Các khoản chi cần quyết định nằm ở tab Duyệt chi.',
+            second: 'Xem ngân sách còn lại trước khi quyết định từng khoản.'
+          }
+        }
       },
       home: {
         live: {
