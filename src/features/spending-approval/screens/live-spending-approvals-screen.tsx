@@ -14,6 +14,8 @@ import type {
 import { Collapsible } from '@/shared/ui/collapsible'
 import { ChecklistQuestion } from '@/shared/ui/checklist-question'
 import { ChecklistToolbar } from '@/shared/ui/checklist-toolbar'
+import { EmptyState } from '@/shared/ui/empty-state'
+import { RefreshStatus, useRefreshFeedback } from '@/shared/ui/refresh-status'
 import { LoadingState } from '@/shared/ui/loading-state'
 import { PressableFeedback } from '@/shared/ui/pressable-feedback'
 import type { LinesResponseDtoDataItemsItem } from '@/shared/api/generated/contracts/group-requests'
@@ -45,6 +47,7 @@ export function LiveSpendingApprovalsScreen({ requestId }: { requestId?: string 
   const account = profile.data
   const isApprover = account?.roles.length === 1 && account.roles[0] === 'SPENDING_APPROVER'
   const [page, setPage] = useState(1)
+  const queueRefresh = useRefreshFeedback()
   const [search, setSearch] = useState('')
   const [selectedRequestId, setSelectedRequestId] = useState<string>()
   const [notificationUnavailable, setNotificationUnavailable] = useState(false)
@@ -553,8 +556,8 @@ export function LiveSpendingApprovalsScreen({ requestId }: { requestId?: string 
                   accessibilityRole='button'
                   accessibilityLabel={t('spending.live.refreshQueue')}
                   accessibilityState={{ busy: queue.isFetching }}
-                  disabled={queue.isFetching}
-                  onPress={() => void queue.refetch()}
+                  disabled={queue.isFetching || queueRefresh.state === 'loading'}
+                  onPress={() => void queueRefresh.refresh(queue.refetch)}
                   style={styles.iconButton}
                 >
                   <Feather
@@ -566,6 +569,12 @@ export function LiveSpendingApprovalsScreen({ requestId }: { requestId?: string 
                   />
                 </PressableFeedback>
               </View>
+              <RefreshStatus
+                failedLabel={t('common.refreshFailed')}
+                doneLabel={t('common.refreshed')}
+                loadingLabel={t('common.refreshing')}
+                state={queueRefresh.state}
+              />
               <View style={styles.search}>
                 <Feather
                   accessibilityElementsHidden
@@ -593,21 +602,10 @@ export function LiveSpendingApprovalsScreen({ requestId }: { requestId?: string 
                   ))}
                 </View>
               ) : (
-                <View style={styles.emptyState}>
-                  <Feather
-                    accessibilityElementsHidden
-                    color={colors.muted}
-                    importantForAccessibility='no'
-                    name={search ? 'search' : 'check-circle'}
-                    size={24}
-                  />
-                  <Text style={styles.emptyTitle}>
-                    {search ? t('spending.live.emptySearch') : t('spending.live.emptyQueue')}
-                  </Text>
-                  <Text style={styles.muted}>
-                    {search ? t('spending.live.emptySearchHint') : t('spending.live.emptyQueueHint')}
-                  </Text>
-                </View>
+                <EmptyState
+                  hint={search ? t('spending.live.emptySearchHint') : t('spending.live.emptyQueueHint')}
+                  title={search ? t('spending.live.emptySearch') : t('spending.live.emptyQueue')}
+                />
               )}
               {queue.data ? (
                 <View style={styles.pagination}>

@@ -3,6 +3,9 @@ export const resources = {
     translation: {
       common: {
         back: 'Back',
+        refreshFailed: 'Could not refresh. Please try again.',
+        refreshed: 'Up to date',
+        refreshing: 'Refreshing…',
         brandInitial: 'S',
         brandName: 'SaaS-Sentry',
         errorReference: 'Reference: {{id}}',
@@ -909,6 +912,9 @@ export const resources = {
     translation: {
       common: {
         back: 'Quay lại',
+        refreshFailed: 'Chưa làm mới được. Vui lòng thử lại.',
+        refreshed: 'Đã cập nhật',
+        refreshing: 'Đang làm mới…',
         brandInitial: 'S',
         brandName: 'SaaS-Sentry',
         errorReference: 'Mã tham chiếu: {{id}}',

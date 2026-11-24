@@ -11,6 +11,8 @@ import { BackButton } from '@/shared/ui/back-button'
 import { ChecklistQuestion } from '@/shared/ui/checklist-question'
 import { ChipButton } from '@/shared/ui/chip-button'
 import { ChecklistToolbar } from '@/shared/ui/checklist-toolbar'
+import { EmptyState } from '@/shared/ui/empty-state'
+import { RefreshStatus, useRefreshFeedback } from '@/shared/ui/refresh-status'
 import { LoadingState } from '@/shared/ui/loading-state'
 import { PressableFeedback } from '@/shared/ui/pressable-feedback'
 import type { NeedQueueResponseDtoDataItemsItem } from '@/shared/api/generated/contracts/need-decisions'
@@ -61,6 +63,7 @@ export function LiveNeedApprovalsScreen({
   const router = useRouter()
   const session = useSession()
   const [page, setPage] = useState(1)
+  const queueRefresh = useRefreshFeedback()
   const [checklistOpen, setChecklistOpen] = useState(true)
   const [selected, setSelected] = useState<NeedQueueResponseDtoDataItemsItem>()
   const [choice, setChoice] = useState<'APPROVE' | 'REJECT' | 'RETURN'>()
@@ -378,17 +381,19 @@ export function LiveNeedApprovalsScreen({
               ) : null}
               {hasScope ? (
                 <ChipButton
-                  disabled={queue.isFetching}
+                  disabled={queue.isFetching || queueRefresh.state === 'loading'}
                   icon='refresh-cw'
                   label={t('manager.live.refreshQueue')}
-                  onPress={() => void queue.refetch()}
+                  onPress={() => void queueRefresh.refresh(queue.refetch)}
                 />
               ) : null}
-              {hasScope && queue.data?.items.length === 0 ? (
-                <View style={styles.card}>
-                  <Text style={styles.muted}>{t('manager.live.empty')}</Text>
-                </View>
-              ) : null}
+              <RefreshStatus
+                failedLabel={t('common.refreshFailed')}
+                doneLabel={t('common.refreshed')}
+                loadingLabel={t('common.refreshing')}
+                state={queueRefresh.state}
+              />
+              {hasScope && queue.data?.items.length === 0 ? <EmptyState title={t('manager.live.empty')} /> : null}
               {hasScope &&
                 queue.data?.items.map((item) => <NeedQueueCard key={item.stepId} item={item} onPress={setSelected} />)}
               {hasScope && queue.data && queue.data.pagination.totalPages > 1 ? (

@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next'
 import { RefreshControl, ScrollView, StyleSheet, Text, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
+import { EmptyState } from '@/shared/ui/empty-state'
 import { LoadingState } from '@/shared/ui/loading-state'
 import { PressableFeedback } from '@/shared/ui/pressable-feedback'
 import { SegmentedControl } from '@/shared/ui/segmented-control'
@@ -197,29 +198,18 @@ export function MySoftwareScreen() {
                 />
               ))}
               {items.length === 0 ? (
-                <View style={styles.emptyCard}>
-                  <View style={styles.emptyIcon}>
-                    <Feather
-                      accessibilityElementsHidden
-                      importantForAccessibility='no'
-                      name='inbox'
-                      size={24}
-                      color={mobileColors.primaryInk}
-                    />
-                  </View>
-                  <Text style={styles.emptyTitle}>
-                    {filter === 'expiring'
+                <EmptyState
+                  hint={view === 'current' && filter === 'all' && page === 1 ? t('licenses.live.emptyHint') : undefined}
+                  title={
+                    filter === 'expiring'
                       ? t('licenses.live.noExpiringPage')
                       : view === 'ended'
                         ? t('licenses.live.endedEmpty')
                         : page === 1
                           ? t('licenses.live.empty')
-                          : t('licenses.live.emptyPage')}
-                  </Text>
-                  {view === 'current' && filter === 'all' && page === 1 ? (
-                    <Text style={styles.emptyHint}>{t('licenses.live.emptyHint')}</Text>
-                  ) : null}
-                </View>
+                          : t('licenses.live.emptyPage')
+                  }
+                />
               ) : null}
               {software.data.pagination.totalPages > 1 ? (
                 <View style={styles.pagination}>

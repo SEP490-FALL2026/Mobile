@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next'
 import { RefreshControl, ScrollView, StyleSheet, Text, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
+import { EmptyState } from '@/shared/ui/empty-state'
 import { LoadingState } from '@/shared/ui/loading-state'
 import { PressableFeedback } from '@/shared/ui/pressable-feedback'
 import type { NotificationListResponseDtoDataItemsItem } from '@/shared/api/generated/contracts/notifications'
@@ -154,11 +155,7 @@ export function LiveInboxScreen() {
               ) : null}
             </View>
           ) : null}
-          {list.data?.items.length === 0 ? (
-            <View style={styles.card}>
-              <Text style={styles.muted}>{t('inbox.live.empty')}</Text>
-            </View>
-          ) : null}
+          {list.data?.items.length === 0 ? <EmptyState title={t('inbox.live.empty')} /> : null}
           {list.data?.items.map((item) => {
             const codes = [
               'REQUEST_SUBMITTED',

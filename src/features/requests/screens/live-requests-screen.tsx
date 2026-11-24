@@ -8,6 +8,7 @@ import { BackHandler, Platform, RefreshControl, ScrollView, StyleSheet, Text, Vi
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 import { SoftwareIcon } from '@/entities/software'
+import { EmptyState } from '@/shared/ui/empty-state'
 import { LoadingState } from '@/shared/ui/loading-state'
 import { PressableFeedback } from '@/shared/ui/pressable-feedback'
 import { SegmentedControl } from '@/shared/ui/segmented-control'
@@ -165,11 +166,7 @@ export function LiveRequestsScreen() {
               ) : null}
             </View>
           ) : null}
-          {query.data?.items.length === 0 ? (
-            <View style={styles.card}>
-              <Text style={styles.muted}>{t('requests.live.empty')}</Text>
-            </View>
-          ) : null}
+          {query.data?.items.length === 0 ? <EmptyState title={t('requests.live.empty')} /> : null}
           {query.data?.items.map((item) => {
             const name = item.plan?.applicationName ?? item.softwareName ?? t('requests.live.unnamed')
             const date = new Date(item.submittedAt)
