@@ -117,17 +117,19 @@ export function LiveHomeScreen() {
                   <Text style={styles.cardDescription}>{t('home.live.createDescription')}</Text>
                 </PressableFeedback>
               ) : null}
-              <PressableFeedback
-                accessibilityRole='button'
-                onPress={() => router.push('/live-requests')}
-                style={styles.card}
-              >
-                <View style={styles.cardIcon}>
-                  <Feather name='file-text' size={21} color={colors.primaryInk} />
-                </View>
-                <Text style={styles.cardTitle}>{t('home.live.requests')}</Text>
-                <Text style={styles.cardDescription}>{t('home.live.requestsDescription')}</Text>
-              </PressableFeedback>
+              {role !== 'SPENDING_APPROVER' ? (
+                <PressableFeedback
+                  accessibilityRole='button'
+                  onPress={() => router.push('/live-requests')}
+                  style={styles.card}
+                >
+                  <View style={styles.cardIcon}>
+                    <Feather name='file-text' size={21} color={colors.primaryInk} />
+                  </View>
+                  <Text style={styles.cardTitle}>{t('home.live.requests')}</Text>
+                  <Text style={styles.cardDescription}>{t('home.live.requestsDescription')}</Text>
+                </PressableFeedback>
+              ) : null}
               <PressableFeedback
                 accessibilityRole='button'
                 onPress={() => router.push('/live-inbox')}

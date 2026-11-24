@@ -12,5 +12,8 @@ export function visibleTabs(account: MeResponseDtoData | undefined): TabName[] {
       : role === 'SPENDING_APPROVER'
         ? 'spending-approvals'
         : 'my-software'
-  return ['home', work, 'live-requests', 'live-inbox', 'profile']
+  // A spending approver neither sends nor benefits from requests (QĐ-93d), so My Requests would always be empty.
+  return role === 'SPENDING_APPROVER'
+    ? ['home', work, 'live-inbox', 'profile']
+    : ['home', work, 'live-requests', 'live-inbox', 'profile']
 }
