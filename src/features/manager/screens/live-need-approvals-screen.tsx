@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next'
 import { BackHandler, Platform, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
+import { Collapsible } from '@/shared/ui/collapsible'
 import { ChecklistToolbar } from '@/shared/ui/checklist-toolbar'
 import { PressableFeedback } from '@/shared/ui/pressable-feedback'
 import type { NeedQueueResponseDtoDataItemsItem } from '@/shared/api/generated/contracts/need-decisions'
@@ -605,37 +606,39 @@ export function LiveNeedApprovalsScreen({
                           )}
                         />
                       ) : null}
-                      {(checklistOpen ? checklist : undefined)?.map((item) => (
-                        <View key={item.code}>
-                          <Text style={styles.label}>{item.text}</Text>
-                          {item.check === 'SYSTEM' ? (
-                            <Text style={styles.muted}>{t('manager.live.systemYes')}</Text>
-                          ) : (
-                            <View style={styles.actions}>
-                              {(['YES', 'NO'] as const).map((answer) => (
-                                <PressableFeedback
-                                  key={answer}
-                                  accessibilityRole='radio'
-                                  accessibilityState={{ checked: answers[item.code] === answer, disabled: locked }}
-                                  disabled={locked}
-                                  onPress={() => {
-                                    if (!policy.data) return
-                                    setResponse({
-                                      version: policy.data.policyVersionId,
-                                      answers: { ...answers, [item.code]: answer }
-                                    })
-                                  }}
-                                  style={answers[item.code] === answer ? styles.primary : styles.outline}
-                                >
-                                  <Text style={answers[item.code] === answer ? styles.primaryText : styles.link}>
-                                    {t(answer === 'YES' ? 'manager.live.yes' : 'manager.live.no')}
-                                  </Text>
-                                </PressableFeedback>
-                              ))}
-                            </View>
-                          )}
-                        </View>
-                      ))}
+                      <Collapsible expanded={checklistOpen}>
+                        {checklist?.map((item) => (
+                          <View key={item.code}>
+                            <Text style={styles.label}>{item.text}</Text>
+                            {item.check === 'SYSTEM' ? (
+                              <Text style={styles.muted}>{t('manager.live.systemYes')}</Text>
+                            ) : (
+                              <View style={styles.actions}>
+                                {(['YES', 'NO'] as const).map((answer) => (
+                                  <PressableFeedback
+                                    key={answer}
+                                    accessibilityRole='radio'
+                                    accessibilityState={{ checked: answers[item.code] === answer, disabled: locked }}
+                                    disabled={locked}
+                                    onPress={() => {
+                                      if (!policy.data) return
+                                      setResponse({
+                                        version: policy.data.policyVersionId,
+                                        answers: { ...answers, [item.code]: answer }
+                                      })
+                                    }}
+                                    style={answers[item.code] === answer ? styles.primary : styles.outline}
+                                  >
+                                    <Text style={answers[item.code] === answer ? styles.primaryText : styles.link}>
+                                      {t(answer === 'YES' ? 'manager.live.yes' : 'manager.live.no')}
+                                    </Text>
+                                  </PressableFeedback>
+                                ))}
+                              </View>
+                            )}
+                          </View>
+                        ))}
+                      </Collapsible>
                       {choice === 'APPROVE' && hasNo ? (
                         <Text style={styles.error}>{t('manager.live.noBlocksApproval')}</Text>
                       ) : null}

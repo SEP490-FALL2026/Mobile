@@ -11,6 +11,7 @@ import type {
   LineSpendDecisionBodyDto,
   SpendDecisionBodyDto
 } from '@/shared/api/generated/contracts'
+import { Collapsible } from '@/shared/ui/collapsible'
 import { ChecklistToolbar } from '@/shared/ui/checklist-toolbar'
 import { PressableFeedback } from '@/shared/ui/pressable-feedback'
 import type { LinesResponseDtoDataItemsItem } from '@/shared/api/generated/contracts/group-requests'
@@ -867,27 +868,29 @@ function DecisionForm({
           <ActionButton label={t('account.retry')} onPress={onRetryChecklist} />
         </View>
       ) : null}
-      {(expanded ? checklist : []).map((item) => (
-        <View key={item.code} style={styles.question}>
-          <Text style={styles.bodyText}>{item.text}</Text>
-          {item.check === 'SYSTEM' ? (
-            <Text style={styles.systemAnswer}>{t('spending.live.systemYes')}</Text>
-          ) : (
-            <View style={styles.choiceRow}>
-              <ChoiceButton
-                label={t('spending.live.yes')}
-                selected={answers[item.code] === 'YES'}
-                onPress={() => onAnswer(item.code, 'YES')}
-              />
-              <ChoiceButton
-                label={t('spending.live.no')}
-                selected={answers[item.code] === 'NO'}
-                onPress={() => onAnswer(item.code, 'NO')}
-              />
-            </View>
-          )}
-        </View>
-      ))}
+      <Collapsible expanded={expanded}>
+        {checklist.map((item) => (
+          <View key={item.code} style={styles.question}>
+            <Text style={styles.bodyText}>{item.text}</Text>
+            {item.check === 'SYSTEM' ? (
+              <Text style={styles.systemAnswer}>{t('spending.live.systemYes')}</Text>
+            ) : (
+              <View style={styles.choiceRow}>
+                <ChoiceButton
+                  label={t('spending.live.yes')}
+                  selected={answers[item.code] === 'YES'}
+                  onPress={() => onAnswer(item.code, 'YES')}
+                />
+                <ChoiceButton
+                  label={t('spending.live.no')}
+                  selected={answers[item.code] === 'NO'}
+                  onPress={() => onAnswer(item.code, 'NO')}
+                />
+              </View>
+            )}
+          </View>
+        ))}
+      </Collapsible>
       {!checklistComplete && !checklistLoading && !checklistError ? (
         <Text accessibilityRole='alert' style={styles.noticeText}>
           {t('spending.live.checklistIncomplete')}

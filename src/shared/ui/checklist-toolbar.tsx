@@ -1,6 +1,7 @@
 import { Feather } from '@expo/vector-icons'
 import { StyleSheet, Text, View } from 'react-native'
 
+import { selectionHaptic } from '@/shared/native/haptics'
 import type { MobileColors } from '@/shared/theme/colors'
 import { useMobileTheme } from '@/shared/theme/theme-provider'
 
@@ -46,7 +47,10 @@ export function ChecklistToolbar({
         accessibilityRole='button'
         accessibilityState={{ checked: allYes, disabled }}
         disabled={disabled}
-        onPress={onAnswerAll}
+        onPress={() => {
+          selectionHaptic()
+          onAnswerAll()
+        }}
         style={[styles.answerAll, allYes && styles.answerAllSelected, disabled && styles.disabled]}
       >
         <Feather color={allYes ? colors.onPrimary : colors.primaryInk} name='check-circle' size={16} />

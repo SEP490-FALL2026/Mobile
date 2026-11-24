@@ -1,5 +1,16 @@
 import { Feather } from '@expo/vector-icons'
+import { useEffect } from 'react'
 import { StyleSheet, Text, View } from 'react-native'
+import Animated, {
+  Easing,
+  ReduceMotion,
+  interpolate,
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming
+} from 'react-native-reanimated'
+
+import { selectionHaptic } from '@/shared/native/haptics'
 
 import { PressableFeedback } from '@/shared/ui/pressable-feedback'
 import type { MobileColors } from '@/shared/theme/colors'
@@ -24,6 +35,32 @@ interface MobileTabBarProps {
   tabs: MobileTab[]
 }
 
+// The active pill grows and fades in behind the icon instead of switching on abruptly.
+function TabIndicator({ selected, color }: { selected: boolean; color: string }) {
+  const progress = useSharedValue(selected ? 1 : 0)
+  useEffect(() => {
+    progress.value = withTiming(selected ? 1 : 0, {
+      duration: 180,
+      easing: Easing.out(Easing.cubic),
+      reduceMotion: ReduceMotion.System
+    })
+  }, [progress, selected])
+  const style = useAnimatedStyle(() => ({
+    opacity: progress.value,
+    transform: [{ scaleX: interpolate(progress.value, [0, 1], [0.6, 1]) }]
+  }))
+  return <Animated.View pointerEvents='none' style={[indicatorBase, { backgroundColor: color }, style]} />
+}
+
+const indicatorBase = {
+  borderRadius: 16,
+  bottom: 0,
+  left: 0,
+  position: 'absolute',
+  right: 0,
+  top: 0
+} as const
+
 export function MobileTabBar({ accessibilityLabel, tabs }: MobileTabBarProps) {
   const { colors: mobileColors } = useMobileTheme()
   const styles = createStyles(mobileColors)
@@ -37,11 +74,14 @@ export function MobileTabBar({ accessibilityLabel, tabs }: MobileTabBarProps) {
           accessibilityState={{ selected: tab.selected, disabled: tab.disabled }}
           disabled={tab.disabled}
           key={tab.id}
-          onPress={tab.onPress}
-          style={({ pressed }) => [styles.tab, pressed && styles.tabPressed, tab.disabled && styles.tabDisabled]}
+          onPress={() => {
+            if (!tab.selected) selectionHaptic()
+            tab.onPress?.()
+          }}
+          style={[styles.tab, tab.disabled && styles.tabDisabled]}
         >
           <View style={styles.iconContainer}>
-            <View style={[styles.indicator, tab.selected && styles.indicatorSelected]} />
+            <TabIndicator color={mobileColors.primarySoft} selected={tab.selected} />
             <Feather
               accessibilityElementsHidden
               color={tab.selected ? mobileColors.primaryInk : mobileColors.muted}
@@ -100,17 +140,6 @@ const createStyles = (mobileColors: MobileColors) =>
       justifyContent: 'center',
       width: 60
     },
-    indicator: {
-      borderRadius: 16,
-      bottom: 0,
-      left: 0,
-      position: 'absolute',
-      right: 0,
-      top: 0
-    },
-    indicatorSelected: {
-      backgroundColor: mobileColors.primarySoft
-    },
     label: {
       color: mobileColors.muted,
       fontSize: 12,
@@ -127,9 +156,6 @@ const createStyles = (mobileColors: MobileColors) =>
       flex: 1,
       justifyContent: 'center',
       minHeight: 56
-    },
-    tabPressed: {
-      opacity: 0.65
     },
     tabDisabled: {
       opacity: 0.5

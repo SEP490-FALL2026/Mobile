@@ -2,6 +2,7 @@ import { useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { StyleSheet, Text, TextInput, View } from 'react-native'
 
+import { Collapsible } from '@/shared/ui/collapsible'
 import { ChecklistToolbar } from '@/shared/ui/checklist-toolbar'
 import { PressableFeedback } from '@/shared/ui/pressable-feedback'
 import { apiErrorInfo } from '@/shared/api/api-error'
@@ -242,8 +243,9 @@ export function ManagerGroupDecision({
           toggleLabel={t(checklistOpen ? 'manager.live.checklistCollapse' : 'manager.live.checklistExpand')}
         />
       ) : null}
-      {ready && checklistOpen
-        ? items.map((item) => (
+      {ready ? (
+        <Collapsible expanded={checklistOpen}>
+          {items.map((item) => (
             <View key={item.code} style={styles.question}>
               <Text style={styles.label}>{item.text}</Text>
               {item.check === 'SYSTEM' ? (
@@ -273,8 +275,9 @@ export function ManagerGroupDecision({
                 </View>
               )}
             </View>
-          ))
-        : null}
+          ))}
+        </Collapsible>
+      ) : null}
       {approving && hasNo ? <Text style={styles.error}>{t('manager.live.noBlocksApproval')}</Text> : null}
       {validation ? (
         <Text accessibilityRole='alert' style={styles.error}>
