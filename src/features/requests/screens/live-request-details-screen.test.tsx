@@ -141,6 +141,17 @@ test('confirms before withdrawing and reports the returned state', async () => {
   await screen.findByText('Trạng thái máy chủ trả về:')
 })
 
+test('asks in a popup first and sends nothing when the user cancels', async () => {
+  mockRequest('PENDING')
+  const screen = await renderScreen()
+  expect(screen.queryByText('Rút yêu cầu này?')).toBeNull()
+  await fireEvent.press(await screen.findByRole('button', { name: 'Rút yêu cầu' }))
+  screen.getByText('Rút yêu cầu này?')
+  await fireEvent.press(screen.getByRole('button', { name: 'Giữ yêu cầu' }))
+  expect(screen.queryByText('Rút yêu cầu này?')).toBeNull()
+  expect(accessRequestWithdraw).not.toHaveBeenCalled()
+})
+
 test('explains that a returned request is revised on the web', async () => {
   mockRequest('AWAITING_REQUESTER_REVISION')
   const screen = await renderScreen()

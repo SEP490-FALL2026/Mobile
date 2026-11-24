@@ -1,9 +1,8 @@
 import { Feather } from '@expo/vector-icons'
-import { usePreventRemove } from '@react-navigation/native'
-import { Redirect, useFocusEffect, useRouter } from 'expo-router'
-import { useCallback, useRef, useState } from 'react'
+import { Redirect, useRouter } from 'expo-router'
+import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { BackHandler, Platform, RefreshControl, ScrollView, StyleSheet, Text, View } from 'react-native'
+import { RefreshControl, ScrollView, StyleSheet, Text, View } from 'react-native'
 
 import { SafeAreaView } from 'react-native-safe-area-context'
 
@@ -22,7 +21,6 @@ import { useMobileTheme } from '@/shared/theme/theme-provider'
 import { LiveRequestStatus } from '../components/live-request-status'
 import { LiveRequestType } from '../components/live-request-type'
 import { useLiveRequests } from '../hooks/use-live-requests'
-import { useLiveWithdraw } from '../hooks/use-live-withdraw'
 
 export function LiveRequestsScreen() {
   const { colors: mobileColors } = useMobileTheme()
@@ -35,18 +33,6 @@ export function LiveRequestsScreen() {
   const [view, setView] = useState<'open' | 'ended'>('open')
   const [page, setPage] = useState(1)
   const query = useLiveRequests(view, page)
-  const withdrawal = useLiveWithdraw()
-  const [confirmId, setConfirmId] = useState<string>()
-  const withdrawing = useRef(false)
-  const inFlight = withdrawal.isPending || withdrawing.current
-  usePreventRemove(session.state === 'authenticated' && inFlight, () => undefined)
-  useFocusEffect(
-    useCallback(() => {
-      if (Platform.OS !== 'android') return
-      const subscription = BackHandler.addEventListener('hardwareBackPress', () => inFlight || withdrawing.current)
-      return () => subscription.remove()
-    }, [inFlight])
-  )
 
   if (session.state === 'anonymous') return <Redirect href='/' />
   return (
@@ -85,8 +71,6 @@ export function LiveRequestsScreen() {
               <PressableFeedback
                 accessibilityRole='button'
                 accessibilityLabel={t('navigation.createRequest')}
-                accessibilityState={{ disabled: inFlight }}
-                disabled={inFlight}
                 onPress={() => router.push('/live-request-create')}
                 style={styles.createButton}
               >
@@ -102,12 +86,9 @@ export function LiveRequestsScreen() {
             ) : null}
           </View>
           <SegmentedControl
-            disabled={inFlight}
             onChange={(value) => {
-              if (withdrawing.current) return
               setView(value)
               setPage(1)
-              setConfirmId(undefined)
             }}
             options={(['open', 'ended'] as const).map((value) => ({
               label: t(`requests.live.views.${value}`),
@@ -115,53 +96,6 @@ export function LiveRequestsScreen() {
             }))}
             value={view}
           />
-          {withdrawal.isError ? (
-            <Text accessibilityRole='alert' style={styles.error}>
-              {t('requests.createLive.withdrawError')}
-            </Text>
-          ) : null}
-          {withdrawal.isSuccess ? (
-            <View accessibilityRole='summary'>
-              <Text style={styles.muted}>{t('requests.createLive.withdrawSuccess')}</Text>
-              <Text style={styles.muted}>{t('requests.createLive.withdrawResultState')}</Text>
-              <LiveRequestStatus state={withdrawal.data.state} />
-            </View>
-          ) : null}
-          {confirmId ? (
-            <View accessibilityRole='summary' style={styles.card}>
-              <Text style={styles.itemTitle}>{t('requests.createLive.confirmWithdraw')}</Text>
-              <Text style={styles.muted}>{t('requests.createLive.withdrawNote')}</Text>
-              <PressableFeedback
-                accessibilityRole='button'
-                disabled={inFlight}
-                accessibilityState={{ disabled: inFlight }}
-                onPress={() => {
-                  if (!withdrawing.current) setConfirmId(undefined)
-                }}
-                style={styles.action}
-              >
-                <Text style={styles.actionText}>{t('requests.cancel')}</Text>
-              </PressableFeedback>
-              <PressableFeedback
-                accessibilityRole='button'
-                disabled={inFlight || query.isFetching || query.isError}
-                accessibilityState={{ disabled: inFlight || query.isFetching || query.isError, busy: inFlight }}
-                onPress={() => {
-                  if (withdrawing.current || query.isFetching || query.isError) return
-                  withdrawing.current = true
-                  withdrawal.mutate(confirmId, {
-                    onSettled: () => {
-                      withdrawing.current = false
-                      setConfirmId(undefined)
-                    }
-                  })
-                }}
-                style={styles.action}
-              >
-                <Text style={styles.actionText}>{t('requests.createLive.withdrawAction')}</Text>
-              </PressableFeedback>
-            </View>
-          ) : null}
           {session.state === 'loading' || query.isLoading ? <LoadingState label={t('requests.live.loading')} /> : null}
           {query.isError ? (
             <View style={styles.card}>
@@ -187,13 +121,9 @@ export function LiveRequestsScreen() {
                 <PressableFeedback
                   accessibilityRole='button'
                   accessibilityLabel={t('requests.live.openNamed', { name })}
-                  accessibilityState={{ disabled: inFlight }}
-                  disabled={inFlight}
-                  onPress={() => {
-                    if (!withdrawing.current) {
-                      router.push({ pathname: '/live-requests/[requestId]', params: { requestId: item.id } })
-                    }
-                  }}
+                  onPress={() =>
+                    router.push({ pathname: '/live-requests/[requestId]', params: { requestId: item.id } })
+                  }
                 >
                   <View style={styles.row}>
                     <SoftwareIcon name={name} />
@@ -224,22 +154,6 @@ export function LiveRequestsScreen() {
                     })}
                   </Text>
                 </PressableFeedback>
-                {item.canWithdraw ? (
-                  <PressableFeedback
-                    accessibilityRole='button'
-                    accessibilityLabel={t('requests.createLive.withdrawNamed', { name })}
-                    accessibilityState={{
-                      disabled: inFlight || withdrawal.isError || query.isFetching || query.isError
-                    }}
-                    disabled={inFlight || withdrawal.isError || query.isFetching || query.isError}
-                    onPress={() => {
-                      if (!withdrawing.current) setConfirmId(item.id)
-                    }}
-                    style={styles.action}
-                  >
-                    <Text style={styles.actionText}>{t('requests.createLive.withdraw')}</Text>
-                  </PressableFeedback>
-                ) : null}
               </View>
             )
           })}
@@ -247,11 +161,9 @@ export function LiveRequestsScreen() {
             <View style={styles.pagination}>
               <PressableFeedback
                 accessibilityRole='button'
-                accessibilityState={{ disabled: page <= 1 || inFlight }}
-                disabled={page <= 1 || inFlight}
-                onPress={() => {
-                  if (!withdrawing.current) setPage(page - 1)
-                }}
+                accessibilityState={{ disabled: page <= 1 }}
+                disabled={page <= 1}
+                onPress={() => setPage(page - 1)}
                 style={[styles.action, page <= 1 && styles.disabled]}
               >
                 <Text style={styles.actionText}>{t('licenses.live.previous')}</Text>
@@ -261,11 +173,9 @@ export function LiveRequestsScreen() {
               </Text>
               <PressableFeedback
                 accessibilityRole='button'
-                accessibilityState={{ disabled: page >= query.data.pagination.totalPages || inFlight }}
-                disabled={page >= query.data.pagination.totalPages || inFlight}
-                onPress={() => {
-                  if (!withdrawing.current) setPage(page + 1)
-                }}
+                accessibilityState={{ disabled: page >= query.data.pagination.totalPages }}
+                disabled={page >= query.data.pagination.totalPages}
+                onPress={() => setPage(page + 1)}
                 style={[styles.action, page >= query.data.pagination.totalPages && styles.disabled]}
               >
                 <Text style={styles.actionText}>{t('licenses.live.next')}</Text>

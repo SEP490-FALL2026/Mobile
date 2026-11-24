@@ -17,8 +17,13 @@ import { LiveRequestStatus } from '../components/live-request-status'
 import { LiveRequestType } from '../components/live-request-type'
 import { RequestApprovalRoute } from '../components/request-approval-route'
 import { RequestTimeline } from '../components/request-timeline'
-import { RequestWithdrawPanel } from '../components/request-withdraw-panel'
+import {
+  RequestWithdrawButton,
+  RequestWithdrawDialog,
+  RequestWithdrawResult
+} from '../components/request-withdraw-panel'
 import { useLiveRequest } from '../hooks/use-live-requests'
+import { useRequestWithdraw } from '../hooks/use-request-withdraw'
 import { approvalRoute, canOfferWithdrawal, canRequestAgain } from '../model/request-detail.model'
 
 export function LiveRequestDetailsScreen({ requestId }: { requestId: string }) {
@@ -29,6 +34,7 @@ export function LiveRequestDetailsScreen({ requestId }: { requestId: string }) {
   const router = useRouter()
   const profile = useAccountProfile()
   const query = useLiveRequest(requestId)
+  const withdraw = useRequestWithdraw(requestId)
   const data = query.isError ? undefined : query.data
   const notFound =
     typeof query.error === 'object' && query.error !== null && 'status' in query.error && query.error.status === 404
@@ -37,12 +43,17 @@ export function LiveRequestDetailsScreen({ requestId }: { requestId: string }) {
   const submitted = request ? new Date(request.submittedAt) : null
   const expectedEnd = request?.expectedEndDate ? new Date(`${request.expectedEndDate}T00:00:00.000Z`) : null
   const name = request?.plan?.applicationName ?? request?.proposal?.softwareName ?? t('requests.live.unnamed')
+  const canWithdraw =
+    !!request && canOfferWithdrawal(request, profile.data?.employee.id) && !withdraw.withdrawal.isSuccess
 
   if (session.state === 'anonymous') return <Redirect href='/' />
   return (
     <SafeAreaView style={styles.safe}>
       <ScrollView contentContainerStyle={styles.content}>
-        <BackButton label={t('common.back')} onPress={() => goBackOr(router, '/live-requests')} />
+        <View style={styles.topBar}>
+          <BackButton label={t('common.back')} onPress={() => goBackOr(router, '/live-requests')} />
+          {canWithdraw ? <RequestWithdrawButton flow={withdraw} /> : null}
+        </View>
         <Text accessibilityRole='header' style={styles.title}>
           {t('requests.live.detailsTitle')}
         </Text>
@@ -146,9 +157,7 @@ export function LiveRequestDetailsScreen({ requestId }: { requestId: string }) {
                 <Text style={styles.value}>{t('requests.live.revisionWebOnly')}</Text>
               </View>
             ) : null}
-            {canOfferWithdrawal(request, profile.data?.employee.id) ? (
-              <RequestWithdrawPanel requestId={request.id} />
-            ) : null}
+            <RequestWithdrawResult flow={withdraw} />
             {canRequestAgain(request) && request.plan && mayCreateRequest(profile.data) ? (
               <PressableFeedback
                 accessibilityRole='button'
@@ -178,12 +187,14 @@ export function LiveRequestDetailsScreen({ requestId }: { requestId: string }) {
           </View>
         ) : null}
       </ScrollView>
+      <RequestWithdrawDialog flow={withdraw} />
     </SafeAreaView>
   )
 }
 
 const createStyles = (mobileColors: MobileColors) =>
   StyleSheet.create({
+    topBar: { alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between' },
     safe: { flex: 1, backgroundColor: mobileColors.background },
     content: { padding: 20, paddingBottom: 24, gap: 14 },
     action: { minHeight: 44, alignSelf: 'flex-start', justifyContent: 'center' },

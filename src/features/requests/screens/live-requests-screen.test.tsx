@@ -1,14 +1,9 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { act, fireEvent, render, waitFor } from '@testing-library/react-native'
+import { fireEvent, render, waitFor } from '@testing-library/react-native'
 import type { ReactElement } from 'react'
-import { BackHandler, Platform } from 'react-native'
 
 import { LiveRequestDetailsScreen, LiveRequestsScreen } from '@/features/requests'
-import {
-  accessRequestEventList,
-  accessRequestGet,
-  accessRequestWithdraw
-} from '@/shared/api/generated/api/access-requests/access-requests'
+import { accessRequestEventList, accessRequestGet } from '@/shared/api/generated/api/access-requests/access-requests'
 import { meAccessRequestList } from '@/shared/api/generated/api/me/me'
 import { setAppLanguage } from '@/shared/i18n/i18n'
 
@@ -253,147 +248,11 @@ test('reports timeline failures and retries', async () => {
   await screen.findByText('Chưa có lịch sử.')
 })
 
-test('confirms withdrawal, sends once and reloads the list', async () => {
-  const detail = await jest.mocked(accessRequestGet)(id)
-  if (!detail.data.data || !('request' in detail.data.data)) throw new Error('Expected request')
-  jest.mocked(accessRequestWithdraw).mockResolvedValueOnce({
-    status: 200,
-    headers: new Headers(),
-    data: {
-      success: true,
-      message: 'REQUEST.WITHDRAWN',
-      data: { request: { ...detail.data.data.request, state: 'AWAITING_IT_CLOSE' } }
-    }
-  })
-  const screen = await renderScreen(<LiveRequestsScreen />)
-  await screen.findByText('Figma')
-  await fireEvent.press(screen.getByRole('button', { name: 'Rút yêu cầu cho Figma' }))
-  screen.getByText('Rút yêu cầu này?')
-  await fireEvent.press(screen.getByRole('button', { name: 'Xác nhận rút' }))
-  await waitFor(() =>
-    expect(accessRequestWithdraw).toHaveBeenCalledWith(
-      id,
-      {},
-      expect.objectContaining({ headers: { Authorization: 'Bearer test-token' } })
-    )
-  )
-  await waitFor(() => expect(meAccessRequestList).toHaveBeenCalledTimes(2))
-  screen.getByText('Trạng thái máy chủ trả về:')
-  screen.getByText('Chờ IT đóng yêu cầu rút')
-})
-
-test('treats a withdrawal response for another request as uncertain', async () => {
-  const detail = await jest.mocked(accessRequestGet)(id)
-  if (!detail.data.data || !('request' in detail.data.data)) throw new Error('Expected request')
-  jest.mocked(accessRequestWithdraw).mockResolvedValueOnce({
-    status: 200,
-    headers: new Headers(),
-    data: {
-      success: true,
-      message: 'REQUEST.WITHDRAWN',
-      data: { request: { ...detail.data.data.request, id: '11234567-89ab-cdef-0123-456789abcdef', state: 'WITHDRAWN' } }
-    }
-  })
-  const screen = await renderScreen(<LiveRequestsScreen />)
-  await screen.findByText('Figma')
-  await fireEvent.press(screen.getByRole('button', { name: 'Rút yêu cầu cho Figma' }))
-  await fireEvent.press(screen.getByRole('button', { name: 'Xác nhận rút' }))
-  await screen.findByText(
-    'Chưa thể xác nhận kết quả. Hãy kiểm tra trạng thái yêu cầu sau khi tải lại trước khi thử lại.'
-  )
-  expect(screen.queryByText('Trạng thái máy chủ trả về:')).toBeNull()
-  expect(accessRequestWithdraw).toHaveBeenCalledTimes(1)
-})
-
-test('does not withdraw again from stale list data when the refresh fails', async () => {
-  const detail = await jest.mocked(accessRequestGet)(id)
-  if (!detail.data.data || !('request' in detail.data.data)) throw new Error('Expected request')
-  jest.mocked(accessRequestWithdraw).mockResolvedValueOnce({
-    status: 200,
-    headers: new Headers(),
-    data: {
-      success: true,
-      message: 'REQUEST.WITHDRAWN',
-      data: { request: { ...detail.data.data.request, state: 'WITHDRAWN' } }
-    }
-  })
-  const screen = await renderScreen(<LiveRequestsScreen />)
-  await screen.findByText('Figma')
-  jest.mocked(meAccessRequestList).mockRejectedValueOnce(new Error('offline'))
-  await fireEvent.press(screen.getByRole('button', { name: 'Rút yêu cầu cho Figma' }))
-  await fireEvent.press(screen.getByRole('button', { name: 'Xác nhận rút' }))
-  await screen.findByText('Không thể tải yêu cầu. Vui lòng thử lại.')
-  expect(screen.getByRole('button', { name: 'Rút yêu cầu cho Figma' }).props.accessibilityState.disabled).toBe(true)
-  expect(accessRequestWithdraw).toHaveBeenCalledTimes(1)
-})
-
-test('blocks navigation and Android back during withdrawal', async () => {
-  const previousPlatform = Platform.OS
-  Platform.OS = 'android'
-  let back: () => boolean | null | undefined = () => false
-  const subscription = jest.spyOn(BackHandler, 'addEventListener').mockImplementation((_event, handler) => {
-    back = handler
-    return { remove: jest.fn() }
-  })
-  let rejectWithdrawal: (error: Error) => void = () => {
-    throw new Error('Withdrawal was not started')
-  }
-  jest.mocked(accessRequestWithdraw).mockImplementationOnce(
-    () =>
-      new Promise((_resolve, reject) => {
-        rejectWithdrawal = reject
-      })
-  )
-  try {
-    const screen = await renderScreen(<LiveRequestsScreen />)
-    await screen.findByText('Figma')
-    expect(back()).toBe(false)
-    await fireEvent.press(screen.getByRole('button', { name: 'Rút yêu cầu cho Figma' }))
-    await fireEvent.press(screen.getByRole('button', { name: 'Xác nhận rút' }))
-    await waitFor(() => {
-      expect(mockPreventRemove).toHaveBeenLastCalledWith(true)
-      expect(back()).toBe(true)
-      expect(screen.getByRole('button', { name: 'Xem yêu cầu cho Figma' }).props.accessibilityState.disabled).toBe(true)
-    })
-    await act(() => rejectWithdrawal(new Error('offline')))
-    await screen.findByText(
-      'Chưa thể xác nhận kết quả. Hãy kiểm tra trạng thái yêu cầu sau khi tải lại trước khi thử lại.'
-    )
-    await waitFor(() => expect(back()).toBe(false))
-    expect(accessRequestWithdraw).toHaveBeenCalledTimes(1)
-    screen.unmount()
-  } finally {
-    subscription.mockRestore()
-    Platform.OS = previousPlatform
-  }
-})
-
-test('surfaces uncertain withdrawal and prevents immediate repeat', async () => {
-  jest.mocked(accessRequestWithdraw).mockRejectedValueOnce(new Error('offline'))
-  const screen = await renderScreen(<LiveRequestsScreen />)
-  await screen.findByText('Figma')
-  await fireEvent.press(screen.getByRole('button', { name: 'Rút yêu cầu cho Figma' }))
-  await fireEvent.press(screen.getByRole('button', { name: 'Xác nhận rút' }))
-  await screen.findByText(
-    'Chưa thể xác nhận kết quả. Hãy kiểm tra trạng thái yêu cầu sau khi tải lại trước khi thử lại.'
-  )
-  expect(screen.getByRole('button', { name: 'Rút yêu cầu cho Figma' }).props.accessibilityState.disabled).toBe(true)
-  expect(accessRequestWithdraw).toHaveBeenCalledTimes(1)
-})
-
-test('does not offer withdrawal when the server does not allow it', async () => {
-  const response = await jest.mocked(meAccessRequestList)()
-  if (!response.data.data) throw new Error('Expected list data')
-  jest.mocked(meAccessRequestList).mockResolvedValueOnce({
-    ...response,
-    data: {
-      ...response.data,
-      data: { ...response.data.data, items: response.data.data.items.map((item) => ({ ...item, canWithdraw: false })) }
-    }
-  })
+test('does not offer withdrawal in the list even when the server allows it', async () => {
   const screen = await renderScreen(<LiveRequestsScreen />)
   await screen.findByText('Figma')
   expect(screen.queryByRole('button', { name: 'Rút yêu cầu cho Figma' })).toBeNull()
+  expect(screen.queryByRole('button', { name: 'Rút yêu cầu' })).toBeNull()
 })
 
 test('switches server view, resets page and handles empty results', async () => {
