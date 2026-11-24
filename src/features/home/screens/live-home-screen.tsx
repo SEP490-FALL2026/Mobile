@@ -1,7 +1,7 @@
 import { Feather } from '@expo/vector-icons'
 import { Redirect, useRouter } from 'expo-router'
 import { useTranslation } from 'react-i18next'
-import { ScrollView, StyleSheet, Text, View } from 'react-native'
+import { RefreshControl, ScrollView, StyleSheet, Text, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 import { PressableFeedback } from '@/shared/ui/pressable-feedback'
@@ -12,11 +12,13 @@ import { useAccountProfile } from '@/shared/api/use-account-profile'
 import type { MobileColors } from '@/shared/theme/colors'
 import { useMobileTheme } from '@/shared/theme/theme-provider'
 import { Avatar } from '@/shared/ui/avatar'
+import { RefreshStatus, useRefreshFeedback } from '@/shared/ui/refresh-status'
 import { LoadingState } from '@/shared/ui/loading-state'
 import { SentryMascot } from '@/shared/ui/sentry-mascot'
 
 export function LiveHomeScreen() {
   const { t, i18n } = useTranslation()
+  const pull = useRefreshFeedback()
   const { colors } = useMobileTheme()
   const styles = createStyles(colors)
   const router = useRouter()
@@ -39,7 +41,28 @@ export function LiveHomeScreen() {
 
   return (
     <SafeAreaView style={styles.safe}>
-      <ScrollView contentContainerStyle={styles.content}>
+      <ScrollView
+        contentContainerStyle={styles.content}
+        refreshControl={
+          <RefreshControl
+            onRefresh={() =>
+              void pull.refresh(async () => {
+                const results = await Promise.all([profile.refetch(), count.refetch()])
+                return { isError: results.some((result) => result.isError) }
+              })
+            }
+            refreshing={pull.state === 'loading'}
+            tintColor={colors.primary}
+          />
+        }
+      >
+        <RefreshStatus
+          doneLabel={t('common.refreshed')}
+          failedLabel={t('common.refreshFailed')}
+          loadingLabel={t('common.refreshing')}
+          showLoading={false}
+          state={pull.state}
+        />
         {account && role ? (
           <>
             <View style={styles.header}>

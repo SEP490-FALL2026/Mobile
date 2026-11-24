@@ -3,7 +3,7 @@ import { usePreventRemove } from '@react-navigation/native'
 import { Redirect, useFocusEffect, useRouter } from 'expo-router'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { BackHandler, Platform, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native'
+import { BackHandler, Platform, RefreshControl, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 import { Collapsible } from '@/shared/ui/collapsible'
@@ -244,7 +244,17 @@ export function LiveNeedApprovalsScreen({
   return (
     <SafeAreaView style={styles.safe}>
       <View style={styles.screen}>
-        <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps='handled'>
+        <ScrollView
+          contentContainerStyle={styles.content}
+          keyboardShouldPersistTaps='handled'
+          refreshControl={
+            <RefreshControl
+              onRefresh={() => void queueRefresh.refresh(queue.refetch)}
+              refreshing={queueRefresh.state === 'loading'}
+              tintColor={mobileColors.primary}
+            />
+          }
+        >
           {logoutError ? (
             <Text accessibilityRole='alert' style={styles.error}>
               {t('licenses.live.logoutError')}

@@ -6,6 +6,7 @@ import { RefreshControl, ScrollView, StyleSheet, Text, View } from 'react-native
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 import { EmptyState } from '@/shared/ui/empty-state'
+import { RefreshStatus, useRefreshFeedback } from '@/shared/ui/refresh-status'
 import { LoadingState } from '@/shared/ui/loading-state'
 import { PressableFeedback } from '@/shared/ui/pressable-feedback'
 import type { NotificationListResponseDtoDataItemsItem } from '@/shared/api/generated/contracts/notifications'
@@ -22,6 +23,7 @@ export function LiveInboxScreen() {
   const { colors: mobileColors } = useMobileTheme()
   const styles = createStyles(mobileColors)
   const { t, i18n } = useTranslation()
+  const pull = useRefreshFeedback()
   const router = useRouter()
   const session = useSession()
   const profile = useAccountProfile()
@@ -82,15 +84,24 @@ export function LiveInboxScreen() {
           contentContainerStyle={styles.content}
           refreshControl={
             <RefreshControl
-              onRefresh={() => {
-                void list.refetch()
-                void count.refetch()
-              }}
-              refreshing={list.isRefetching}
+              onRefresh={() =>
+                void pull.refresh(async () => {
+                  const results = await Promise.all([list.refetch(), count.refetch()])
+                  return { isError: results.some((result) => result.isError) }
+                })
+              }
+              refreshing={pull.state === 'loading'}
               tintColor={mobileColors.primary}
             />
           }
         >
+          <RefreshStatus
+            doneLabel={t('common.refreshed')}
+            failedLabel={t('common.refreshFailed')}
+            loadingLabel={t('common.refreshing')}
+            showLoading={false}
+            state={pull.state}
+          />
           <View style={styles.titleBlock}>
             <Text accessibilityRole='header' style={styles.pageTitle}>
               {t('inbox.title')}

@@ -9,6 +9,7 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 
 import { SoftwareIcon } from '@/entities/software'
 import { EmptyState } from '@/shared/ui/empty-state'
+import { RefreshStatus, useRefreshFeedback } from '@/shared/ui/refresh-status'
 import { LoadingState } from '@/shared/ui/loading-state'
 import { PressableFeedback } from '@/shared/ui/pressable-feedback'
 import { SegmentedControl } from '@/shared/ui/segmented-control'
@@ -27,6 +28,7 @@ export function LiveRequestsScreen() {
   const { colors: mobileColors } = useMobileTheme()
   const styles = createStyles(mobileColors)
   const { t, i18n } = useTranslation()
+  const pull = useRefreshFeedback()
   const router = useRouter()
   const session = useSession()
   const profile = useAccountProfile()
@@ -54,14 +56,24 @@ export function LiveRequestsScreen() {
           contentContainerStyle={styles.content}
           refreshControl={
             <RefreshControl
-              onRefresh={() => {
-                void query.refetch()
-              }}
-              refreshing={query.isRefetching}
+              onRefresh={() =>
+                void pull.refresh(async () => {
+                  const results = await Promise.all([query.refetch()])
+                  return { isError: results.some((result) => result.isError) }
+                })
+              }
+              refreshing={pull.state === 'loading'}
               tintColor={mobileColors.primary}
             />
           }
         >
+          <RefreshStatus
+            doneLabel={t('common.refreshed')}
+            failedLabel={t('common.refreshFailed')}
+            loadingLabel={t('common.refreshing')}
+            showLoading={false}
+            state={pull.state}
+          />
           <View style={styles.titleRow}>
             <View style={styles.titleBlock}>
               <Text accessibilityRole='header' style={styles.pageTitle}>

@@ -54,12 +54,13 @@ interface RefreshStatusProps {
   loadingLabel: string
   doneLabel: string
   failedLabel: string
+  showLoading?: boolean
 }
 
-export function RefreshStatus({ state, loadingLabel, doneLabel, failedLabel }: RefreshStatusProps) {
+export function RefreshStatus({ state, loadingLabel, doneLabel, failedLabel, showLoading = true }: RefreshStatusProps) {
   const { colors } = useMobileTheme()
   const styles = createStyles(colors)
-  if (state === 'idle') return null
+  if (state === 'idle' || (state === 'loading' && !showLoading)) return null
   const failed = state === 'failed'
   return (
     <View
