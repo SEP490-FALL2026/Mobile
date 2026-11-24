@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { StyleSheet, Text, TextInput, View } from 'react-native'
 
 import { Collapsible } from '@/shared/ui/collapsible'
+import { ChecklistQuestion } from '@/shared/ui/checklist-question'
 import { ChecklistToolbar } from '@/shared/ui/checklist-toolbar'
 import { PressableFeedback } from '@/shared/ui/pressable-feedback'
 import { apiErrorInfo } from '@/shared/api/api-error'
@@ -246,35 +247,24 @@ export function ManagerGroupDecision({
       {ready ? (
         <Collapsible expanded={checklistOpen}>
           {items.map((item) => (
-            <View key={item.code} style={styles.question}>
-              <Text style={styles.label}>{item.text}</Text>
-              {item.check === 'SYSTEM' ? (
-                <Text style={styles.muted}>{t('manager.live.systemYes')}</Text>
-              ) : (
-                <View style={styles.row}>
-                  {(['YES', 'NO'] as const).map((answer) => (
-                    <PressableFeedback
-                      key={answer}
-                      accessibilityRole='radio'
-                      accessibilityState={{ checked: values[item.code] === answer, disabled: locked }}
-                      disabled={locked}
-                      onPress={() =>
-                        checklist &&
-                        setAnswers({
-                          version: checklist.policyVersionId,
-                          values: { ...values, [item.code]: answer }
-                        })
-                      }
-                      style={values[item.code] === answer ? styles.primary : styles.outline}
-                    >
-                      <Text style={values[item.code] === answer ? styles.primaryText : styles.link}>
-                        {t(answer === 'YES' ? 'manager.live.yes' : 'manager.live.no')}
-                      </Text>
-                    </PressableFeedback>
-                  ))}
-                </View>
-              )}
-            </View>
+            <ChecklistQuestion
+              key={item.code}
+              answer={values[item.code]}
+              choiceRole='radio'
+              disabled={locked}
+              noLabel={t('manager.live.no')}
+              onAnswer={(answer) =>
+                checklist &&
+                setAnswers({
+                  version: checklist.policyVersionId,
+                  values: { ...values, [item.code]: answer }
+                })
+              }
+              system={item.check === 'SYSTEM'}
+              systemLabel={t('manager.live.systemYes')}
+              text={item.text}
+              yesLabel={t('manager.live.yes')}
+            />
           ))}
         </Collapsible>
       ) : null}

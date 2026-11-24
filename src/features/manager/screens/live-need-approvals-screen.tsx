@@ -7,6 +7,9 @@ import { BackHandler, Platform, ScrollView, StyleSheet, Text, TextInput, View } 
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 import { Collapsible } from '@/shared/ui/collapsible'
+import { BackButton } from '@/shared/ui/back-button'
+import { ChecklistQuestion } from '@/shared/ui/checklist-question'
+import { ChipButton } from '@/shared/ui/chip-button'
 import { ChecklistToolbar } from '@/shared/ui/checklist-toolbar'
 import { PressableFeedback } from '@/shared/ui/pressable-feedback'
 import type { NeedQueueResponseDtoDataItemsItem } from '@/shared/api/generated/contracts/need-decisions'
@@ -272,15 +275,7 @@ export function LiveNeedApprovalsScreen({
             </View>
           ) : null}
           {selected ? (
-            <PressableFeedback
-              accessibilityRole='button'
-              accessibilityState={{ disabled: inFlight }}
-              disabled={inFlight}
-              onPress={closeDetails}
-              style={styles.action}
-            >
-              <Text style={styles.link}>{t('manager.live.backQueue')}</Text>
-            </PressableFeedback>
+            <BackButton disabled={inFlight} label={t('manager.live.backQueue')} onPress={closeDetails} variant='chip' />
           ) : null}
           {isManager ? (
             <View style={styles.titleBlock}>
@@ -383,13 +378,12 @@ export function LiveNeedApprovalsScreen({
                 </View>
               ) : null}
               {hasScope ? (
-                <PressableFeedback
-                  accessibilityRole='button'
+                <ChipButton
+                  disabled={queue.isFetching}
+                  icon='refresh-cw'
+                  label={t('manager.live.refreshQueue')}
                   onPress={() => void queue.refetch()}
-                  style={styles.action}
-                >
-                  <Text style={styles.link}>{t('manager.live.refreshQueue')}</Text>
-                </PressableFeedback>
+                />
               ) : null}
               {hasScope && queue.data?.items.length === 0 ? (
                 <View style={styles.card}>
@@ -616,35 +610,24 @@ export function LiveNeedApprovalsScreen({
                       ) : null}
                       <Collapsible expanded={checklistOpen}>
                         {checklist?.map((item) => (
-                          <View key={item.code}>
-                            <Text style={styles.label}>{item.text}</Text>
-                            {item.check === 'SYSTEM' ? (
-                              <Text style={styles.muted}>{t('manager.live.systemYes')}</Text>
-                            ) : (
-                              <View style={styles.actions}>
-                                {(['YES', 'NO'] as const).map((answer) => (
-                                  <PressableFeedback
-                                    key={answer}
-                                    accessibilityRole='radio'
-                                    accessibilityState={{ checked: answers[item.code] === answer, disabled: locked }}
-                                    disabled={locked}
-                                    onPress={() => {
-                                      if (!policy.data) return
-                                      setResponse({
-                                        version: policy.data.policyVersionId,
-                                        answers: { ...answers, [item.code]: answer }
-                                      })
-                                    }}
-                                    style={answers[item.code] === answer ? styles.primary : styles.outline}
-                                  >
-                                    <Text style={answers[item.code] === answer ? styles.primaryText : styles.link}>
-                                      {t(answer === 'YES' ? 'manager.live.yes' : 'manager.live.no')}
-                                    </Text>
-                                  </PressableFeedback>
-                                ))}
-                              </View>
-                            )}
-                          </View>
+                          <ChecklistQuestion
+                            key={item.code}
+                            answer={answers[item.code]}
+                            choiceRole='radio'
+                            disabled={locked}
+                            noLabel={t('manager.live.no')}
+                            onAnswer={(answer) => {
+                              if (!policy.data) return
+                              setResponse({
+                                version: policy.data.policyVersionId,
+                                answers: { ...answers, [item.code]: answer }
+                              })
+                            }}
+                            system={item.check === 'SYSTEM'}
+                            systemLabel={t('manager.live.systemYes')}
+                            text={item.text}
+                            yesLabel={t('manager.live.yes')}
+                          />
                         ))}
                       </Collapsible>
                       {choice === 'APPROVE' && hasNo ? (

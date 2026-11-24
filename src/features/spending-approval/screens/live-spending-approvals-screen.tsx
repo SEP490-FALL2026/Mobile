@@ -12,6 +12,7 @@ import type {
   SpendDecisionBodyDto
 } from '@/shared/api/generated/contracts'
 import { Collapsible } from '@/shared/ui/collapsible'
+import { ChecklistQuestion } from '@/shared/ui/checklist-question'
 import { ChecklistToolbar } from '@/shared/ui/checklist-toolbar'
 import { PressableFeedback } from '@/shared/ui/pressable-feedback'
 import type { LinesResponseDtoDataItemsItem } from '@/shared/api/generated/contracts/group-requests'
@@ -879,25 +880,16 @@ function DecisionForm({
       ) : null}
       <Collapsible expanded={expanded}>
         {checklist.map((item) => (
-          <View key={item.code} style={styles.question}>
-            <Text style={styles.bodyText}>{item.text}</Text>
-            {item.check === 'SYSTEM' ? (
-              <Text style={styles.systemAnswer}>{t('spending.live.systemYes')}</Text>
-            ) : (
-              <View style={styles.choiceRow}>
-                <ChoiceButton
-                  label={t('spending.live.yes')}
-                  selected={answers[item.code] === 'YES'}
-                  onPress={() => onAnswer(item.code, 'YES')}
-                />
-                <ChoiceButton
-                  label={t('spending.live.no')}
-                  selected={answers[item.code] === 'NO'}
-                  onPress={() => onAnswer(item.code, 'NO')}
-                />
-              </View>
-            )}
-          </View>
+          <ChecklistQuestion
+            key={item.code}
+            answer={answers[item.code]}
+            noLabel={t('spending.live.no')}
+            onAnswer={(answer) => onAnswer(item.code, answer)}
+            system={item.check === 'SYSTEM'}
+            systemLabel={t('spending.live.systemYes')}
+            text={item.text}
+            yesLabel={t('spending.live.yes')}
+          />
         ))}
       </Collapsible>
       {!checklistComplete && !checklistLoading && !checklistError ? (
