@@ -77,8 +77,8 @@ routing mode, step state and holder, and loads the paginated server event histor
 The requester can withdraw from the detail (confirmation first) while the state allows it, a
 request returned for revision shows that revising and resubmitting is web-only, and a closed
 individual request offers "Request again", which opens the catalog on the same application.
-The list offers withdrawal only when the server indicates it is
-available, and displays the returned status rather than assuming immediate withdrawal.
+Withdrawal is offered only on the detail screen (top-right action with a confirmation popup), when the
+server indicates it is available, and displays the returned status rather than assuming immediate withdrawal.
 The withdrawal response must identify the same request; a missing or inconsistent
 response is treated as uncertain. Navigation and Android Back are blocked while
 withdrawal is in flight, but forced termination cannot be intercepted.
@@ -125,6 +125,18 @@ Manager group request creation and spend-batch submission remain web-only; a GH-
 is not shown because the current detail contract does not expose it. The mobile app
 does not assume the newer proposed one-step manager-self-request routing has been
 implemented by the backend.
+Navigation shape (2026-11-25, see the Mobile UX rules in `AGENTS.md`): the bottom tab bar (`app/(tabs)`)
+holds only each role's main sections, and work is pushed on the root stack as separate routes, each with a
+single top-left back button that returns to the screen underneath:
+`/spending-approvals` -> `/spending-approvals/[requestId]` (verified in the assigned queue, read-only
+evidence) -> `/spending-approvals/[requestId]/decide` (lines, checklist, outcome); `/live-need-approvals` ->
+`/live-need-approvals/[requestId]` (verified in the assigned queue; a reminder that is not in it replaces
+itself with the request detail) -> `/live-need-approvals/[requestId]/decide`; `/live-requests` ->
+`/live-requests/[requestId]` -> `/live-requests/[requestId]/history`. Inbox notifications push these detail
+routes directly. After a decision, "Done" dismisses back to the queue. The create-request flow keeps its
+steps (catalog, plans, details, review) in one route so its discard guard and single submission stay intact;
+its one back button (and Android Back) steps backwards through them and only the first step leaves the screen.
+Internal identifiers (request, step and policy IDs) are never displayed.
 Sibling tabs (software, create request, requests, inbox) switch with `router.replace`, so
 Back from any tab returns to the screen that opened it (normally Home) instead of walking
 through previously visited tabs. Header and card shortcuts still use `push`. The login and
@@ -177,19 +189,17 @@ persistence, jobs, and financial/access decisions.
 app/
   _layout.tsx              root route/provider attachment
   index.tsx                thin route entry
-  home.tsx                 authenticated Home handoff
   forgot-password.tsx      password reset request handoff
   activate.tsx             invitation activation (token from URL fragment)
   reset-password.tsx       password reset (token from URL fragment)
   change-password.tsx      signed-in password change handoff
-  live-inbox.tsx           authenticated inbox handoff
-  live-requests.tsx        authenticated request list handoff
+  (tabs)/                  bottom-tab main sections: home, my-software, live-need-approvals,
+                           spending-approvals, live-requests, live-inbox, profile
   live-request-create.tsx  authenticated individual request handoff (optional application preselection)
-  live-need-approvals.tsx  authenticated need approval handoff
-  live-requests/           authenticated request detail handoff
-  my-software.tsx          employee software handoff
-  profile.tsx              signed-in account and profile editing handoff
-  spending-approvals.tsx   authenticated Spending Approver handoff
+  live-requests/[requestId]/        request detail (index) and its history
+  live-need-approvals/[requestId]/  Manager request detail (index) and decision (decide)
+  spending-approvals/[requestId]/   Spending Approver request detail (index) and decision (decide)
+  my-software/[softwareId].tsx      software access detail
 src/
   providers/               application-wide framework providers
   features/
