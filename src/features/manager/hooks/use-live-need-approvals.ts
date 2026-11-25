@@ -6,11 +6,11 @@ import { policyStepGet } from '@/shared/api/generated/api/policies/policies'
 import type { NeedDecisionBodyDto } from '@/shared/api/generated/contracts/access-requests'
 import { useSession } from '@/shared/api/session-context'
 
-export function useLiveNeedApprovals(page: number, requestId?: string, permitted = true) {
+// The Manager's assigned queue, one page at a time.
+export function useNeedQueue(page: number, permitted = true) {
   const session = useSession()
-  const client = useQueryClient()
   const enabled = session.state === 'authenticated' && permitted
-  const queue = useQuery({
+  return useQuery({
     queryKey: ['session', 'need-approvals', page],
     enabled,
     queryFn: ({ signal }) =>
@@ -23,6 +23,13 @@ export function useLiveNeedApprovals(page: number, requestId?: string, permitted
         return result.data.data
       })
   })
+}
+
+// Detail, policy 1.2 checklist and the decision write for one assigned request.
+export function useNeedApproval(requestId: string | undefined, permitted = true) {
+  const session = useSession()
+  const client = useQueryClient()
+  const enabled = session.state === 'authenticated' && permitted
   const detail = useQuery({
     queryKey: ['session', 'need-approval-detail', requestId],
     enabled: enabled && !!requestId,
@@ -65,16 +72,18 @@ export function useLiveNeedApprovals(page: number, requestId?: string, permitted
     onSettled: async (_, __, { id }) => {
       await Promise.all([
         client.invalidateQueries({ queryKey: ['session', 'need-approvals'] }),
+        client.invalidateQueries({ queryKey: ['session', 'notification-need-approval'] }),
         client.invalidateQueries({ queryKey: ['session', 'need-approval-detail', id] }),
         client.invalidateQueries({ queryKey: ['session', 'request', id] }),
         client.invalidateQueries({ queryKey: ['session', 'notifications'] })
       ])
     }
   })
-  return { queue, detail, policy, decision }
+  return { detail, policy, decision }
 }
 
-export function useNotificationNeedApproval(requestId: string | undefined, permitted: boolean) {
+// Finds a request in the caller's assigned queue (all pages); null when it is not assigned to them.
+export function useAssignedNeedApproval(requestId: string | undefined, permitted: boolean) {
   const session = useSession()
   return useQuery({
     queryKey: ['session', 'notification-need-approval', requestId],

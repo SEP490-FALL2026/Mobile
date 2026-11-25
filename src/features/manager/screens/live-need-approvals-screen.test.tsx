@@ -3,7 +3,7 @@ import { act, fireEvent, render, waitFor } from '@testing-library/react-native'
 import { BackHandler, Platform } from 'react-native'
 
 import { NotificationReadErrorProvider } from '@/features/inbox'
-import { LiveNeedApprovalsScreen } from '@/features/manager'
+import { LiveNeedApprovalsScreen, NeedApprovalDetailScreen, NeedDecisionScreen } from '@/features/manager'
 import {
   accessRequestGet,
   accessRequestNeedDecide,
@@ -15,7 +15,13 @@ import { notificationList, notificationUnreadCount } from '@/shared/api/generate
 import { policyStepGet } from '@/shared/api/generated/api/policies/policies'
 import { setAppLanguage } from '@/shared/i18n/i18n'
 
-const mockRouter = { replace: jest.fn(), push: jest.fn(), canGoBack: jest.fn(() => false) }
+const mockRouter = {
+  replace: jest.fn(),
+  push: jest.fn(),
+  back: jest.fn(),
+  dismissTo: jest.fn(),
+  canGoBack: jest.fn(() => false)
+}
 const mockRedirect = jest.fn()
 const mockPreventRemove = jest.fn()
 const mockSession = {
@@ -54,18 +60,20 @@ jest.mock('@/shared/api/generated/api/access-requests/access-requests', () => ({
 }))
 
 const id = '01234567-89ab-cdef-0123-456789abcdef'
-function renderScreen(notification?: { requestId: string; source: 'assigned' | 'reminder' }) {
+function renderWithClient(element: React.ReactElement) {
   const client = new QueryClient({
     defaultOptions: { queries: { retry: false, gcTime: 0 }, mutations: { retry: false, gcTime: 0 } }
   })
   return render(
     <QueryClientProvider client={client}>
-      <NotificationReadErrorProvider>
-        <LiveNeedApprovalsScreen notification={notification} />
-      </NotificationReadErrorProvider>
+      <NotificationReadErrorProvider>{element}</NotificationReadErrorProvider>
     </QueryClientProvider>
   )
 }
+const renderScreen = () => renderWithClient(<LiveNeedApprovalsScreen />)
+const renderDetail = (requestId: string, source?: 'reminder') =>
+  renderWithClient(<NeedApprovalDetailScreen requestId={requestId} source={source} />)
+const renderDecision = (requestId: string) => renderWithClient(<NeedDecisionScreen requestId={requestId} />)
 beforeEach(async () => {
   jest.clearAllMocks()
   await setAppLanguage('vi', false)
@@ -235,7 +243,18 @@ test('loads only assigned individual grants and opens real details', async () =>
     expect.objectContaining({ headers: { Authorization: 'Bearer test-token' } })
   )
   await fireEvent.press(screen.getByRole('button', { name: 'Xem Figma do An yêu cầu' }))
+  expect(mockRouter.push).toHaveBeenCalledWith({
+    pathname: '/live-need-approvals/[requestId]',
+    params: { requestId: id }
+  })
+  expect(accessRequestGet).not.toHaveBeenCalled()
+})
+
+test('shows an assigned request on its own screen with one back button and no internal ID', async () => {
+  const screen = await renderDetail(id)
   await screen.findByText('Thiết kế')
+  expect(screen.getAllByRole('button', { name: 'Quay lại' })).toHaveLength(1)
+  expect(screen.queryByText(new RegExp(id))).toBeNull()
   screen.getByText('Không áp dụng')
   await screen.findByText('Không có quyền hiện có cùng nhóm chức năng.')
   expect(accessRequestSimilarSeatList).toHaveBeenCalledWith(
@@ -247,6 +266,12 @@ test('loads only assigned individual grants and opens real details', async () =>
     id,
     expect.objectContaining({ headers: { Authorization: 'Bearer test-token' } })
   )
+  expect(screen.queryByText('Có (hệ thống kiểm tra)')).toBeNull()
+  await fireEvent.press(screen.getByRole('button', { name: 'Ra quyết định' }))
+  expect(mockRouter.push).toHaveBeenCalledWith({
+    pathname: '/live-need-approvals/[requestId]/decide',
+    params: { requestId: id }
+  })
 })
 
 test('opens assigned notification work found on a later queue page', async () => {
@@ -268,7 +293,7 @@ test('opens assigned notification work found on a later queue page', async () =>
       }
     }
   })
-  const screen = await renderScreen({ requestId: id, source: 'assigned' })
+  const screen = await renderDetail(id)
   await screen.findByText('Thiết kế')
   expect(needDecisionList).toHaveBeenCalledWith(
     { page: 2, pageSize: 100 },
@@ -276,9 +301,6 @@ test('opens assigned notification work found on a later queue page', async () =>
   )
   expect(accessRequestGet).toHaveBeenCalledWith(id, expect.anything())
   await screen.findByText('Không có quyền hiện có cùng nhóm chức năng.')
-  await fireEvent.press(screen.getByRole('button', { name: 'Về danh sách được giao' }))
-  await screen.findByText('Figma')
-  expect(screen.queryByText('Thiết kế')).toBeNull()
 })
 
 test('does not open a stale or unsupported assigned notification as an individual decision', async () => {
@@ -293,7 +315,7 @@ test('does not open a stale or unsupported assigned notification as an individua
         }
       : response
   )
-  const screen = await renderScreen({ requestId: id, source: 'assigned' })
+  const screen = await renderDetail(id)
   await screen.findByText(
     'Yêu cầu không còn được giao cho bạn hoặc chưa thể duyệt trên ứng dụng. Hãy kiểm tra hàng đợi hoặc xem trên web.'
   )
@@ -310,7 +332,7 @@ test('opens request detail for a need reminder not in the manager queue', async 
     .mockImplementation(async (params) =>
       params?.pageSize === 100 ? { ...response, data: { ...response.data, data: { ...data, items: [] } } } : response
     )
-  await renderScreen({ requestId: id, source: 'reminder' })
+  await renderDetail(id, 'reminder')
   await waitFor(() =>
     expect(mockRouter.replace).toHaveBeenCalledWith({
       pathname: '/live-requests/[requestId]',
@@ -326,7 +348,7 @@ test('does not fall back to request detail when checking the assigned queue fail
     if (params?.pageSize === 100) throw new Error('offline')
     return response
   })
-  const screen = await renderScreen({ requestId: id, source: 'reminder' })
+  const screen = await renderDetail(id, 'reminder')
   await screen.findByText('Không thể kiểm tra yêu cầu trong hàng đợi được giao. Vui lòng thử lại.')
   expect(mockRouter.replace).not.toHaveBeenCalled()
   expect(accessRequestGet).not.toHaveBeenCalled()
@@ -386,9 +408,7 @@ test('shows similar access returned by the backend and supports pagination', asy
       }
     }
   })
-  const screen = await renderScreen()
-  await screen.findByText('Figma')
-  await fireEvent.press(screen.getByRole('button', { name: 'Xem Figma do An yêu cầu' }))
+  const screen = await renderDetail(id)
   await screen.findByText('Miro')
   screen.getByText('Gói: Business')
   expect(screen.queryByText('private@example.test')).toBeNull()
@@ -401,9 +421,7 @@ test('shows similar access returned by the backend and supports pagination', asy
 
 test('reports failure to load similar access and can retry', async () => {
   jest.mocked(accessRequestSimilarSeatList).mockRejectedValueOnce(new Error('offline'))
-  const screen = await renderScreen()
-  await screen.findByText('Figma')
-  await fireEvent.press(screen.getByRole('button', { name: 'Xem Figma do An yêu cầu' }))
+  const screen = await renderDetail(id)
   await screen.findByText('Không thể tải quyền hiện có. Vui lòng thử lại.')
   await fireEvent.press(screen.getByRole('button', { name: /Không thể tải quyền hiện có/ }))
   await screen.findByText('Không có quyền hiện có cùng nhóm chức năng.')
@@ -425,11 +443,9 @@ test('does not allow a decision if detail identifies a different request', async
     ...response,
     data: { ...response.data, data: { request: { ...response.data.data.request, id: 'another-id' } } }
   })
-  const screen = await renderScreen()
-  await screen.findByText('Figma')
-  await fireEvent.press(screen.getByRole('button', { name: 'Xem Figma do An yêu cầu' }))
+  const screen = await renderDetail(id)
   await screen.findByText('Không thể tải yêu cầu này. Yêu cầu có thể không còn được giao cho bạn.')
-  expect(screen.queryByRole('button', { name: 'Duyệt nhu cầu' })).toBeNull()
+  expect(screen.queryByRole('button', { name: 'Ra quyết định' })).toBeNull()
   expect(accessRequestSimilarSeatList).not.toHaveBeenCalled()
 })
 
@@ -457,11 +473,8 @@ test('rejects with a required reason and refreshes the assigned queue', async ()
       }
     }
   })
-  const screen = await renderScreen()
-  await screen.findByText('Figma')
-  await fireEvent.press(screen.getByRole('button', { name: 'Xem Figma do An yêu cầu' }))
-  await screen.findByText('Thiết kế')
-  await screen.findByText('Không có quyền hiện có cùng nhóm chức năng.')
+  const screen = await renderDecision(id)
+  await screen.findByRole('header', { name: 'Figma' })
   await fireEvent.press(screen.getByRole('button', { name: 'Từ chối' }))
   await screen.findByText('Có (hệ thống kiểm tra)')
   await fireEvent.press(screen.getByRole('button', { name: 'Xác nhận quyết định' }))
@@ -484,11 +497,8 @@ test('rejects with a required reason and refreshes the assigned queue', async ()
 
 test('does not retry or report success for an uncertain approval', async () => {
   jest.mocked(accessRequestNeedDecide).mockRejectedValueOnce(new Error('offline'))
-  const screen = await renderScreen()
-  await screen.findByText('Figma')
-  await fireEvent.press(screen.getByRole('button', { name: 'Xem Figma do An yêu cầu' }))
-  await screen.findByText('Thiết kế')
-  await screen.findByText('Không có quyền hiện có cùng nhóm chức năng.')
+  const screen = await renderDecision(id)
+  await screen.findByRole('header', { name: 'Figma' })
   await fireEvent.press(screen.getByRole('button', { name: 'Duyệt nhu cầu' }))
   await screen.findByText('Có (hệ thống kiểm tra)')
   await fireEvent.press(screen.getByRole('button', { name: 'Xác nhận quyết định' }))
@@ -515,10 +525,8 @@ test('blocks navigation and Android system exit while a decision is in flight', 
       })
   )
   try {
-    const screen = await renderScreen()
-    await screen.findByText('Figma')
-    await fireEvent.press(screen.getByRole('button', { name: 'Xem Figma do An yêu cầu' }))
-    await screen.findByText('Thiết kế')
+    const screen = await renderDecision(id)
+    await screen.findByRole('header', { name: 'Figma' })
     expect(back()).toBe(false)
     await fireEvent.press(screen.getByRole('button', { name: 'Duyệt nhu cầu' }))
     await screen.findByText('Có (hệ thống kiểm tra)')
@@ -526,9 +534,7 @@ test('blocks navigation and Android system exit while a decision is in flight', 
     await waitFor(() => {
       expect(mockPreventRemove).toHaveBeenLastCalledWith(true)
       expect(back()).toBe(true)
-      expect(screen.getByRole('button', { name: 'Về danh sách được giao' }).props.accessibilityState.disabled).toBe(
-        true
-      )
+      expect(screen.getByRole('button', { name: 'Quay lại' }).props.accessibilityState.disabled).toBe(true)
     })
     await act(() => rejectDecision(new Error('offline')))
     await screen.findByText('Chưa thể xác nhận quyết định. Hãy quay lại danh sách và kiểm tra trước khi thử lại.')
@@ -547,10 +553,8 @@ test('reports a server refusal when another decision already closed the step', a
     status: 409,
     info: { success: false, error: { code: 'ACCESS_REQUEST.STEP_NOT_PENDING' } }
   })
-  const screen = await renderScreen()
-  await screen.findByText('Figma')
-  await fireEvent.press(screen.getByRole('button', { name: 'Xem Figma do An yêu cầu' }))
-  await screen.findByText('Thiết kế')
+  const screen = await renderDecision(id)
+  await screen.findByRole('header', { name: 'Figma' })
   await fireEvent.press(screen.getByRole('button', { name: 'Duyệt nhu cầu' }))
   await screen.findByText('Có (hệ thống kiểm tra)')
   await fireEvent.press(screen.getByRole('button', { name: 'Xác nhận quyết định' }))
@@ -581,10 +585,8 @@ test('reloads a changed checklist and requires a fresh answer before another dec
     status: 409,
     info: { success: false, error: { code: 'POLICY.VERSION_CHANGED' } }
   })
-  const screen = await renderScreen()
-  await screen.findByText('Figma')
-  await fireEvent.press(screen.getByRole('button', { name: 'Xem Figma do An yêu cầu' }))
-  await screen.findByText('Thiết kế')
+  const screen = await renderDecision(id)
+  await screen.findByRole('header', { name: 'Figma' })
   await fireEvent.press(screen.getByRole('button', { name: 'Duyệt nhu cầu' }))
   await screen.findByText('Có (hệ thống kiểm tra)')
   await fireEvent.press(screen.getByRole('button', { name: 'Xác nhận quyết định' }))
@@ -619,11 +621,8 @@ test('confirms approval only after confirmation', async () => {
       }
     }
   })
-  const screen = await renderScreen()
-  await screen.findByText('Figma')
-  await fireEvent.press(screen.getByRole('button', { name: 'Xem Figma do An yêu cầu' }))
-  await screen.findByText('Thiết kế')
-  await screen.findByText('Không có quyền hiện có cùng nhóm chức năng.')
+  const screen = await renderDecision(id)
+  await screen.findByRole('header', { name: 'Figma' })
   await fireEvent.press(screen.getByRole('button', { name: 'Duyệt nhu cầu' }))
   await screen.findByText('Có (hệ thống kiểm tra)')
   expect(accessRequestNeedDecide).not.toHaveBeenCalled()
@@ -645,11 +644,8 @@ test('rejects inconsistent server responses', async () => {
     headers: new Headers(),
     data: { success: true, message: 'NEED.DECIDED', data: { request: response.data.data.request } }
   })
-  const screen = await renderScreen()
-  await screen.findByText('Figma')
-  await fireEvent.press(screen.getByRole('button', { name: 'Xem Figma do An yêu cầu' }))
-  await screen.findByText('Thiết kế')
-  await screen.findByText('Không có quyền hiện có cùng nhóm chức năng.')
+  const screen = await renderDecision(id)
+  await screen.findByRole('header', { name: 'Figma' })
   await fireEvent.press(screen.getByRole('button', { name: 'Duyệt nhu cầu' }))
   await screen.findByText('Có (hệ thống kiểm tra)')
   expect(accessRequestNeedDecide).not.toHaveBeenCalled()
@@ -681,9 +677,7 @@ test('shows price from the server with an English locale', async () => {
       }
     }
   })
-  const screen = await renderScreen()
-  await screen.findByText('Figma')
-  await fireEvent.press(screen.getByRole('button', { name: /Figma.*An/ }))
+  const screen = await renderDetail(id)
   await screen.findByText('$123.45')
   await screen.findByText('No existing access in the same functional group.')
   screen.getByText('Estimated request amount')
@@ -718,10 +712,8 @@ test('requires a checklist answer and blocks approval for a No', async () => {
       }
     }
   })
-  const screen = await renderScreen()
-  await screen.findByText('Figma')
-  await fireEvent.press(screen.getByRole('button', { name: 'Xem Figma do An yêu cầu' }))
-  await screen.findByText('Thiết kế')
+  const screen = await renderDecision(id)
+  await screen.findByRole('header', { name: 'Figma' })
   await fireEvent.press(screen.getByRole('button', { name: 'Duyệt nhu cầu' }))
   await screen.findByText('Có cần không?')
   expect(screen.getByRole('button', { name: 'Xác nhận quyết định' }).props.accessibilityState.disabled).toBe(true)
@@ -731,7 +723,7 @@ test('requires a checklist answer and blocks approval for a No', async () => {
   expect(accessRequestNeedDecide).not.toHaveBeenCalled()
 })
 
-test('rejects stale step and allows retry on failed queue', async () => {
+test('does not offer a decision for a step that is no longer pending', async () => {
   const response = await jest.mocked(accessRequestGet)(id)
   if (!response.data.data || !('request' in response.data.data)) throw new Error('Expected request')
   jest.mocked(accessRequestGet).mockResolvedValueOnce({
@@ -746,13 +738,16 @@ test('rejects stale step and allows retry on failed queue', async () => {
       }
     }
   })
+  const screen = await renderDetail(id)
+  await screen.findByText('Bước này không còn sẵn sàng để quyết định. Hãy quay lại và tải mới danh sách.')
+  await screen.findByText('Không có quyền hiện có cùng nhóm chức năng.')
+  expect(screen.queryByRole('button', { name: 'Ra quyết định' })).toBeNull()
+})
+
+test('retries a failed queue load', async () => {
   jest.mocked(needDecisionList).mockRejectedValueOnce(new Error('offline'))
   const screen = await renderScreen()
   await screen.findByText('Không thể tải danh sách được giao. Vui lòng thử lại.')
   await fireEvent.press(screen.getByRole('button', { name: 'Thử lại' }))
   await screen.findByText('Figma')
-  await fireEvent.press(screen.getByRole('button', { name: 'Xem Figma do An yêu cầu' }))
-  await screen.findByText('Bước này không còn sẵn sàng để quyết định. Hãy quay lại và tải mới danh sách.')
-  await screen.findByText('Không có quyền hiện có cùng nhóm chức năng.')
-  expect(screen.queryByRole('button', { name: 'Duyệt nhu cầu' })).toBeNull()
 })

@@ -3,6 +3,7 @@ export const resources = {
     translation: {
       common: {
         back: 'Back',
+        cancel: 'Cancel',
         refreshFailed: 'Could not refresh. Please try again.',
         refreshed: 'Up to date',
         refreshing: 'Refreshing…',
@@ -211,10 +212,13 @@ export const resources = {
         live: {
           openQueue: 'Need approvals',
           backSoftware: 'Back to my software',
-          backQueue: 'Back to assigned approvals',
+          makeDecision: 'Make a decision',
+          done: 'Done',
+          requestedBy: 'For {{name}}',
+          chooseOutcome: 'Choose an outcome for this request.',
+          assignedCount: '{{formattedCount}} assigned requests',
           kicker: 'Assigned work',
           title: 'Need approvals',
-          details: 'Review request',
           scope:
             'Individual requests assigned to you. Other request types and department-wide views are not available here.',
           loading: 'Loading approvals',
@@ -225,7 +229,6 @@ export const resources = {
             'This request is no longer assigned to you or cannot be reviewed in the app. Check the queue or use the web.',
           detailError: 'Could not load this request. It may no longer be assigned to you.',
           count: '{{formattedCount}} assigned requests',
-          assignedLabel: 'Assigned individual requests',
           role: 'Department head',
           noScope: 'No active department-head assignment was returned. Refresh or contact your administrator.',
           urgentUnavailable: 'Urgent SLA count unavailable',
@@ -907,6 +910,7 @@ export const resources = {
     translation: {
       common: {
         back: 'Quay lại',
+        cancel: 'Hủy',
         refreshFailed: 'Chưa làm mới được. Vui lòng thử lại.',
         refreshed: 'Đã cập nhật',
         refreshing: 'Đang làm mới…',
@@ -1114,10 +1118,13 @@ export const resources = {
         live: {
           openQueue: 'Duyệt nhu cầu',
           backSoftware: 'Về phần mềm của tôi',
-          backQueue: 'Về danh sách được giao',
+          makeDecision: 'Ra quyết định',
+          done: 'Xong',
+          requestedBy: 'Cho {{name}}',
+          chooseOutcome: 'Chọn kết quả cho yêu cầu này.',
+          assignedCount: '{{formattedCount}} yêu cầu được giao',
           kicker: 'Công việc được giao',
           title: 'Duyệt nhu cầu',
-          details: 'Xem yêu cầu',
           scope: 'Yêu cầu cá nhân được giao cho bạn. Các loại yêu cầu khác và danh sách toàn phòng chưa có tại đây.',
           loading: 'Đang tải yêu cầu cần duyệt',
           queueError: 'Không thể tải danh sách được giao. Vui lòng thử lại.',
@@ -1127,7 +1134,6 @@ export const resources = {
             'Yêu cầu không còn được giao cho bạn hoặc chưa thể duyệt trên ứng dụng. Hãy kiểm tra hàng đợi hoặc xem trên web.',
           detailError: 'Không thể tải yêu cầu này. Yêu cầu có thể không còn được giao cho bạn.',
           count: '{{formattedCount}} yêu cầu được giao',
-          assignedLabel: 'Yêu cầu cá nhân được giao',
           role: 'Trưởng phòng',
           noScope: 'Tài khoản chưa có phạm vi trưởng phòng đang hiệu lực. Hãy tải lại hoặc liên hệ quản trị viên.',
           urgentUnavailable: 'Chưa có số đơn gấp',

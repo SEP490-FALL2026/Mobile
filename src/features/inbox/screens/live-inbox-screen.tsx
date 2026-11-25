@@ -40,8 +40,8 @@ export function LiveInboxScreen() {
         break
       case 'manager':
         router.push({
-          pathname: '/live-need-approvals',
-          params: { requestId: target.requestId, source: target.source }
+          pathname: '/live-need-approvals/[requestId]',
+          params: { requestId: target.requestId, ...(target.source === 'reminder' ? { source: 'reminder' } : {}) }
         })
         break
       case 'spending':

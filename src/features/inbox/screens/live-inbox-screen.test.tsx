@@ -241,8 +241,8 @@ test('passes the assigned request to the manager queue after marking the notific
   await fireEvent.press(await screen.findByRole('button', { name: 'Mở thông báo: Có bước xử lý được giao cho bạn' }))
   await waitFor(() =>
     expect(mockRouter.push).toHaveBeenCalledWith({
-      pathname: '/live-need-approvals',
-      params: { requestId: 'aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee', source: 'assigned' }
+      pathname: '/live-need-approvals/[requestId]',
+      params: { requestId: 'aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee' }
     })
   )
   expect(notificationMarkRead).toHaveBeenCalledTimes(1)
