@@ -5,6 +5,7 @@ import { needDecisionList } from '@/shared/api/generated/api/need-decisions/need
 import { policyStepGet } from '@/shared/api/generated/api/policies/policies'
 import type { NeedDecisionBodyDto } from '@/shared/api/generated/contracts/access-requests'
 import { useSession } from '@/shared/api/session-context'
+import { LIST_PAGE_SIZE } from '@/shared/lib/list-page-size'
 
 // The Manager's assigned queue, one page at a time.
 export function useNeedQueue(page: number, permitted = true) {
@@ -16,7 +17,7 @@ export function useNeedQueue(page: number, permitted = true) {
     queryFn: ({ signal }) =>
       session.read(async (token) => {
         const result = await needDecisionList(
-          { page, pageSize: 20 },
+          { page, pageSize: LIST_PAGE_SIZE },
           { signal, headers: { Authorization: `Bearer ${token}` } }
         )
         if (!result.data.data) throw new Error('Missing need approval queue')

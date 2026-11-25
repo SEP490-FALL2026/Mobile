@@ -1,6 +1,6 @@
 import { Feather } from '@expo/vector-icons'
 import { Redirect, useRouter } from 'expo-router'
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { RefreshControl, ScrollView, StyleSheet, Text, View } from 'react-native'
 
@@ -17,6 +17,7 @@ import { useSession } from '@/shared/api/session-context'
 import { useAccountProfile } from '@/shared/api/use-account-profile'
 import type { MobileColors } from '@/shared/theme/colors'
 import { useMobileTheme } from '@/shared/theme/theme-provider'
+import { Pagination } from '@/shared/ui/pagination'
 
 import { LiveRequestStatus } from '../components/live-request-status'
 import { LiveRequestType } from '../components/live-request-type'
@@ -32,6 +33,7 @@ export function LiveRequestsScreen() {
   const profile = useAccountProfile()
   const [view, setView] = useState<'open' | 'ended'>('open')
   const [page, setPage] = useState(1)
+  const listScroll = useRef<ScrollView>(null)
   const query = useLiveRequests(view, page)
 
   if (session.state === 'anonymous') return <Redirect href='/' />
@@ -39,6 +41,7 @@ export function LiveRequestsScreen() {
     <SafeAreaView edges={['top', 'left', 'right']} style={styles.safe}>
       <View style={styles.screen}>
         <ScrollView
+          ref={listScroll}
           contentContainerStyle={styles.content}
           refreshControl={
             <RefreshControl
@@ -158,29 +161,14 @@ export function LiveRequestsScreen() {
             )
           })}
           {query.data && query.data.pagination.totalPages > 1 ? (
-            <View style={styles.pagination}>
-              <PressableFeedback
-                accessibilityRole='button'
-                accessibilityState={{ disabled: page <= 1 }}
-                disabled={page <= 1}
-                onPress={() => setPage(page - 1)}
-                style={[styles.action, page <= 1 && styles.disabled]}
-              >
-                <Text style={styles.actionText}>{t('licenses.live.previous')}</Text>
-              </PressableFeedback>
-              <Text style={styles.muted}>
-                {t('licenses.live.page', { page: new Intl.NumberFormat(i18n.language).format(page) })}
-              </Text>
-              <PressableFeedback
-                accessibilityRole='button'
-                accessibilityState={{ disabled: page >= query.data.pagination.totalPages }}
-                disabled={page >= query.data.pagination.totalPages}
-                onPress={() => setPage(page + 1)}
-                style={[styles.action, page >= query.data.pagination.totalPages && styles.disabled]}
-              >
-                <Text style={styles.actionText}>{t('licenses.live.next')}</Text>
-              </PressableFeedback>
-            </View>
+            <Pagination
+              onChange={(next) => {
+                setPage(next)
+                listScroll.current?.scrollTo({ y: 0, animated: true })
+              }}
+              page={page}
+              totalPages={query.data.pagination.totalPages}
+            />
           ) : null}
         </ScrollView>
       </View>
@@ -204,7 +192,11 @@ const createStyles = (mobileColors: MobileColors) =>
       backgroundColor: mobileColors.primary
     },
     createText: { color: mobileColors.onPrimary, fontWeight: '700' },
-    safe: { flex: 1, backgroundColor: mobileColors.background },
+    safe: {
+      flex: 1,
+      backgroundColor: mobileColors.background,
+      experimental_backgroundImage: mobileColors.backgroundGradient
+    },
     screen: { flex: 1 },
     content: { padding: 20, paddingBottom: 24, gap: 14 },
     header: {
@@ -270,6 +262,5 @@ const createStyles = (mobileColors: MobileColors) =>
     error: { color: mobileColors.danger, fontSize: 13 },
     action: { minHeight: 44, justifyContent: 'center', paddingHorizontal: 8, alignSelf: 'flex-start' },
     actionText: { color: mobileColors.primaryInk, fontWeight: '700' },
-    disabled: { opacity: 0.4 },
-    pagination: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }
+    disabled: { opacity: 0.4 }
   })

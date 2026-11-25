@@ -231,7 +231,7 @@ export function LiveHomeScreen() {
 
 const createStyles = (colors: MobileColors) =>
   StyleSheet.create({
-    safe: { flex: 1, backgroundColor: colors.background },
+    safe: { flex: 1, backgroundColor: colors.background, experimental_backgroundImage: colors.backgroundGradient },
     content: { padding: 20, gap: 18, paddingBottom: 36 },
     header: { flexDirection: 'row', alignItems: 'center', gap: 12 },
     profile: { flex: 1 },

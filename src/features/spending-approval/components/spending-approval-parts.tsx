@@ -441,7 +441,7 @@ export function getMutationErrorKey(error: unknown) {
 
 export const createSpendingStyles = (colors: MobileColors) =>
   StyleSheet.create({
-    safe: { backgroundColor: colors.background, flex: 1 },
+    safe: { backgroundColor: colors.background, experimental_backgroundImage: colors.backgroundGradient, flex: 1 },
     screen: { flex: 1 },
     content: { gap: 16, padding: 18, paddingBottom: 26 },
     header: { alignItems: 'center', flexDirection: 'row', gap: 12, minHeight: 54 },
@@ -547,7 +547,6 @@ export const createSpendingStyles = (colors: MobileColors) =>
       padding: 22
     },
     emptyTitle: { color: colors.foreground, fontSize: 14, fontWeight: '700', textAlign: 'center' },
-    pagination: { alignItems: 'center', flexDirection: 'row', gap: 8, justifyContent: 'space-between' },
     actionButton: {
       alignItems: 'center',
       alignSelf: 'flex-start',
@@ -604,7 +603,7 @@ export const createSpendingStyles = (colors: MobileColors) =>
       textAlignVertical: 'top'
     },
     footer: {
-      backgroundColor: colors.background,
+      backgroundColor: colors.backgroundEnd,
       borderTopColor: colors.border,
       borderTopWidth: 1,
       paddingHorizontal: 18,

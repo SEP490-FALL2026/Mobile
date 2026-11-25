@@ -2,7 +2,7 @@ import { Feather } from '@expo/vector-icons'
 import { useRouter } from 'expo-router'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native'
+import { StyleSheet, Text, TextInput, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 import { PressableFeedback } from '@/shared/ui/pressable-feedback'
@@ -12,6 +12,7 @@ import { useAccountProfile } from '@/shared/api/use-account-profile'
 import type { MobileColors } from '@/shared/theme/colors'
 import { useMobileTheme } from '@/shared/theme/theme-provider'
 import { PreferenceSwitches } from '@/shared/ui/preference-switches'
+import { KeyboardAwareScrollView } from '@/shared/ui/keyboard-aware-scroll-view'
 
 export function LoginScreen() {
   const { colors: mobileColors } = useMobileTheme()
@@ -105,8 +106,8 @@ export function LoginScreen() {
     <SafeAreaView style={styles.safeArea}>
       <View pointerEvents='none' style={styles.orbitLarge} />
       <View pointerEvents='none' style={styles.orbitSmall} />
-      <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={styles.flex}>
-        <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps='handled'>
+      <View style={styles.flex}>
+        <KeyboardAwareScrollView contentContainerStyle={styles.content}>
           <View style={styles.toolbar}>
             <PreferenceSwitches />
           </View>
@@ -230,8 +231,8 @@ export function LoginScreen() {
             <Text style={styles.secureText}>{t('auth.secureSession')}</Text>
           </View>
           <Text style={styles.tagline}>{t('auth.tagline')}</Text>
-        </ScrollView>
-      </KeyboardAvoidingView>
+        </KeyboardAwareScrollView>
+      </View>
     </SafeAreaView>
   )
 }
@@ -239,7 +240,11 @@ export function LoginScreen() {
 const createStyles = (mobileColors: MobileColors) =>
   StyleSheet.create({
     flex: { flex: 1 },
-    safeArea: { backgroundColor: mobileColors.background, flex: 1 },
+    safeArea: {
+      backgroundColor: mobileColors.background,
+      experimental_backgroundImage: mobileColors.backgroundGradient,
+      flex: 1
+    },
     orbitLarge: {
       position: 'absolute',
       top: -120,

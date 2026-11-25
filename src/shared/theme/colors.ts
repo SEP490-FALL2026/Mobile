@@ -5,6 +5,9 @@ export type ToneColors = Record<IconTone, { solid: string; soft: string }>
 
 export type MobileColors = {
   background: string
+  // Soft vertical wash behind every screen; backgroundEnd is its bottom colour for docks and footers.
+  backgroundGradient: string
+  backgroundEnd: string
   border: string
   danger: string
   dangerBackground: string
@@ -29,6 +32,8 @@ export type MobileColors = {
 
 export const mobileColors: MobileColors = {
   background: '#f3f5fa',
+  backgroundGradient: 'linear-gradient(180deg, #e6ebfd 0%, #f1f1fc 38%, #f8f3fb 72%, #fbf0f4 100%)',
+  backgroundEnd: '#fbf0f4',
   border: '#e2e5ef',
   danger: '#b42630',
   dangerBackground: '#fbe8e9',
@@ -60,6 +65,8 @@ export const mobileColors: MobileColors = {
 
 export const darkMobileColors: MobileColors = {
   background: '#05162a',
+  backgroundGradient: 'linear-gradient(180deg, #0b2347 0%, #07192f 45%, #05162a 70%, #120f30 100%)',
+  backgroundEnd: '#120f30',
   border: '#1b3553',
   danger: '#f04850',
   dangerBackground: '#3d1f27',

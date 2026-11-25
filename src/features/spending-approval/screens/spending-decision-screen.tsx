@@ -2,7 +2,7 @@ import { usePreventRemove } from '@react-navigation/native'
 import { Redirect, useFocusEffect, useRouter } from 'expo-router'
 import { useCallback, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { BackHandler, Platform, ScrollView, Text, View } from 'react-native'
+import { BackHandler, Platform, Text, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 import type { LineSpendDecisionBodyDto, SpendDecisionBodyDto } from '@/shared/api/generated/contracts'
@@ -13,6 +13,7 @@ import { useMobileTheme } from '@/shared/theme/theme-provider'
 import { BackButton } from '@/shared/ui/back-button'
 import { LoadingState } from '@/shared/ui/loading-state'
 import { PressableFeedback } from '@/shared/ui/pressable-feedback'
+import { KeyboardAwareScrollView } from '@/shared/ui/keyboard-aware-scroll-view'
 
 import {
   ActionButton,
@@ -201,7 +202,7 @@ export function SpendingDecisionScreen({ requestId }: { requestId: string }) {
 
   return (
     <SafeAreaView style={styles.safe}>
-      <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps='handled'>
+      <KeyboardAwareScrollView contentContainerStyle={styles.content}>
         <BackButton
           disabled={inFlight}
           label={t('common.back')}
@@ -289,7 +290,7 @@ export function SpendingDecisionScreen({ requestId }: { requestId: string }) {
             />
           </>
         )}
-      </ScrollView>
+      </KeyboardAwareScrollView>
       {result ? (
         <View style={styles.footer}>
           <PressableFeedback

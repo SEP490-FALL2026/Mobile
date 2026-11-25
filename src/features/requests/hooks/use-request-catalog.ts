@@ -6,6 +6,7 @@ import {
   requestablePlanList
 } from '@/shared/api/generated/api/requestable-software/requestable-software'
 import { useSession } from '@/shared/api/session-context'
+import { LIST_PAGE_SIZE } from '@/shared/lib/list-page-size'
 
 export function isNoDepartment(error: unknown) {
   if (typeof error !== 'object' || error === null || !('info' in error)) return false
@@ -35,7 +36,7 @@ export function useRequestCatalog(
     queryFn: ({ signal }) =>
       session.read(async (token) => {
         const result = await meDepartmentSoftwareList(
-          { page, pageSize: 20 },
+          { page, pageSize: LIST_PAGE_SIZE },
           {
             signal,
             headers: { Authorization: `Bearer ${token}` }
@@ -52,7 +53,7 @@ export function useRequestCatalog(
     queryFn: ({ signal }) =>
       session.read(async (token) => {
         const result = await requestableApplicationList(
-          { search: search || undefined, page, pageSize: 20 },
+          { search: search || undefined, page, pageSize: LIST_PAGE_SIZE },
           {
             signal,
             headers: { Authorization: `Bearer ${token}` }
@@ -70,7 +71,7 @@ export function useRequestCatalog(
       session.read(async (token) => {
         if (!applicationId) throw new Error('Missing application ID')
         const result = await requestablePlanList(
-          { applicationId, page, pageSize: 20 },
+          { applicationId, page, pageSize: LIST_PAGE_SIZE },
           {
             signal,
             headers: { Authorization: `Bearer ${token}` }

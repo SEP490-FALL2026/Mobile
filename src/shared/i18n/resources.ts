@@ -3,6 +3,11 @@ export const resources = {
     translation: {
       common: {
         back: 'Back',
+        pagination: {
+          previous: 'Previous',
+          next: 'Next',
+          status: 'Page {{page}} of {{total}}'
+        },
         cancel: 'Cancel',
         refreshFailed: 'Could not refresh. Please try again.',
         refreshed: 'Up to date',
@@ -906,6 +911,11 @@ export const resources = {
     translation: {
       common: {
         back: 'Quay lại',
+        pagination: {
+          previous: 'Trang trước',
+          next: 'Trang sau',
+          status: 'Trang {{page}}/{{total}}'
+        },
         cancel: 'Hủy',
         refreshFailed: 'Chưa làm mới được. Vui lòng thử lại.',
         refreshed: 'Đã cập nhật',

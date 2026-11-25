@@ -38,7 +38,7 @@ export function RequestHistoryScreen({ requestId }: { requestId: string }) {
 
 const createStyles = (colors: MobileColors) =>
   StyleSheet.create({
-    safe: { flex: 1, backgroundColor: colors.background },
+    safe: { flex: 1, backgroundColor: colors.background, experimental_backgroundImage: colors.backgroundGradient },
     content: { padding: 20, paddingBottom: 24, gap: 14 },
     title: { color: colors.foreground, fontSize: 25, fontWeight: '700' }
   })

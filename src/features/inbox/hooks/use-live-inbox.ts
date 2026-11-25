@@ -8,6 +8,7 @@ import {
   notificationUnreadCount
 } from '@/shared/api/generated/api/notifications/notifications'
 import { useSession } from '@/shared/api/session-context'
+import { LIST_PAGE_SIZE } from '@/shared/lib/list-page-size'
 
 export function useLiveInbox(page: number) {
   const session = useSession()
@@ -21,7 +22,7 @@ export function useLiveInbox(page: number) {
     queryFn: ({ signal }) =>
       session.read(async (token) => {
         const result = await notificationList(
-          { page, pageSize: 20 },
+          { page, pageSize: LIST_PAGE_SIZE },
           { signal, headers: { Authorization: `Bearer ${token}`, 'Accept-Language': language } }
         )
         if (!result.data.data) throw new Error('Missing notification list')

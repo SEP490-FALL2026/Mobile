@@ -9,6 +9,7 @@ import { SegmentedControl } from '@/shared/ui/segmented-control'
 import type { RequestablePlanPageResponseDtoDataItemsItem } from '@/shared/api/generated/contracts/requestable-software'
 import type { MobileColors } from '@/shared/theme/colors'
 import { useMobileTheme } from '@/shared/theme/theme-provider'
+import { Pagination } from '@/shared/ui/pagination'
 
 import { useHeldPlans } from '../hooks/use-held-plans'
 import { isNoDepartment, useRequestCatalog } from '../hooks/use-request-catalog'
@@ -258,27 +259,14 @@ export function RequestCatalog({
           })
         : null}
       {!query.isError && query.data && query.data.pagination.totalPages > 1 ? (
-        <View style={styles.pagination}>
-          <PressableFeedback
-            accessibilityRole='button'
-            disabled={page <= 1}
-            accessibilityState={{ disabled: page <= 1 }}
-            onPress={() => setPage(page - 1)}
-            style={[styles.action, page <= 1 && styles.disabled]}
-          >
-            <Text style={styles.link}>{t('licenses.live.previous')}</Text>
-          </PressableFeedback>
-          <Text style={styles.muted}>{t('licenses.live.page', { page: numberFormat(page, i18n.language) })}</Text>
-          <PressableFeedback
-            accessibilityRole='button'
-            disabled={page >= query.data.pagination.totalPages}
-            accessibilityState={{ disabled: page >= query.data.pagination.totalPages }}
-            onPress={() => setPage(page + 1)}
-            style={[styles.action, page >= query.data.pagination.totalPages && styles.disabled]}
-          >
-            <Text style={styles.link}>{t('licenses.live.next')}</Text>
-          </PressableFeedback>
-        </View>
+        <Pagination
+          onChange={(next) => {
+            setPage(next)
+            scrollTo(0, true)
+          }}
+          page={page}
+          totalPages={query.data.pagination.totalPages}
+        />
       ) : null}
     </View>
   )
@@ -332,6 +320,5 @@ const createStyles = (colors: MobileColors) =>
     error: { color: colors.danger, fontSize: 13, lineHeight: 19 },
     link: { color: colors.primaryInk, fontWeight: '700' },
     action: { minHeight: 44, justifyContent: 'center' },
-    pagination: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
     disabled: { opacity: 0.4 }
   })

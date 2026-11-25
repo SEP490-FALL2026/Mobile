@@ -2,7 +2,7 @@ import { usePreventRemove } from '@react-navigation/native'
 import { Redirect, useFocusEffect, useRouter } from 'expo-router'
 import { useCallback, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { BackHandler, Platform, ScrollView, Text, TextInput, View } from 'react-native'
+import { BackHandler, Platform, Text, TextInput, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 import { useSession } from '@/shared/api/session-context'
@@ -16,6 +16,7 @@ import { Collapsible } from '@/shared/ui/collapsible'
 import { ErrorReference } from '@/shared/ui/error-reference'
 import { LoadingState } from '@/shared/ui/loading-state'
 import { PressableFeedback } from '@/shared/ui/pressable-feedback'
+import { KeyboardAwareScrollView } from '@/shared/ui/keyboard-aware-scroll-view'
 
 import { ManagerGroupDecision } from '../components/manager-group-decision'
 import { createNeedApprovalStyles } from '../components/need-approval-styles'
@@ -132,7 +133,7 @@ export function NeedDecisionScreen({ requestId }: { requestId: string }) {
 
   return (
     <SafeAreaView style={styles.safe}>
-      <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps='handled'>
+      <KeyboardAwareScrollView contentContainerStyle={styles.content}>
         <BackButton
           disabled={inFlight}
           label={t('common.back')}
@@ -382,7 +383,7 @@ export function NeedDecisionScreen({ requestId }: { requestId: string }) {
             ) : null}
           </>
         )}
-      </ScrollView>
+      </KeyboardAwareScrollView>
       {decision.isSuccess || groupDone ? (
         <View style={styles.footer}>
           <PressableFeedback

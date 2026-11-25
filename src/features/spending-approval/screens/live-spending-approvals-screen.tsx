@@ -1,6 +1,6 @@
 import { Feather } from '@expo/vector-icons'
 import { Redirect, useRouter } from 'expo-router'
-import { useMemo, useState } from 'react'
+import { useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { RefreshControl, ScrollView, Text, TextInput, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
@@ -12,6 +12,8 @@ import { EmptyState } from '@/shared/ui/empty-state'
 import { LoadingState } from '@/shared/ui/loading-state'
 import { PressableFeedback } from '@/shared/ui/pressable-feedback'
 import { RefreshStatus, useRefreshFeedback } from '@/shared/ui/refresh-status'
+import { KeyboardAwareScrollView } from '@/shared/ui/keyboard-aware-scroll-view'
+import { Pagination } from '@/shared/ui/pagination'
 
 import { LiveSpendingApprovalCard } from '../components/live-spending-approval-card'
 import { ActionButton, createSpendingStyles } from '../components/spending-approval-parts'
@@ -29,6 +31,7 @@ export function LiveSpendingApprovalsScreen() {
   const account = profile.data
   const isApprover = account?.roles.length === 1 && account.roles[0] === 'SPENDING_APPROVER'
   const [page, setPage] = useState(1)
+  const listScroll = useRef<ScrollView>(null)
   const [search, setSearch] = useState('')
   const queueRefresh = useRefreshFeedback()
   const queue = useSpendingQueue(page, !!isApprover)
@@ -40,9 +43,10 @@ export function LiveSpendingApprovalsScreen() {
 
   return (
     <SafeAreaView edges={['top', 'left', 'right']} style={styles.safe}>
-      <ScrollView
+      <KeyboardAwareScrollView
+        ref={listScroll}
         contentContainerStyle={styles.content}
-        keyboardShouldPersistTaps='handled'
+
         refreshControl={
           <RefreshControl
             onRefresh={() => void queueRefresh.refresh(queue.refetch)}
@@ -150,28 +154,19 @@ export function LiveSpendingApprovalsScreen() {
               />
             )}
             {queue.data && queue.data.pagination.totalPages > 1 ? (
-              <View style={styles.pagination}>
-                <ActionButton
-                  disabled={page <= 1 || queue.isFetching}
-                  label={t('spending.live.previousPage')}
-                  onPress={() => setPage((current) => Math.max(1, current - 1))}
-                />
-                <Text style={styles.muted}>
-                  {t('spending.live.page', {
-                    page: queue.data.pagination.page,
-                    totalPages: queue.data.pagination.totalPages
-                  })}
-                </Text>
-                <ActionButton
-                  disabled={page >= queue.data.pagination.totalPages || queue.isFetching}
-                  label={t('spending.live.nextPage')}
-                  onPress={() => setPage((current) => current + 1)}
-                />
-              </View>
+              <Pagination
+                disabled={queue.isFetching}
+                onChange={(next) => {
+                  setPage(next)
+                  listScroll.current?.scrollTo({ y: 0, animated: true })
+                }}
+                page={page}
+                totalPages={queue.data.pagination.totalPages}
+              />
             ) : null}
           </>
         )}
-      </ScrollView>
+      </KeyboardAwareScrollView>
     </SafeAreaView>
   )
 }

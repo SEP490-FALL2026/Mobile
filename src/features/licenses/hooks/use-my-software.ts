@@ -4,6 +4,7 @@ import { employeeDashboardGet } from '@/shared/api/generated/api/dashboards/dash
 import { meSoftwareRightList } from '@/shared/api/generated/api/me/me'
 import { useSession } from '@/shared/api/session-context'
 import { useAccountProfile } from '@/shared/api/use-account-profile'
+import { LIST_PAGE_SIZE } from '@/shared/lib/list-page-size'
 
 export function useMySoftware(page: number, view: 'current' | 'ended' = 'current') {
   const session = useSession()
@@ -15,7 +16,7 @@ export function useMySoftware(page: number, view: 'current' | 'ended' = 'current
     queryFn: ({ signal }) =>
       session.read(async (token) => {
         const result = await meSoftwareRightList(
-          { view, page, pageSize: 20 },
+          { view, page, pageSize: LIST_PAGE_SIZE },
           { signal, headers: { Authorization: `Bearer ${token}` } }
         )
         if (!result.data.data) throw new Error('Missing software response data')

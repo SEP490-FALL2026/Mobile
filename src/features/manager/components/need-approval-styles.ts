@@ -7,7 +7,11 @@ export const createNeedApprovalStyles = (mobileColors: MobileColors) =>
   StyleSheet.create({
     titleBlock: { gap: 4 },
     pageTitle: { color: mobileColors.foreground, fontSize: 26, fontWeight: '800', letterSpacing: -0.4 },
-    safe: { flex: 1, backgroundColor: mobileColors.background },
+    safe: {
+      flex: 1,
+      backgroundColor: mobileColors.background,
+      experimental_backgroundImage: mobileColors.backgroundGradient
+    },
     screen: { flex: 1 },
     profile: {
       flexDirection: 'row',
@@ -116,7 +120,6 @@ export const createNeedApprovalStyles = (mobileColors: MobileColors) =>
     heroSubtitle: { color: mobileColors.foreground },
     error: { color: mobileColors.danger, fontSize: 13, lineHeight: 19 },
     success: { color: mobileColors.success, fontSize: 13, lineHeight: 19 },
-    pagination: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
     actions: { flexDirection: 'row', justifyContent: 'flex-end', gap: 10 },
     outline: {
       minHeight: 48,
@@ -152,7 +155,7 @@ export const createNeedApprovalStyles = (mobileColors: MobileColors) =>
     confirm: { borderTopWidth: 1, borderTopColor: mobileColors.border, paddingTop: 12, gap: 10 },
     queueHeader: { alignItems: 'center', flexDirection: 'row', gap: 10, justifyContent: 'space-between' },
     footer: {
-      backgroundColor: mobileColors.background,
+      backgroundColor: mobileColors.backgroundEnd,
       borderTopColor: mobileColors.border,
       borderTopWidth: 1,
       paddingHorizontal: 16,

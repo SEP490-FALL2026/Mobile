@@ -3,6 +3,7 @@ import { useQuery } from '@tanstack/react-query'
 import { accessRequestGet } from '@/shared/api/generated/api/access-requests/access-requests'
 import { meAccessRequestList } from '@/shared/api/generated/api/me/me'
 import { useSession } from '@/shared/api/session-context'
+import { LIST_PAGE_SIZE } from '@/shared/lib/list-page-size'
 
 export function useLiveRequests(view: 'open' | 'ended', page: number) {
   const session = useSession()
@@ -12,7 +13,7 @@ export function useLiveRequests(view: 'open' | 'ended', page: number) {
     queryFn: ({ signal }) =>
       session.read(async (token) => {
         const result = await meAccessRequestList(
-          { view, involvement: 'ALL', page, pageSize: 20 },
+          { view, involvement: 'ALL', page, pageSize: LIST_PAGE_SIZE },
           { signal, headers: { Authorization: `Bearer ${token}` } }
         )
         if (!result.data.data) throw new Error('Missing request list')

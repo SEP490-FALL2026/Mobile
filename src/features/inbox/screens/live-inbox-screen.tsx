@@ -15,6 +15,7 @@ import { useAccountProfile } from '@/shared/api/use-account-profile'
 import type { MobileColors } from '@/shared/theme/colors'
 import { useMobileTheme } from '@/shared/theme/theme-provider'
 import { IconBadge } from '@/shared/ui/icon-badge'
+import { Pagination } from '@/shared/ui/pagination'
 
 import { useNotificationReadError } from '../components/notification-read-error-provider'
 import { useLiveInbox } from '../hooks/use-live-inbox'
@@ -29,6 +30,7 @@ export function LiveInboxScreen() {
   const session = useSession()
   const profile = useAccountProfile()
   const [page, setPage] = useState(1)
+  const listScroll = useRef<ScrollView>(null)
   const [webNotice, setWebNotice] = useState(false)
   const opening = useRef(false)
   const { list, count, markRead } = useLiveInbox(page)
@@ -82,6 +84,7 @@ export function LiveInboxScreen() {
     <SafeAreaView edges={['top', 'left', 'right']} style={styles.safe}>
       <View style={styles.screen}>
         <ScrollView
+          ref={listScroll}
           contentContainerStyle={styles.content}
           refreshControl={
             <RefreshControl
@@ -237,29 +240,14 @@ export function LiveInboxScreen() {
             )
           })}
           {list.data && list.data.pagination.totalPages > 1 ? (
-            <View style={styles.pagination}>
-              <PressableFeedback
-                accessibilityRole='button'
-                accessibilityState={{ disabled: page <= 1 }}
-                disabled={page <= 1}
-                onPress={() => setPage(page - 1)}
-                style={[styles.action, page <= 1 && styles.disabled]}
-              >
-                <Text style={styles.actionText}>{t('licenses.live.previous')}</Text>
-              </PressableFeedback>
-              <Text style={styles.muted}>
-                {t('licenses.live.page', { page: new Intl.NumberFormat(i18n.language).format(page) })}
-              </Text>
-              <PressableFeedback
-                accessibilityRole='button'
-                accessibilityState={{ disabled: page >= list.data.pagination.totalPages }}
-                disabled={page >= list.data.pagination.totalPages}
-                onPress={() => setPage(page + 1)}
-                style={[styles.action, page >= list.data.pagination.totalPages && styles.disabled]}
-              >
-                <Text style={styles.actionText}>{t('licenses.live.next')}</Text>
-              </PressableFeedback>
-            </View>
+            <Pagination
+              onChange={(next) => {
+                setPage(next)
+                listScroll.current?.scrollTo({ y: 0, animated: true })
+              }}
+              page={page}
+              totalPages={list.data.pagination.totalPages}
+            />
           ) : null}
         </ScrollView>
       </View>
@@ -271,7 +259,11 @@ const createStyles = (mobileColors: MobileColors) =>
   StyleSheet.create({
     titleBlock: { gap: 4 },
     pageTitle: { color: mobileColors.foreground, fontSize: 26, fontWeight: '800', letterSpacing: -0.4 },
-    safe: { flex: 1, backgroundColor: mobileColors.background },
+    safe: {
+      flex: 1,
+      backgroundColor: mobileColors.background,
+      experimental_backgroundImage: mobileColors.backgroundGradient
+    },
     screen: { flex: 1 },
     content: { padding: 20, gap: 14, paddingBottom: 24 },
     header: {
@@ -329,6 +321,5 @@ const createStyles = (mobileColors: MobileColors) =>
     action: { minHeight: 44, alignSelf: 'flex-start', flexDirection: 'row', alignItems: 'center', gap: 8 },
     actionText: { color: mobileColors.primaryInk, fontWeight: '700' },
     disabled: { opacity: 0.4 },
-    error: { color: mobileColors.danger, fontSize: 13 },
-    pagination: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }
+    error: { color: mobileColors.danger, fontSize: 13 }
   })

@@ -1,12 +1,13 @@
 import type { PropsWithChildren } from 'react'
 import { useTranslation } from 'react-i18next'
-import { ScrollView, StyleSheet, Text, View } from 'react-native'
+import { StyleSheet, Text, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 import { BackButton } from '@/shared/ui/back-button'
 import type { MobileColors } from '@/shared/theme/colors'
 import { useMobileTheme } from '@/shared/theme/theme-provider'
 import { PreferenceSwitches } from '@/shared/ui/preference-switches'
+import { KeyboardAwareScrollView } from '@/shared/ui/keyboard-aware-scroll-view'
 
 type Props = PropsWithChildren<{ title: string; subtitle?: string; onBack?: () => void }>
 
@@ -17,7 +18,7 @@ export function AuthFormLayout({ title, subtitle, onBack, children }: Props) {
 
   return (
     <SafeAreaView style={styles.safe}>
-      <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps='handled'>
+      <KeyboardAwareScrollView contentContainerStyle={styles.content}>
         <View style={styles.top}>
           {onBack ? <BackButton label={t('common.back')} onPress={onBack} /> : <View />}
           <PreferenceSwitches />
@@ -27,7 +28,7 @@ export function AuthFormLayout({ title, subtitle, onBack, children }: Props) {
         </Text>
         {subtitle ? <Text style={styles.subtitle}>{subtitle}</Text> : null}
         <View style={styles.form}>{children}</View>
-      </ScrollView>
+      </KeyboardAwareScrollView>
     </SafeAreaView>
   )
 }
@@ -64,7 +65,7 @@ export function authFormStyles(colors: MobileColors) {
 
 const createStyles = (colors: MobileColors) =>
   StyleSheet.create({
-    safe: { backgroundColor: colors.background, flex: 1 },
+    safe: { backgroundColor: colors.background, experimental_backgroundImage: colors.backgroundGradient, flex: 1 },
     content: { alignSelf: 'center', flexGrow: 1, maxWidth: 480, padding: 24, width: '100%' },
     top: { alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between' },
     back: { minHeight: 44, justifyContent: 'center' },

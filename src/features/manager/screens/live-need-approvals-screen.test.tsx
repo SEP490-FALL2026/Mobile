@@ -239,7 +239,7 @@ test('loads only assigned individual grants and opens real details', async () =>
   const screen = await renderScreen()
   await screen.findByText('Figma')
   expect(needDecisionList).toHaveBeenCalledWith(
-    { page: 1, pageSize: 20 },
+    { page: 1, pageSize: 10 },
     expect.objectContaining({ headers: { Authorization: 'Bearer test-token' } })
   )
   await fireEvent.press(screen.getByRole('button', { name: 'Xem Figma do An yêu cầu' }))
@@ -259,7 +259,7 @@ test('shows an assigned request on its own screen with one back button and no in
   await screen.findByText('Không có quyền hiện có cùng nhóm chức năng.')
   expect(accessRequestSimilarSeatList).toHaveBeenCalledWith(
     id,
-    { page: 1, pageSize: 20 },
+    { page: 1, pageSize: 10 },
     expect.objectContaining({ headers: { Authorization: 'Bearer test-token' } })
   )
   expect(accessRequestGet).toHaveBeenCalledWith(
@@ -414,9 +414,9 @@ test('shows similar access returned by the backend and supports pagination', asy
   expect(screen.queryByText('private@example.test')).toBeNull()
   await fireEvent.press(screen.getByRole('button', { name: 'Trang sau' }))
   await waitFor(() =>
-    expect(accessRequestSimilarSeatList).toHaveBeenCalledWith(id, { page: 2, pageSize: 20 }, expect.anything())
+    expect(accessRequestSimilarSeatList).toHaveBeenCalledWith(id, { page: 2, pageSize: 10 }, expect.anything())
   )
-  await screen.findByText('Trang 2')
+  await screen.findByText('Trang 2/2')
 })
 
 test('reports failure to load similar access and can retry', async () => {
@@ -696,7 +696,7 @@ test('moves to the next page of assigned work', async () => {
   const screen = await renderScreen()
   await screen.findByText('Figma')
   await fireEvent.press(screen.getByRole('button', { name: 'Trang sau' }))
-  await waitFor(() => expect(needDecisionList).toHaveBeenCalledWith({ page: 2, pageSize: 20 }, expect.anything()))
+  await waitFor(() => expect(needDecisionList).toHaveBeenCalledWith({ page: 2, pageSize: 10 }, expect.anything()))
 })
 
 test('requires a checklist answer and blocks approval for a No', async () => {

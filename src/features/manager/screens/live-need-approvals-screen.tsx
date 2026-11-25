@@ -1,6 +1,6 @@
 import { Feather } from '@expo/vector-icons'
 import { Redirect, useRouter } from 'expo-router'
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { RefreshControl, ScrollView, Text, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
@@ -12,6 +12,7 @@ import { EmptyState } from '@/shared/ui/empty-state'
 import { LoadingState } from '@/shared/ui/loading-state'
 import { PressableFeedback } from '@/shared/ui/pressable-feedback'
 import { RefreshStatus, useRefreshFeedback } from '@/shared/ui/refresh-status'
+import { Pagination } from '@/shared/ui/pagination'
 
 import { createNeedApprovalStyles } from '../components/need-approval-styles'
 import { NeedQueueCard } from '../components/need-queue-card'
@@ -25,6 +26,7 @@ export function LiveNeedApprovalsScreen() {
   const router = useRouter()
   const session = useSession()
   const [page, setPage] = useState(1)
+  const listScroll = useRef<ScrollView>(null)
   const queueRefresh = useRefreshFeedback()
   const [loggingOut, setLoggingOut] = useState(false)
   const [logoutError, setLogoutError] = useState(false)
@@ -51,6 +53,7 @@ export function LiveNeedApprovalsScreen() {
   return (
     <SafeAreaView edges={['top', 'left', 'right']} style={styles.safe}>
       <ScrollView
+        ref={listScroll}
         contentContainerStyle={styles.content}
         refreshControl={
           <RefreshControl
@@ -183,29 +186,14 @@ export function LiveNeedApprovalsScreen() {
                 />
               ))}
             {hasScope && queue.data && queue.data.pagination.totalPages > 1 ? (
-              <View style={styles.pagination}>
-                <PressableFeedback
-                  accessibilityRole='button'
-                  accessibilityState={{ disabled: page <= 1 }}
-                  disabled={page <= 1}
-                  onPress={() => setPage(page - 1)}
-                  style={[styles.action, page <= 1 && styles.disabled]}
-                >
-                  <Text style={styles.link}>{t('licenses.live.previous')}</Text>
-                </PressableFeedback>
-                <Text style={styles.muted}>
-                  {t('licenses.live.page', { page: new Intl.NumberFormat(i18n.language).format(page) })}
-                </Text>
-                <PressableFeedback
-                  accessibilityRole='button'
-                  accessibilityState={{ disabled: page >= queue.data.pagination.totalPages }}
-                  disabled={page >= queue.data.pagination.totalPages}
-                  onPress={() => setPage(page + 1)}
-                  style={[styles.action, page >= queue.data.pagination.totalPages && styles.disabled]}
-                >
-                  <Text style={styles.link}>{t('licenses.live.next')}</Text>
-                </PressableFeedback>
-              </View>
+              <Pagination
+                onChange={(next) => {
+                  setPage(next)
+                  listScroll.current?.scrollTo({ y: 0, animated: true })
+                }}
+                page={page}
+                totalPages={queue.data.pagination.totalPages}
+              />
             ) : null}
           </>
         ) : null}

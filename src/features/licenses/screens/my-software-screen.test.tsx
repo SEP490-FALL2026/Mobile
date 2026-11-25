@@ -118,7 +118,7 @@ test('shows only server account and rights, without invented license keys', asyn
   expect(screen.queryByRole('button', { name: 'Duyệt nhu cầu' })).toBeNull()
   expect(screen.queryByText(/FIG-PRO/)).toBeNull()
   expect(meSoftwareRightList).toHaveBeenCalledWith(
-    { view: 'current', page: 1, pageSize: 20 },
+    { view: 'current', page: 1, pageSize: 10 },
     expect.objectContaining({ headers: { Authorization: 'Bearer test-token' } })
   )
   await fireEvent.press(screen.getByRole('button', { name: 'Mở quyền phần mềm: Figma, Professional' }))
@@ -175,7 +175,7 @@ test('switches to ended software and resets the current-page filter', async () =
   await fireEvent.press(screen.getByRole('button', { name: 'Sắp hết hạn' }))
   await fireEvent.press(screen.getByRole('button', { name: 'Đã kết thúc' }))
   await waitFor(() =>
-    expect(meSoftwareRightList).toHaveBeenCalledWith({ view: 'ended', page: 1, pageSize: 20 }, expect.anything())
+    expect(meSoftwareRightList).toHaveBeenCalledWith({ view: 'ended', page: 1, pageSize: 10 }, expect.anything())
   )
   await screen.findByText('Figma')
   expect(screen.queryByRole('button', { name: 'Sắp hết hạn' })).toBeNull()
@@ -277,5 +277,5 @@ test('loads subsequent pages from the server', async () => {
   await screen.findByText('Figma')
   await fireEvent.press(screen.getByRole('button', { name: 'Trang sau' }))
   await screen.findByText('Không có quyền phần mềm trên trang này.')
-  expect(meSoftwareRightList).toHaveBeenLastCalledWith({ view: 'current', page: 2, pageSize: 20 }, expect.anything())
+  expect(meSoftwareRightList).toHaveBeenLastCalledWith({ view: 'current', page: 2, pageSize: 10 }, expect.anything())
 })

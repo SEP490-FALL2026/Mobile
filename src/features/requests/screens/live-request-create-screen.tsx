@@ -15,6 +15,7 @@ import { useAccountProfile } from '@/shared/api/use-account-profile'
 import type { MobileColors } from '@/shared/theme/colors'
 import { useMobileTheme } from '@/shared/theme/theme-provider'
 import { goBackOr } from '@/shared/lib/go-back-or'
+import { KeyboardAwareScrollView } from '@/shared/ui/keyboard-aware-scroll-view'
 
 import { RequestCatalog } from '../components/request-catalog'
 import { RequestPreview } from '../components/request-preview'
@@ -266,9 +267,9 @@ export function LiveRequestCreateScreen({ initialApplication }: { initialApplica
   }
   return (
     <SafeAreaView style={styles.safe}>
-      <ScrollView
+      <KeyboardAwareScrollView
         ref={scroll}
-        keyboardShouldPersistTaps='handled'
+
         contentContainerStyle={styles.content}
         onScroll={(event) => {
           scrollY.current = event.nativeEvent.contentOffset.y
@@ -492,7 +493,7 @@ export function LiveRequestCreateScreen({ initialApplication }: { initialApplica
             ) : null}
           </View>
         ) : null}
-      </ScrollView>
+      </KeyboardAwareScrollView>
       <Modal
         transparent
         animationType='fade'
@@ -550,7 +551,11 @@ export function LiveRequestCreateScreen({ initialApplication }: { initialApplica
 const createStyles = (mobileColors: MobileColors) =>
   StyleSheet.create({
     pageTitle: { color: mobileColors.foreground, fontSize: 26, fontWeight: '800', letterSpacing: -0.4 },
-    safe: { flex: 1, backgroundColor: mobileColors.background },
+    safe: {
+      flex: 1,
+      backgroundColor: mobileColors.background,
+      experimental_backgroundImage: mobileColors.backgroundGradient
+    },
     content: { padding: 20, gap: 12, paddingBottom: 30 },
     header: {
       flexDirection: 'row',

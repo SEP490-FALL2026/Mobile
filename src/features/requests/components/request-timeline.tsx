@@ -6,6 +6,7 @@ import { PressableFeedback } from '@/shared/ui/pressable-feedback'
 import { RequestEventPageResponseDtoDataItemsItemKind } from '@/shared/api/generated/contracts/access-requests'
 import type { MobileColors } from '@/shared/theme/colors'
 import { useMobileTheme } from '@/shared/theme/theme-provider'
+import { Pagination } from '@/shared/ui/pagination'
 
 import { useRequestEvents } from '../hooks/use-request-events'
 
@@ -90,29 +91,7 @@ export function RequestTimeline({ requestId, showTitle = true }: { requestId: st
           })
         : null}
       {events.data && !events.isError && events.data.pagination.totalPages > 1 ? (
-        <View style={styles.pagination}>
-          <PressableFeedback
-            accessibilityRole='button'
-            disabled={page <= 1}
-            accessibilityState={{ disabled: page <= 1 }}
-            onPress={() => setPage((value) => value - 1)}
-            style={styles.action}
-          >
-            <Text style={styles.link}>{t('licenses.live.previous')}</Text>
-          </PressableFeedback>
-          <Text style={styles.muted}>
-            {t('licenses.live.page', { page: new Intl.NumberFormat(i18n.language).format(page) })}
-          </Text>
-          <PressableFeedback
-            accessibilityRole='button'
-            disabled={page >= events.data.pagination.totalPages}
-            accessibilityState={{ disabled: page >= events.data.pagination.totalPages }}
-            onPress={() => setPage((value) => value + 1)}
-            style={styles.action}
-          >
-            <Text style={styles.link}>{t('licenses.live.next')}</Text>
-          </PressableFeedback>
-        </View>
+        <Pagination onChange={setPage} page={page} totalPages={events.data.pagination.totalPages} />
       ) : null}
     </View>
   )
@@ -145,6 +124,5 @@ const createStyles = (colors: MobileColors) =>
     reason: { color: colors.foreground, fontSize: 13, lineHeight: 19 },
     error: { color: colors.danger, fontSize: 13 },
     action: { minHeight: 44, justifyContent: 'center' },
-    link: { color: colors.primaryInk, fontWeight: '700' },
-    pagination: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 10 }
+    link: { color: colors.primaryInk, fontWeight: '700' }
   })

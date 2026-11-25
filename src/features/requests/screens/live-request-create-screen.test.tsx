@@ -886,21 +886,21 @@ test('browses suggestions, searches the full catalog, and loads plans for the se
   await fireEvent.changeText(screen.getByLabelText('Tìm ứng dụng'), 'Fig')
   await waitFor(() =>
     expect(requestableApplicationList).toHaveBeenLastCalledWith(
-      { search: 'Fig', page: 1, pageSize: 20 },
+      { search: 'Fig', page: 1, pageSize: 10 },
       expect.objectContaining({ headers: { Authorization: 'Bearer test-token' } })
     )
   )
   await fireEvent.changeText(screen.getByLabelText('Tìm ứng dụng'), '')
   await waitFor(() =>
     expect(requestableApplicationList).toHaveBeenLastCalledWith(
-      { search: undefined, page: 1, pageSize: 20 },
+      { search: undefined, page: 1, pageSize: 10 },
       expect.anything()
     )
   )
   await fireEvent.press(await screen.findByRole('button', { name: 'Xem các gói của Figma' }))
   await screen.findByRole('button', { name: 'Chọn Figma, Pro' })
   expect(requestablePlanList).toHaveBeenCalledWith(
-    { applicationId: id, page: 1, pageSize: 20 },
+    { applicationId: id, page: 1, pageSize: 10 },
     expect.objectContaining({ headers: { Authorization: 'Bearer test-token' } })
   )
   screen.getByText('Đã có dữ liệu giá')
@@ -963,7 +963,7 @@ test('paginates department suggestions without treating them as the full catalog
   await screen.findByText('Figma')
   await fireEvent.press(screen.getByRole('button', { name: 'Trang sau' }))
   await screen.findByText('Slack')
-  expect(meDepartmentSoftwareList).toHaveBeenLastCalledWith({ page: 2, pageSize: 20 }, expect.anything())
+  expect(meDepartmentSoftwareList).toHaveBeenLastCalledWith({ page: 2, pageSize: 10 }, expect.anything())
   screen.getByRole('button', { name: 'Xem toàn bộ danh mục' })
 })
 

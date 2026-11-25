@@ -129,7 +129,7 @@ const createStyles = (mobileColors: MobileColors) =>
       justifyContent: 'center'
     },
     badgeText: { color: mobileColors.onDanger, fontSize: 11, fontWeight: '700' },
-    dock: { backgroundColor: mobileColors.background, paddingHorizontal: 16, paddingTop: 6 },
+    dock: { backgroundColor: mobileColors.backgroundEnd, paddingHorizontal: 16, paddingTop: 6 },
     container: {
       backgroundColor: mobileColors.sidebar,
       borderColor: mobileColors.border,

@@ -2,6 +2,7 @@ import { useQuery } from '@tanstack/react-query'
 
 import { accessRequestSimilarSeatList } from '@/shared/api/generated/api/access-requests/access-requests'
 import { useSession } from '@/shared/api/session-context'
+import { LIST_PAGE_SIZE } from '@/shared/lib/list-page-size'
 
 export function useSimilarSeats(requestId: string, page: number) {
   const session = useSession()
@@ -12,7 +13,7 @@ export function useSimilarSeats(requestId: string, page: number) {
       session.read(async (token) => {
         const result = await accessRequestSimilarSeatList(
           requestId,
-          { page, pageSize: 20 },
+          { page, pageSize: LIST_PAGE_SIZE },
           {
             signal,
             headers: { Authorization: `Bearer ${token}` }

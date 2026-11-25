@@ -161,7 +161,7 @@ test('lists server requests and opens their details', async () => {
   await screen.findByText('Figma')
   screen.getByText('Chờ xử lý')
   expect(meAccessRequestList).toHaveBeenCalledWith(
-    { view: 'open', involvement: 'ALL', page: 1, pageSize: 20 },
+    { view: 'open', involvement: 'ALL', page: 1, pageSize: 10 },
     expect.objectContaining({ headers: { Authorization: 'Bearer test-token' } })
   )
   await fireEvent.press(screen.getByRole('button', { name: 'Tạo yêu cầu' }))
@@ -231,12 +231,12 @@ test('shows actual request events and supports pagination', async () => {
   screen.getByText('Lý do: Cần bổ sung')
   expect(accessRequestEventList).toHaveBeenCalledWith(
     id,
-    { page: 1, pageSize: 20 },
+    { page: 1, pageSize: 10 },
     expect.objectContaining({ headers: { Authorization: 'Bearer test-token' } })
   )
   await fireEvent.press(screen.getByRole('button', { name: 'Trang sau' }))
   await waitFor(() =>
-    expect(accessRequestEventList).toHaveBeenCalledWith(id, { page: 2, pageSize: 20 }, expect.anything())
+    expect(accessRequestEventList).toHaveBeenCalledWith(id, { page: 2, pageSize: 10 }, expect.anything())
   )
 })
 
@@ -277,7 +277,7 @@ test('switches server view, resets page and handles empty results', async () => 
   await fireEvent.press(screen.getByRole('button', { name: 'Đã kết thúc' }))
   await screen.findByText('Không có yêu cầu trên trang này.')
   expect(meAccessRequestList).toHaveBeenLastCalledWith(
-    { view: 'ended', involvement: 'ALL', page: 1, pageSize: 20 },
+    { view: 'ended', involvement: 'ALL', page: 1, pageSize: 10 },
     expect.anything()
   )
 })

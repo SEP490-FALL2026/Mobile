@@ -2,7 +2,7 @@ import { Feather } from '@expo/vector-icons'
 import { Redirect, useRouter } from 'expo-router'
 import { useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Modal, ScrollView, StyleSheet, Text, View } from 'react-native'
+import { Modal, StyleSheet, Text, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 import { PressableFeedback } from '@/shared/ui/pressable-feedback'
@@ -11,6 +11,7 @@ import { useAccountProfile } from '@/shared/api/use-account-profile'
 import type { MobileColors } from '@/shared/theme/colors'
 import { useMobileTheme } from '@/shared/theme/theme-provider'
 import { PreferenceSwitches } from '@/shared/ui/preference-switches'
+import { KeyboardAwareScrollView } from '@/shared/ui/keyboard-aware-scroll-view'
 
 import { ProfileHero, WorkPhoneRow } from '../components/profile-hero'
 
@@ -59,7 +60,7 @@ export function AccountProfileScreen() {
 
   return (
     <SafeAreaView edges={['top', 'left', 'right']} style={styles.safe}>
-      <ScrollView contentContainerStyle={styles.content}>
+      <KeyboardAwareScrollView contentContainerStyle={styles.content}>
         <Text accessibilityRole='header' style={styles.pageTitle}>
           {t('account.title')}
         </Text>
@@ -144,7 +145,7 @@ export function AccountProfileScreen() {
             <Text style={styles.logoutText}>{t('licenses.live.logout')}</Text>
           </PressableFeedback>
         ) : null}
-      </ScrollView>
+      </KeyboardAwareScrollView>
       <Modal
         transparent
         animationType='fade'
@@ -199,7 +200,7 @@ const createStyles = (colors: MobileColors) =>
       gap: 12,
       paddingTop: 10
     },
-    safe: { flex: 1, backgroundColor: colors.background },
+    safe: { flex: 1, backgroundColor: colors.background, experimental_backgroundImage: colors.backgroundGradient },
     content: { padding: 20, paddingBottom: 36, gap: 20 },
     topRow: { alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between' },
     back: { alignSelf: 'flex-start', alignItems: 'center', flexDirection: 'row', gap: 8, minHeight: 44 },

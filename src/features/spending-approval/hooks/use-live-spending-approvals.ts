@@ -17,8 +17,8 @@ import type {
   SpendDecisionBodyDto
 } from '@/shared/api/generated/contracts'
 import { useSession } from '@/shared/api/session-context'
+import { LIST_PAGE_SIZE } from '@/shared/lib/list-page-size'
 
-const QUEUE_PAGE_SIZE = 20
 const NOTIFICATION_PAGE_SIZE = 100
 const MAX_NOTIFICATION_PAGES = 100
 
@@ -65,7 +65,7 @@ export function useSpendingQueue(page: number, permitted = true) {
     enabled,
     queryFn: ({ signal }) =>
       session.read(async (token) => {
-        const params: SpendApprovalListParams = { page, pageSize: QUEUE_PAGE_SIZE }
+        const params: SpendApprovalListParams = { page, pageSize: LIST_PAGE_SIZE }
         const result = await spendApprovalList(params, {
           signal,
           headers: { Authorization: `Bearer ${token}` }

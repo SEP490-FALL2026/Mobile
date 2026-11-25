@@ -216,7 +216,11 @@ export function LiveRequestDetailsScreen({ requestId }: { requestId: string }) {
 const createStyles = (mobileColors: MobileColors) =>
   StyleSheet.create({
     topBar: { alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between' },
-    safe: { flex: 1, backgroundColor: mobileColors.background },
+    safe: {
+      flex: 1,
+      backgroundColor: mobileColors.background,
+      experimental_backgroundImage: mobileColors.backgroundGradient
+    },
     content: { padding: 20, paddingBottom: 24, gap: 14 },
     action: { minHeight: 44, alignSelf: 'flex-start', justifyContent: 'center' },
     actionText: { color: mobileColors.primaryInk, fontWeight: '700' },

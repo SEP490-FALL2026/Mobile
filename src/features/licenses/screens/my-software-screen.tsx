@@ -1,5 +1,5 @@
 import { Redirect, useRouter } from 'expo-router'
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { RefreshControl, ScrollView, StyleSheet, Text, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
@@ -13,6 +13,7 @@ import { useSession } from '@/shared/api/session-context'
 import type { MobileColors } from '@/shared/theme/colors'
 import { useMobileTheme } from '@/shared/theme/theme-provider'
 import { IconBadge } from '@/shared/ui/icon-badge'
+import { Pagination } from '@/shared/ui/pagination'
 
 import { LiveSoftwareCard } from '../components/live-software-card'
 import { useMySoftware } from '../hooks/use-my-software'
@@ -25,6 +26,7 @@ export function MySoftwareScreen() {
   const session = useSession()
   const router = useRouter()
   const [page, setPage] = useState(1)
+  const listScroll = useRef<ScrollView>(null)
   const [view, setView] = useState<'current' | 'ended'>('current')
   const [filter, setFilter] = useState<'all' | 'expiring'>('all')
   const { profile, software, summary } = useMySoftware(page, view)
@@ -46,6 +48,7 @@ export function MySoftwareScreen() {
     <SafeAreaView edges={['top', 'left', 'right']} style={styles.safeArea}>
       <View style={styles.screen}>
         <ScrollView
+          ref={listScroll}
           contentContainerStyle={styles.content}
           refreshControl={
             <RefreshControl
@@ -207,27 +210,14 @@ export function MySoftwareScreen() {
                 />
               ) : null}
               {software.data.pagination.totalPages > 1 ? (
-                <View style={styles.pagination}>
-                  <PressableFeedback
-                    accessibilityRole='button'
-                    accessibilityState={{ disabled: page <= 1 }}
-                    disabled={page <= 1}
-                    onPress={() => setPage((current) => current - 1)}
-                    style={[styles.button, page <= 1 && styles.disabledButton]}
-                  >
-                    <Text style={styles.buttonText}>{t('licenses.live.previous')}</Text>
-                  </PressableFeedback>
-                  <Text style={styles.subtitle}>{t('licenses.live.page', { page: formatCount(page) })}</Text>
-                  <PressableFeedback
-                    accessibilityRole='button'
-                    accessibilityState={{ disabled: page >= software.data.pagination.totalPages }}
-                    disabled={page >= software.data.pagination.totalPages}
-                    onPress={() => setPage((current) => current + 1)}
-                    style={[styles.button, page >= software.data.pagination.totalPages && styles.disabledButton]}
-                  >
-                    <Text style={styles.buttonText}>{t('licenses.live.next')}</Text>
-                  </PressableFeedback>
-                </View>
+                <Pagination
+                  onChange={(next) => {
+                    setPage(next)
+                    listScroll.current?.scrollTo({ y: 0, animated: true })
+                  }}
+                  page={page}
+                  totalPages={software.data.pagination.totalPages}
+                />
               ) : null}
             </View>
           ) : null}
@@ -239,7 +229,11 @@ export function MySoftwareScreen() {
 
 const createStyles = (mobileColors: MobileColors) =>
   StyleSheet.create({
-    safeArea: { backgroundColor: mobileColors.background, flex: 1 },
+    safeArea: {
+      backgroundColor: mobileColors.background,
+      experimental_backgroundImage: mobileColors.backgroundGradient,
+      flex: 1
+    },
     screen: { flex: 1 },
     content: { gap: 18, padding: 20, paddingBottom: 28 },
     profile: { flexDirection: 'row', alignItems: 'center', gap: 10 },
@@ -353,7 +347,6 @@ const createStyles = (mobileColors: MobileColors) =>
     },
     emptyTitle: { color: mobileColors.foreground, fontSize: 14, fontWeight: '700', textAlign: 'center' },
     emptyHint: { color: mobileColors.muted, fontSize: 12, textAlign: 'center', lineHeight: 18 },
-    pagination: { alignItems: 'center', flexDirection: 'row', justifyContent: 'space-between', gap: 8 },
     button: { minHeight: 44, justifyContent: 'center', paddingHorizontal: 12 },
     disabledButton: { opacity: 0.4 },
     pressed: { opacity: 0.7 },

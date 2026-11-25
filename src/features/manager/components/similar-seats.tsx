@@ -5,13 +5,14 @@ import { StyleSheet, Text, View } from 'react-native'
 import { PressableFeedback } from '@/shared/ui/pressable-feedback'
 import type { MobileColors } from '@/shared/theme/colors'
 import { useMobileTheme } from '@/shared/theme/theme-provider'
+import { Pagination } from '@/shared/ui/pagination'
 
 import { useSimilarSeats } from '../hooks/use-similar-seats'
 
 export function SimilarSeats({ requestId }: { requestId: string }) {
   const { colors: mobileColors } = useMobileTheme()
   const styles = createStyles(mobileColors)
-  const { t, i18n } = useTranslation()
+  const { t } = useTranslation()
   const [page, setPage] = useState(1)
   const seats = useSimilarSeats(requestId, page)
 
@@ -39,29 +40,7 @@ export function SimilarSeats({ requestId }: { requestId: string }) {
           ))
         : null}
       {seats.data && seats.data.pagination.totalPages > 1 ? (
-        <View style={styles.pagination}>
-          <PressableFeedback
-            accessibilityRole='button'
-            accessibilityState={{ disabled: page <= 1 }}
-            disabled={page <= 1}
-            onPress={() => setPage(page - 1)}
-            style={[styles.action, page <= 1 && styles.disabled]}
-          >
-            <Text style={styles.link}>{t('licenses.live.previous')}</Text>
-          </PressableFeedback>
-          <Text style={styles.muted}>
-            {t('licenses.live.page', { page: new Intl.NumberFormat(i18n.language).format(page) })}
-          </Text>
-          <PressableFeedback
-            accessibilityRole='button'
-            accessibilityState={{ disabled: page >= seats.data.pagination.totalPages }}
-            disabled={page >= seats.data.pagination.totalPages}
-            onPress={() => setPage(page + 1)}
-            style={[styles.action, page >= seats.data.pagination.totalPages && styles.disabled]}
-          >
-            <Text style={styles.link}>{t('licenses.live.next')}</Text>
-          </PressableFeedback>
-        </View>
+        <Pagination onChange={setPage} page={page} totalPages={seats.data.pagination.totalPages} />
       ) : null}
     </View>
   )
@@ -83,6 +62,5 @@ const createStyles = (mobileColors: MobileColors) =>
     error: { color: mobileColors.danger, fontSize: 13, lineHeight: 19 },
     link: { color: mobileColors.primaryInk, fontWeight: '700' },
     action: { minHeight: 44, alignSelf: 'flex-start', justifyContent: 'center' },
-    disabled: { opacity: 0.4 },
-    pagination: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }
+    disabled: { opacity: 0.4 }
   })
