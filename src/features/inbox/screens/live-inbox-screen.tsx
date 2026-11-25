@@ -45,7 +45,7 @@ export function LiveInboxScreen() {
         })
         break
       case 'spending':
-        router.push({ pathname: '/spending-approvals', params: { requestId: target.requestId } })
+        router.push({ pathname: '/spending-approvals/[requestId]', params: { requestId: target.requestId } })
         break
       case 'software':
         router.push('/my-software')

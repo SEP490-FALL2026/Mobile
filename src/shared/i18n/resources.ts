@@ -310,10 +310,12 @@ export const resources = {
       spending: {
         live: {
           amountUnavailable: 'Amount unavailable',
+          makeDecision: 'Make a decision',
+          done: 'Done',
+          notPending: 'This item is no longer waiting for your decision.',
           approve: 'Approve',
           assignedOnly: 'Only items currently assigned to you are shown.',
           assessmentTitle: 'Business and security assessment',
-          backToQueue: 'Back to assigned decisions',
           beneficiary: 'For {{name}}',
           blockedReasons: {
             NO_APPROVED_BUDGET: 'No approved budget is available.',
@@ -365,7 +367,6 @@ export const resources = {
           decisionTitle: 'Policy 1.7 checklist and decision',
           detailError: 'Could not load this item. It may no longer be assigned to you.',
           detailLoading: 'Loading assigned item…',
-          detailTitle: 'Assigned spending decision',
           dueDateLabel: 'Decision due date',
           dueDateUnavailable: 'Due date unavailable',
           dueOn: 'Due {{date}}',
@@ -407,7 +408,6 @@ export const resources = {
             NO_DEPARTMENT_HEAD: 'No department head is assigned.',
             HEAD_LEFT: 'The department head is no longer active.'
           },
-          kicker: 'Assigned spending work',
           needDecision: 'Need step decided by',
           slaWorkingDays: 'Decision time limit',
           needReason: 'Need-step reason',
@@ -445,7 +445,6 @@ export const resources = {
           queueCount: '{{formattedCount}} assigned items',
           queueError: 'Could not load your assigned decisions.',
           queueLoading: 'Loading your assigned decisions…',
-          queueTitle: 'Assigned decisions',
           readOnly: 'Read-only',
           reasonLabel: 'Reason (required unless a No answer supplies it)',
           reasonPlaceholder: 'Enter the reason for rejecting or returning this request',
@@ -466,7 +465,6 @@ export const resources = {
           searchLabel: 'Search current page by software, requester, cost center, or request ID',
           searchPlaceholder: 'Search this page',
           submitting: 'Submitting…',
-          subtitle: 'Review each assigned item, the policy checklist, and the read-only budget snapshot.',
           systemYes: 'System check · Yes',
           answerAllYes: 'Answer Yes to all',
           checklistCollapse: 'Collapse policy checklist',
@@ -1213,10 +1211,12 @@ export const resources = {
       spending: {
         live: {
           amountUnavailable: 'Không có thông tin số tiền',
+          makeDecision: 'Ra quyết định',
+          done: 'Xong',
+          notPending: 'Mục này không còn chờ bạn quyết định.',
           approve: 'Duyệt',
           assignedOnly: 'Chỉ hiển thị mục hiện được giao cho bạn.',
           assessmentTitle: 'Đánh giá nghiệp vụ và bảo mật',
-          backToQueue: 'Quay lại việc được giao',
           beneficiary: 'Cho {{name}}',
           blockedReasons: {
             NO_APPROVED_BUDGET: 'Chưa có ngân sách được phê duyệt.',
@@ -1268,7 +1268,6 @@ export const resources = {
           decisionTitle: 'Checklist chính sách 1.7 và quyết định',
           detailError: 'Không thể tải mục này. Có thể mục đã không còn được giao cho bạn.',
           detailLoading: 'Đang tải mục được giao…',
-          detailTitle: 'Quyết định duyệt chi được giao',
           dueDateLabel: 'Hạn quyết định',
           dueDateUnavailable: 'Không có hạn xử lý',
           dueOn: 'Hạn {{date}}',
@@ -1306,7 +1305,6 @@ export const resources = {
             NO_DEPARTMENT_HEAD: 'Phòng ban chưa có trưởng bộ phận.',
             HEAD_LEFT: 'Trưởng bộ phận không còn hoạt động.'
           },
-          kicker: 'Công việc duyệt chi được giao',
           needDecision: 'Bước nhu cầu được quyết định bởi',
           slaWorkingDays: 'Thời hạn quyết định',
           needReason: 'Lý do ở bước nhu cầu',
@@ -1344,7 +1342,6 @@ export const resources = {
           queueCount: '{{formattedCount}} mục được giao',
           queueError: 'Không thể tải các quyết định được giao.',
           queueLoading: 'Đang tải quyết định được giao…',
-          queueTitle: 'Việc được giao',
           readOnly: 'Chỉ đọc',
           reasonLabel: 'Lý do (bắt buộc trừ khi checklist có câu trả lời Không)',
           reasonPlaceholder: 'Nhập lý do từ chối hoặc trả về yêu cầu',
@@ -1363,7 +1360,6 @@ export const resources = {
           searchLabel: 'Tìm trong trang hiện tại theo phần mềm, người yêu cầu, cost center hoặc mã yêu cầu',
           searchPlaceholder: 'Tìm trong trang này',
           submitting: 'Đang gửi…',
-          subtitle: 'Rà soát từng mục, checklist chính sách và snapshot ngân sách chỉ đọc.',
           systemYes: 'Hệ thống kiểm tra · Có',
           answerAllYes: 'Chọn Có cho tất cả',
           checklistCollapse: 'Thu gọn checklist chính sách',

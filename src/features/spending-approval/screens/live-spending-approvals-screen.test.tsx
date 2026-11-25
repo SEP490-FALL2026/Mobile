@@ -2,7 +2,11 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { act, fireEvent, render, waitFor } from '@testing-library/react-native'
 import { BackHandler, Platform } from 'react-native'
 
-import { LiveSpendingApprovalsScreen } from '@/features/spending-approval'
+import {
+  LiveSpendingApprovalsScreen,
+  SpendingApprovalDetailScreen,
+  SpendingDecisionScreen
+} from '@/features/spending-approval'
 import {
   accessRequestLineList,
   spendApprovalLineDecide
@@ -22,7 +26,13 @@ import type {
 import type { SpendApprovalDecide200, SpendApprovalGet200 } from '@/shared/api/generated/contracts/spend-approvals'
 import { setAppLanguage } from '@/shared/i18n/i18n'
 
-const mockRouter = { push: jest.fn(), canGoBack: jest.fn(() => false) }
+const mockRouter = {
+  push: jest.fn(),
+  back: jest.fn(),
+  replace: jest.fn(),
+  dismissTo: jest.fn(),
+  canGoBack: jest.fn(() => false)
+}
 const mockPreventRemove = jest.fn()
 const mockRedirect = jest.fn()
 const mockSession = {
@@ -152,16 +162,16 @@ function makeWaitingLine(employeeId: string, fullName: string): LinesResponseDto
   }
 }
 
-function renderScreen(requestId?: string) {
+function renderWithClient(element: React.ReactElement) {
   const client = new QueryClient({
     defaultOptions: { queries: { retry: false, gcTime: 0 }, mutations: { retry: false, gcTime: 0 } }
   })
-  return render(
-    <QueryClientProvider client={client}>
-      <LiveSpendingApprovalsScreen requestId={requestId} />
-    </QueryClientProvider>
-  )
+  return render(<QueryClientProvider client={client}>{element}</QueryClientProvider>)
 }
+
+const renderScreen = () => renderWithClient(<LiveSpendingApprovalsScreen />)
+const renderDetail = (requestId: string) => renderWithClient(<SpendingApprovalDetailScreen requestId={requestId} />)
+const renderDecision = (requestId: string) => renderWithClient(<SpendingDecisionScreen requestId={requestId} />)
 
 beforeEach(async () => {
   jest.clearAllMocks()
@@ -266,6 +276,47 @@ test('renders work returned by the live queue with an accessible request action'
   screen.getByText('Người yêu cầu: Requester')
   screen.getByText('Kỳ ngân sách đã đóng hoặc hết hạn')
   expect(jest.mocked(spendApprovalList)).toHaveBeenCalled()
+
+  await fireEvent.press(screen.getByRole('button', { name: 'Xem Live app do Requester yêu cầu' }))
+  expect(mockRouter.push).toHaveBeenCalledWith({
+    pathname: '/spending-approvals/[requestId]',
+    params: { requestId: '01234567-89ab-cdef-0123-456789abcdef' }
+  })
+  expect(spendApprovalGet).not.toHaveBeenCalled()
+})
+
+test('shows a request only after finding it in the assigned queue, then opens the decision screen', async () => {
+  const screen = await renderDetail('01234567-89ab-cdef-0123-456789abcdef')
+
+  await screen.findByRole('header', { name: 'Live app' })
+  expect(screen.getAllByRole('button', { name: 'Quay lại' })).toHaveLength(1)
+  expect(screen.queryByText('Checklist question')).toBeNull()
+  expect(screen.queryByText(/01234567-89ab/)).toBeNull()
+  await fireEvent.press(screen.getByRole('button', { name: 'Ra quyết định' }))
+  expect(mockRouter.push).toHaveBeenCalledWith({
+    pathname: '/spending-approvals/[requestId]/decide',
+    params: { requestId: '01234567-89ab-cdef-0123-456789abcdef' }
+  })
+  expect(spendApprovalDecide).not.toHaveBeenCalled()
+})
+
+test('does not load a request that is not in the assigned queue', async () => {
+  const screen = await renderDetail('99999999-89ab-cdef-0123-456789abcdef')
+
+  await screen.findByText('Mục này không còn được giao cho bạn hoặc không thể xử lý trên ứng dụng.')
+  expect(spendApprovalGet).not.toHaveBeenCalled()
+  expect(screen.queryByRole('button', { name: 'Ra quyết định' })).toBeNull()
+})
+
+test('returns to the queue with Done after a successful decision', async () => {
+  const screen = await renderDecision('01234567-89ab-cdef-0123-456789abcdef')
+  await screen.findByText('Checklist question')
+  await fireEvent.press(screen.getByRole('button', { name: 'Có' }))
+  await fireEvent.press(screen.getByRole('button', { name: 'Duyệt' }))
+  await fireEvent.press(screen.getByRole('button', { name: 'Xác nhận quyết định riêng lẻ' }))
+  await screen.findByText('Đã gửi quyết định. Hàng đợi sẽ được tải lại.')
+  await fireEvent.press(screen.getByRole('button', { name: 'Xong' }))
+  expect(mockRouter.dismissTo).toHaveBeenCalledWith('/spending-approvals')
 })
 
 test('redirects accounts without the Spending Approver role to Home', async () => {
@@ -276,8 +327,8 @@ test('redirects accounts without the Spending Approver role to Home', async () =
   expect(spendApprovalList).not.toHaveBeenCalled()
 })
 
-test('verifies a notification in the assigned queue and blocks approval after a No answer', async () => {
-  const screen = await renderScreen('01234567-89ab-cdef-0123-456789abcdef')
+test('blocks approval after a No answer', async () => {
+  const screen = await renderDecision('01234567-89ab-cdef-0123-456789abcdef')
 
   await screen.findByText('Checklist question')
   const approve = screen.getByRole('button', { name: 'Duyệt' })
@@ -315,7 +366,7 @@ test('returns every waiting group line in one confirmed decision', async () => {
     data: returnedApproval(approvalDetail) satisfies SpendApprovalLineDecide200
   })
 
-  const screen = await renderScreen(requestId)
+  const screen = await renderDecision(requestId)
   await screen.findByText('Employee One')
   await screen.findByText('Employee Two')
   await fireEvent.press(screen.getByRole('button', { name: 'Có' }))
@@ -368,7 +419,7 @@ test('uses the group endpoint when only one person remains in a group', async ()
     data: returnedApproval(approvalDetail)
   })
 
-  const screen = await renderScreen(requestId)
+  const screen = await renderDecision(requestId)
   await screen.findByText('Employee One')
   await fireEvent.press(screen.getByRole('button', { name: 'Có' }))
   await fireEvent.press(screen.getByRole('button', { name: 'Trả về trưởng bộ phận' }))
@@ -424,7 +475,7 @@ test('does not report a group approval as successful when its request state is i
       }
     }
   })
-  const screen = await renderScreen('01234567-89ab-cdef-0123-456789abcdef')
+  const screen = await renderDecision('01234567-89ab-cdef-0123-456789abcdef')
   await screen.findByText('Employee One')
   await fireEvent.press(screen.getByRole('button', { name: 'Duyệt' }))
   await fireEvent.press(screen.getByRole('button', { name: 'Có' }))
@@ -442,7 +493,7 @@ test('confirms a returned individual request without a spend decision record', a
     headers: new Headers(),
     data: returnedApproval(makeApprovalDetail())
   })
-  const screen = await renderScreen(requestId)
+  const screen = await renderDecision(requestId)
   await screen.findByText('Checklist question')
   await fireEvent.press(screen.getByRole('button', { name: 'Có' }))
   await fireEvent.press(screen.getByRole('button', { name: 'Trả về trưởng bộ phận' }))
@@ -465,7 +516,7 @@ test('returns a one-step request to its requester', async () => {
   returned.data.spendApproval.request.state = 'AWAITING_REQUESTER_REVISION'
   jest.mocked(spendApprovalGet).mockResolvedValue({ status: 200, headers: new Headers(), data: detail })
   jest.mocked(spendApprovalDecide).mockResolvedValue({ status: 200, headers: new Headers(), data: returned })
-  const screen = await renderScreen('01234567-89ab-cdef-0123-456789abcdef')
+  const screen = await renderDecision('01234567-89ab-cdef-0123-456789abcdef')
   await screen.findByText('Checklist question')
   await fireEvent.press(screen.getByRole('button', { name: 'Có' }))
   await fireEvent.press(screen.getByRole('button', { name: 'Trả về người yêu cầu' }))
@@ -484,7 +535,7 @@ test('requires a different verified policy version before a manual retry', async
   })
   const policy = await jest.mocked(policyStepGet)('POL-MF1', '1.7')
   if (!policy.data.data) throw new Error('Missing test policy')
-  const screen = await renderScreen('01234567-89ab-cdef-0123-456789abcdef')
+  const screen = await renderDecision('01234567-89ab-cdef-0123-456789abcdef')
   await screen.findByText('Checklist question')
   await fireEvent.press(screen.getByRole('button', { name: 'Có' }))
   await fireEvent.press(screen.getByRole('button', { name: 'Duyệt' }))
@@ -520,7 +571,7 @@ test.each([
     status,
     info: { error: { code: 'SPEND.RECHECKED_RETURNED_TO_HEAD' } }
   })
-  const screen = await renderScreen('01234567-89ab-cdef-0123-456789abcdef')
+  const screen = await renderDecision('01234567-89ab-cdef-0123-456789abcdef')
   await screen.findByText('Checklist question')
   await fireEvent.press(screen.getByRole('button', { name: 'Có' }))
   await fireEvent.press(screen.getByRole('button', { name: 'Duyệt' }))
@@ -539,14 +590,14 @@ test('locks navigation while a decision is in flight and never reports an incons
         resolveDecision = resolve
       })
   )
-  const screen = await renderScreen('01234567-89ab-cdef-0123-456789abcdef')
+  const screen = await renderDecision('01234567-89ab-cdef-0123-456789abcdef')
   await screen.findByText('Checklist question')
   await fireEvent.press(screen.getByRole('button', { name: 'Có' }))
   await fireEvent.press(screen.getByRole('button', { name: 'Duyệt' }))
   await fireEvent.press(screen.getByRole('button', { name: 'Xác nhận quyết định riêng lẻ' }))
   await waitFor(() => {
     expect(spendApprovalDecide).toHaveBeenCalledTimes(1)
-    expect(screen.getByRole('button', { name: 'Quay lại việc được giao' }).props.accessibilityState.disabled).toBe(true)
+    expect(screen.getByRole('button', { name: 'Quay lại' }).props.accessibilityState.disabled).toBe(true)
     expect(mockPreventRemove).toHaveBeenLastCalledWith(true)
   })
   await act(() => resolveDecision({ status: 200, headers: new Headers(), data: makeApprovalDetail() }))
@@ -573,7 +624,7 @@ test('blocks Android system exit on the last route while a decision is in flight
       })
   )
   try {
-    const screen = await renderScreen('01234567-89ab-cdef-0123-456789abcdef')
+    const screen = await renderDecision('01234567-89ab-cdef-0123-456789abcdef')
     await screen.findByText('Checklist question')
     expect(back()).toBe(false)
     await fireEvent.press(screen.getByRole('button', { name: 'Có' }))
