@@ -161,7 +161,7 @@ test('lists server requests and opens their details', async () => {
   await screen.findByText('Figma')
   screen.getByText('Chờ xử lý')
   expect(meAccessRequestList).toHaveBeenCalledWith(
-    { view: 'open', involvement: 'ALL', page: 1, pageSize: 10 },
+    { view: 'open', involvement: 'ALL', page: 1, pageSize: 5 },
     expect.objectContaining({ headers: { Authorization: 'Bearer test-token' } })
   )
   await fireEvent.press(screen.getByRole('button', { name: 'Tạo yêu cầu' }))
@@ -199,7 +199,7 @@ test('shows the returned-for-revision state from the server', async () => {
     }
   })
   const screen = await renderScreen(<LiveRequestsScreen />)
-  await screen.findByText('Đã trả về để bổ sung')
+  await screen.findByText('Cần bạn bổ sung thông tin')
 })
 
 test('shows actual request events and supports pagination', async () => {
@@ -227,16 +227,16 @@ test('shows actual request events and supports pagination', async () => {
     }
   })
   const screen = await renderScreen(<RequestHistoryScreen requestId={id} />)
-  await screen.findByText('Đã trả về để bổ sung')
+  await screen.findByText('Được gửi lại để bổ sung thông tin')
   screen.getByText('Lý do: Cần bổ sung')
   expect(accessRequestEventList).toHaveBeenCalledWith(
     id,
-    { page: 1, pageSize: 10 },
+    { page: 1, pageSize: 5 },
     expect.objectContaining({ headers: { Authorization: 'Bearer test-token' } })
   )
   await fireEvent.press(screen.getByRole('button', { name: 'Trang sau' }))
   await waitFor(() =>
-    expect(accessRequestEventList).toHaveBeenCalledWith(id, { page: 2, pageSize: 10 }, expect.anything())
+    expect(accessRequestEventList).toHaveBeenCalledWith(id, { page: 2, pageSize: 5 }, expect.anything())
   )
 })
 
@@ -277,7 +277,7 @@ test('switches server view, resets page and handles empty results', async () => 
   await fireEvent.press(screen.getByRole('button', { name: 'Đã kết thúc' }))
   await screen.findByText('Không có yêu cầu trên trang này.')
   expect(meAccessRequestList).toHaveBeenLastCalledWith(
-    { view: 'ended', involvement: 'ALL', page: 1, pageSize: 10 },
+    { view: 'ended', involvement: 'ALL', page: 1, pageSize: 5 },
     expect.anything()
   )
 })
@@ -298,7 +298,7 @@ test('shows detail from server and handles missing authorization with retry', as
   await fireEvent.press(screen.getByRole('button', { name: 'Thử lại' }))
   await screen.findByText('Thiết kế')
   screen.getByText('Figma')
-  screen.getByText('Không có ngày dự kiến kết thúc')
+  screen.getByText('Không giới hạn ngày')
   expect(accessRequestGet).toHaveBeenLastCalledWith(
     id,
     expect.objectContaining({ headers: { Authorization: 'Bearer test-token' } })

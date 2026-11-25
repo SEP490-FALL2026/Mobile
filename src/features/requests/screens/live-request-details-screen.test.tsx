@@ -122,14 +122,14 @@ beforeEach(async () => {
 test('shows the approval route and holder', async () => {
   mockRequest('PENDING')
   const screen = await renderScreen()
-  await screen.findByText('Tuyến duyệt')
-  screen.getByText('Người đang giữ: Bình')
+  await screen.findByText('Ai cần đồng ý')
+  screen.getByText('Đang chờ: Bình')
 })
 
 test('keeps the history on its own screen and shows a single back button', async () => {
   mockRequest('PENDING')
   const screen = await renderScreen()
-  await screen.findByText('Tuyến duyệt')
+  await screen.findByText('Ai cần đồng ý')
   expect(screen.getAllByRole('button', { name: 'Quay lại' })).toHaveLength(1)
   expect(screen.queryByText('Chưa có lịch sử.')).toBeNull()
   expect(screen.queryByText(new RegExp(id))).toBeNull()

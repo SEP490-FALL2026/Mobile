@@ -102,7 +102,7 @@ test('shows real notifications and updates one using authenticated API', async (
   await screen.findByText('Đã cấp quyền sử dụng')
   screen.getByText('1 thông báo chưa đọc')
   expect(notificationList).toHaveBeenCalledWith(
-    { page: 1, pageSize: 10 },
+    { page: 1, pageSize: 5 },
     expect.objectContaining({ headers: { Authorization: 'Bearer test-token', 'Accept-Language': 'vi' } })
   )
   await fireEvent.press(screen.getByRole('button', { name: 'Mở thông báo: Đã cấp quyền sử dụng' }))
@@ -308,7 +308,7 @@ test('loads subsequent pages and shows an empty page', async () => {
   await screen.findByText('Đã cấp quyền sử dụng')
   await fireEvent.press(screen.getByRole('button', { name: 'Trang sau' }))
   await screen.findByText('Không có thông báo trên trang này.')
-  expect(notificationList).toHaveBeenLastCalledWith({ page: 2, pageSize: 10 }, expect.anything())
+  expect(notificationList).toHaveBeenLastCalledWith({ page: 2, pageSize: 5 }, expect.anything())
 })
 
 test('supports English and marks all notifications as read', async () => {
@@ -316,7 +316,7 @@ test('supports English and marks all notifications as read', async () => {
   const screen = await renderScreen()
   await screen.findByText('Access granted')
   expect(notificationList).toHaveBeenCalledWith(
-    { page: 1, pageSize: 10 },
+    { page: 1, pageSize: 5 },
     expect.objectContaining({ headers: { Authorization: 'Bearer test-token', 'Accept-Language': 'en' } })
   )
   await fireEvent.press(screen.getByRole('button', { name: 'Mark all as read' }))
