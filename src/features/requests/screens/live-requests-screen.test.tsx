@@ -2,7 +2,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { fireEvent, render, waitFor } from '@testing-library/react-native'
 import type { ReactElement } from 'react'
 
-import { LiveRequestDetailsScreen, LiveRequestsScreen } from '@/features/requests'
+import { LiveRequestDetailsScreen, RequestHistoryScreen, LiveRequestsScreen } from '@/features/requests'
 import { accessRequestEventList, accessRequestGet } from '@/shared/api/generated/api/access-requests/access-requests'
 import { meAccessRequestList } from '@/shared/api/generated/api/me/me'
 import { setAppLanguage } from '@/shared/i18n/i18n'
@@ -226,7 +226,7 @@ test('shows actual request events and supports pagination', async () => {
       }
     }
   })
-  const screen = await renderScreen(<LiveRequestDetailsScreen requestId={id} />)
+  const screen = await renderScreen(<RequestHistoryScreen requestId={id} />)
   await screen.findByText('Đã trả về để bổ sung')
   screen.getByText('Lý do: Cần bổ sung')
   expect(accessRequestEventList).toHaveBeenCalledWith(
@@ -242,7 +242,7 @@ test('shows actual request events and supports pagination', async () => {
 
 test('reports timeline failures and retries', async () => {
   jest.mocked(accessRequestEventList).mockRejectedValueOnce(new Error('offline'))
-  const screen = await renderScreen(<LiveRequestDetailsScreen requestId={id} />)
+  const screen = await renderScreen(<RequestHistoryScreen requestId={id} />)
   await screen.findByText('Không thể tải lịch sử yêu cầu.')
   await fireEvent.press(screen.getByRole('button', { name: 'Thử lại' }))
   await screen.findByText('Chưa có lịch sử.')

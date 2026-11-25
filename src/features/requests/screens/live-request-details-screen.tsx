@@ -1,3 +1,4 @@
+import { Feather } from '@expo/vector-icons'
 import { Redirect, useRouter } from 'expo-router'
 import { useTranslation } from 'react-i18next'
 import { ScrollView, StyleSheet, Text, View } from 'react-native'
@@ -16,7 +17,6 @@ import { useMobileTheme } from '@/shared/theme/theme-provider'
 import { LiveRequestStatus } from '../components/live-request-status'
 import { LiveRequestType } from '../components/live-request-type'
 import { RequestApprovalRoute } from '../components/request-approval-route'
-import { RequestTimeline } from '../components/request-timeline'
 import {
   RequestWithdrawButton,
   RequestWithdrawDialog,
@@ -175,7 +175,30 @@ export function LiveRequestDetailsScreen({ requestId }: { requestId: string }) {
                 <Text style={styles.actionText}>{t('requests.live.requestAgain')}</Text>
               </PressableFeedback>
             ) : null}
-            <RequestTimeline key={request.id} requestId={request.id} />
+            <PressableFeedback
+              accessibilityLabel={t('requests.live.openHistory')}
+              accessibilityRole='button'
+              onPress={() =>
+                router.push({ pathname: '/live-requests/[requestId]/history', params: { requestId: request.id } })
+              }
+              style={[styles.card, styles.linkRow]}
+            >
+              <Feather
+                accessibilityElementsHidden
+                color={mobileColors.primaryInk}
+                importantForAccessibility='no'
+                name='clock'
+                size={18}
+              />
+              <Text style={styles.linkRowText}>{t('requests.live.openHistory')}</Text>
+              <Feather
+                accessibilityElementsHidden
+                color={mobileColors.muted}
+                importantForAccessibility='no'
+                name='chevron-right'
+                size={20}
+              />
+            </PressableFeedback>
           </>
         ) : null}
         {draft ? (
@@ -215,5 +238,7 @@ const createStyles = (mobileColors: MobileColors) =>
     label: { color: mobileColors.muted, fontSize: 12, marginTop: 6 },
     value: { color: mobileColors.foreground, fontSize: 14, lineHeight: 20 },
     muted: { color: mobileColors.muted, fontSize: 13, lineHeight: 19 },
-    error: { color: mobileColors.danger, fontSize: 13 }
+    error: { color: mobileColors.danger, fontSize: 13 },
+    linkRow: { alignItems: 'center', flexDirection: 'row', gap: 12, minHeight: 56 },
+    linkRowText: { color: mobileColors.foreground, flex: 1, fontSize: 15, fontWeight: '700' }
   })

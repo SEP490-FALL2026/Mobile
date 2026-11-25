@@ -9,7 +9,7 @@ import { useMobileTheme } from '@/shared/theme/theme-provider'
 
 import { useRequestEvents } from '../hooks/use-request-events'
 
-export function RequestTimeline({ requestId }: { requestId: string }) {
+export function RequestTimeline({ requestId, showTitle = true }: { requestId: string; showTitle?: boolean }) {
   const { t, i18n } = useTranslation()
   const { colors } = useMobileTheme()
   const styles = createStyles(colors)
@@ -18,9 +18,11 @@ export function RequestTimeline({ requestId }: { requestId: string }) {
 
   return (
     <View style={styles.card}>
-      <Text accessibilityRole='header' style={styles.heading}>
-        {t('requests.live.timeline.title')}
-      </Text>
+      {showTitle ? (
+        <Text accessibilityRole='header' style={styles.heading}>
+          {t('requests.live.timeline.title')}
+        </Text>
+      ) : null}
       {events.isLoading ? (
         <Text accessibilityRole='progressbar' style={styles.muted}>
           {t('requests.live.timeline.loading')}

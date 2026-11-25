@@ -126,6 +126,20 @@ test('shows the approval route and holder', async () => {
   screen.getByText('Người đang giữ: Bình')
 })
 
+test('keeps the history on its own screen and shows a single back button', async () => {
+  mockRequest('PENDING')
+  const screen = await renderScreen()
+  await screen.findByText('Tuyến duyệt')
+  expect(screen.getAllByRole('button', { name: 'Quay lại' })).toHaveLength(1)
+  expect(screen.queryByText('Chưa có lịch sử.')).toBeNull()
+  expect(screen.queryByText(new RegExp(id))).toBeNull()
+  await fireEvent.press(screen.getByRole('button', { name: 'Lịch sử xử lý' }))
+  expect(mockRouter.push).toHaveBeenCalledWith({
+    pathname: '/live-requests/[requestId]/history',
+    params: { requestId: id }
+  })
+})
+
 test('confirms before withdrawing and reports the returned state', async () => {
   mockRequest('PENDING')
   jest.mocked(accessRequestWithdraw).mockResolvedValue({
