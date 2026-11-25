@@ -50,6 +50,10 @@ test('shows employee shortcuts and the live unread count', async () => {
   await screen.findByText('2 thông báo chưa đọc')
   screen.getByText('Xin chào, An')
   expect(screen.queryByRole('button', { name: 'Duyệt nhu cầu' })).toBeNull()
+  // quick actions stay folded until Sentry is tapped
+  expect(screen.queryByRole('button', { name: /Tạo yêu cầu/ })).toBeNull()
+  await fireEvent.press(screen.getByRole('button', { name: 'Sentry. Mở truy cập nhanh' }))
+  screen.getByText('Cần phần mềm mới? Mở Tạo yêu cầu để gửi đề xuất.')
   await fireEvent.press(screen.getByRole('button', { name: /Tạo yêu cầu/ }))
   expect(mockRouter.push).toHaveBeenCalledWith('/live-request-create')
 })
@@ -75,6 +79,9 @@ test.each(['SUPER_ADMIN', 'SPENDING_APPROVER'])('does not offer requests to %s',
   mockAccount.roles = [role]
   const screen = await renderScreen()
   await screen.findByText('2 thông báo chưa đọc')
+  await fireEvent.press(screen.getByRole('button', { name: 'Sentry. Mở truy cập nhanh' }))
+  await screen.findByRole('button', { name: 'Sentry. Đóng truy cập nhanh' })
+  screen.getByRole('button', { name: 'Phần mềm của tôi' })
   expect(screen.queryByRole('button', { name: /Tạo yêu cầu/ })).toBeNull()
 })
 
@@ -82,5 +89,8 @@ test('does not offer requests to an unplaced employee', async () => {
   mockAccount.employee.unplaced = true
   const screen = await renderScreen()
   await screen.findByText('2 thông báo chưa đọc')
+  await fireEvent.press(screen.getByRole('button', { name: 'Sentry. Mở truy cập nhanh' }))
+  await screen.findByRole('button', { name: 'Sentry. Đóng truy cập nhanh' })
+  screen.getByRole('button', { name: 'Phần mềm của tôi' })
   expect(screen.queryByRole('button', { name: /Tạo yêu cầu/ })).toBeNull()
 })

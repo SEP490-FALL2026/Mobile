@@ -175,9 +175,6 @@ export const resources = {
         back: 'Back'
       },
       mascot: {
-        label: 'Sentry, the licence-watching bird. Tap to hear a tip',
-        hello: 'I am Sentry, the bird who watches over your software licences with you.',
-        goodbye: 'Have a smooth working day.',
         tips: {
           employee: {
             first: 'Need new software? Open Create request to send a proposal.',
@@ -195,9 +192,10 @@ export const resources = {
       },
       home: {
         live: {
-          eyebrow: 'YOUR WORKSPACE',
           greeting: 'Hello, {{name}}',
-          subtitle: 'Your software, requests and updates in one place.',
+          tapHint: 'Tap me to open your quick actions!',
+          quickOpen: 'Sentry. Open quick actions',
+          quickClose: 'Sentry. Close quick actions',
           actions: 'Your shortcuts',
           software: 'My software',
           softwareDescription: 'View your software access.',
@@ -1083,9 +1081,6 @@ export const resources = {
         back: 'Quay lại'
       },
       mascot: {
-        label: 'Sentry, chú chim canh bản quyền. Chạm để nghe gợi ý',
-        hello: 'Mình là Sentry, chú chim canh chừng bản quyền phần mềm cùng bạn.',
-        goodbye: 'Chúc bạn một ngày làm việc suôn sẻ.',
         tips: {
           employee: {
             first: 'Cần phần mềm mới? Mở Tạo yêu cầu để gửi đề xuất.',
@@ -1103,9 +1098,10 @@ export const resources = {
       },
       home: {
         live: {
-          eyebrow: 'KHÔNG GIAN CỦA BẠN',
           greeting: 'Xin chào, {{name}}',
-          subtitle: 'Phần mềm, yêu cầu và cập nhật của bạn tại một nơi.',
+          tapHint: 'Chạm vào mình để mở truy cập nhanh nhé!',
+          quickOpen: 'Sentry. Mở truy cập nhanh',
+          quickClose: 'Sentry. Đóng truy cập nhanh',
           actions: 'Truy cập nhanh',
           software: 'Phần mềm của tôi',
           softwareDescription: 'Xem quyền sử dụng phần mềm.',
