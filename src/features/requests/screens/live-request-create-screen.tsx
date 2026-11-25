@@ -1,6 +1,6 @@
 import { type NavigationAction, useNavigation, usePreventRemove } from '@react-navigation/native'
 import { type Href, Redirect, useFocusEffect, useRouter } from 'expo-router'
-import { useCallback, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { BackHandler, Modal, Platform, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
@@ -123,6 +123,8 @@ export function LiveRequestCreateScreen({ initialApplication }: { initialApplica
   const [pendingAction, setPendingAction] = useState<NavigationAction>()
   const [exitApp, setExitApp] = useState(false)
   const [choosing, setChoosing] = useState(true)
+  const [application, setApplication] = useState(initialApplication)
+  const stepBackRef = useRef<() => boolean>(() => false)
   const sent = useRef(false)
   const allowRemoval = useRef(false)
   const scroll = useRef<ScrollView>(null)
@@ -141,6 +143,7 @@ export function LiveRequestCreateScreen({ initialApplication }: { initialApplica
       const subscription = BackHandler.addEventListener('hardwareBackPress', () => {
         if (session.state !== 'authenticated') return false
         if (inFlight || (sent.current && !submit.isError && !submit.isSuccess)) return true
+        if (stepBackRef.current()) return true
         if (router.canGoBack() || !dirty) return false
         setExitApp(true)
         return true
@@ -169,6 +172,28 @@ export function LiveRequestCreateScreen({ initialApplication }: { initialApplica
     preview.data.reason === reason.trim()
       ? preview.data.preview
       : undefined
+  const locked = inFlight || submit.isError || submit.isSuccess
+  // The flow has steps (catalog -> plans -> details -> review). One back button walks them backwards; only the
+  // first step leaves the screen. Returns false when there is no earlier step.
+  const stepBack = useCallback(() => {
+    if (locked) return false
+    if (selected && !choosing && currentPreview) {
+      preview.reset()
+      return true
+    }
+    if (selected && !choosing) {
+      setChoosing(true)
+      return true
+    }
+    if (application) {
+      setApplication(undefined)
+      return true
+    }
+    return false
+  }, [application, choosing, currentPreview, locked, preview, selected])
+  useEffect(() => {
+    stepBackRef.current = stepBack
+  }, [stepBack])
   const canSend =
     !!currentPreview?.canSubmit &&
     !currentPreview.termRefusal &&
@@ -200,7 +225,6 @@ export function LiveRequestCreateScreen({ initialApplication }: { initialApplica
       </SafeAreaView>
     )
   }
-  const locked = inFlight || submit.isError || submit.isSuccess
   const rejection = submit.isError ? submitRejection(submit.error) : undefined
   const conflictId = submit.isError ? submitConflictId(submit.error, rejection) : undefined
   function review() {
@@ -251,11 +275,22 @@ export function LiveRequestCreateScreen({ initialApplication }: { initialApplica
         }}
         scrollEventThrottle={32}
       >
-        <BackButton disabled={inFlight} label={t('requests.live.back')} onPress={() => navigateTo('back')} />
-        <Text accessibilityRole='header' style={styles.pageTitle}>
-          {t('requests.createLive.title')}
-        </Text>
-        <Text style={styles.muted}>{t('requests.createLive.intro')}</Text>
+        <BackButton
+          disabled={inFlight}
+          label={t('common.back')}
+          onPress={() => {
+            if (!stepBack()) navigateTo('back')
+            scroll.current?.scrollTo({ y: 0, animated: false })
+          }}
+        />
+        {(!selected || choosing) && !application ? (
+          <>
+            <Text accessibilityRole='header' style={styles.pageTitle}>
+              {t('requests.createLive.title')}
+            </Text>
+            <Text style={styles.muted}>{t('requests.createLive.intro')}</Text>
+          </>
+        ) : null}
         {locked ? (
           <View>
             <Text accessibilityRole='alert' style={styles.error}>
@@ -304,15 +339,11 @@ export function LiveRequestCreateScreen({ initialApplication }: { initialApplica
         ) : null}
         {!selected || choosing ? (
           <>
-            {selected ? (
-              <PressableFeedback accessibilityRole='button' onPress={() => setChoosing(false)} style={styles.action}>
-                <Text style={styles.actionText}>{t('requests.createLive.keepPlan')}</Text>
-              </PressableFeedback>
-            ) : null}
             <RequestCatalog
               getScrollY={() => scrollY.current}
               scrollTo={(y, animated) => scroll.current?.scrollTo({ y, animated })}
-              initialApplication={initialApplication}
+              application={application}
+              onApplicationChange={setApplication}
               onSearchChange={setHasSearch}
               onOpenAccess={(softwareId) =>
                 navigateTo({ pathname: '/my-software/[softwareId]', params: { softwareId } })
@@ -344,15 +375,6 @@ export function LiveRequestCreateScreen({ initialApplication }: { initialApplica
                   </View>
                 </View>
                 {!selected.canSubmit ? <Text style={styles.error}>{t('requests.createLive.planBlocked')}</Text> : null}
-                <PressableFeedback
-                  accessibilityRole='button'
-                  disabled={locked}
-                  accessibilityState={{ disabled: locked }}
-                  onPress={() => setChoosing(true)}
-                  style={styles.action}
-                >
-                  <Text style={styles.actionText}>{t('requests.createLive.changePlan')}</Text>
-                </PressableFeedback>
                 <View style={styles.divider} />
                 {asksTerm ? (
                   <>
@@ -457,15 +479,6 @@ export function LiveRequestCreateScreen({ initialApplication }: { initialApplica
                 {currentPreview.spendSubmission === 'BLOCKED_UNTIL_PRICED' ? (
                   <Text style={styles.error}>{t('requests.createLive.pricingBlocked')}</Text>
                 ) : null}
-                <PressableFeedback
-                  accessibilityRole='button'
-                  disabled={locked}
-                  accessibilityState={{ disabled: locked }}
-                  onPress={() => preview.reset()}
-                  style={styles.action}
-                >
-                  <Text style={styles.actionText}>{t('requests.createLive.reviewDetails.edit')}</Text>
-                </PressableFeedback>
                 <PressableFeedback
                   accessibilityRole='button'
                   accessibilityState={{ disabled: !canSend || locked }}

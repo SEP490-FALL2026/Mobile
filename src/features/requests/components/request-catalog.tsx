@@ -1,10 +1,9 @@
 import { Feather } from '@expo/vector-icons'
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { StyleSheet, Text, TextInput, View } from 'react-native'
 
 import { SoftwareIcon } from '@/entities/software'
-import { BackButton } from '@/shared/ui/back-button'
 import { PressableFeedback } from '@/shared/ui/pressable-feedback'
 import { SegmentedControl } from '@/shared/ui/segmented-control'
 import type { RequestablePlanPageResponseDtoDataItemsItem } from '@/shared/api/generated/contracts/requestable-software'
@@ -14,15 +13,19 @@ import { useMobileTheme } from '@/shared/theme/theme-provider'
 import { useHeldPlans } from '../hooks/use-held-plans'
 import { isNoDepartment, useRequestCatalog } from '../hooks/use-request-catalog'
 
+// The catalog has two levels: applications (department suggestions or the whole catalog) and the plans of one
+// application. The parent owns which application is open so its single back button can step back to the list.
 export function RequestCatalog({
   getScrollY,
   scrollTo,
-  initialApplication,
+  application,
+  onApplicationChange,
   onSelect,
   onOpenAccess,
   onSearchChange
 }: {
-  initialApplication?: { id: string; name: string }
+  application?: { id: string; name: string }
+  onApplicationChange: (application: { id: string; name: string }) => void
   getScrollY: () => number
   scrollTo: (y: number, animated: boolean) => void
   onSelect: (plan: RequestablePlanPageResponseDtoDataItemsItem) => void
@@ -32,9 +35,8 @@ export function RequestCatalog({
   const { t, i18n } = useTranslation()
   const { colors } = useMobileTheme()
   const styles = createStyles(colors)
-  const [mode, setMode] = useState<'department' | 'applications' | 'plans'>(initialApplication ? 'plans' : 'department')
-  const [origin, setOrigin] = useState<'department' | 'applications'>('department')
-  const [application, setApplication] = useState<{ id: string; name: string } | undefined>(initialApplication)
+  const [listMode, setListMode] = useState<'department' | 'applications'>('department')
+  const mode = application ? 'plans' : listMode
   const [search, setSearch] = useState('')
   const [page, setPage] = useState(1)
   const heldPlans = useHeldPlans()
@@ -46,15 +48,23 @@ export function RequestCatalog({
     if (mode === 'plans') return
     listPosition.current = { y: getScrollY(), page }
     scrollTo(0, false)
-    setOrigin(mode)
-    setApplication({ id, name })
-    setMode('plans')
     setPage(1)
+    onApplicationChange({ id, name })
   }
   function showApplications() {
-    setMode('applications')
+    setListMode('applications')
     setPage(1)
   }
+  // Coming back from an application's plans restores the list page and scroll position the user left.
+  const openApplication = useRef(application?.id)
+  useEffect(() => {
+    const wasOpen = openApplication.current
+    openApplication.current = application?.id
+    if (!wasOpen || application) return
+    setPage(listPosition.current.page)
+    const { y } = listPosition.current
+    setTimeout(() => scrollTo(y, false), 60)
+  }, [application, scrollTo])
 
   return (
     <View style={styles.content}>
@@ -70,14 +80,14 @@ export function RequestCatalog({
               setSearch(value)
               onSearchChange(!!value)
               setPage(1)
-              if (value) setMode('applications')
+              if (value) setListMode('applications')
             }}
             style={styles.input}
           />
           <SegmentedControl
             onChange={(value) => {
               if (value === 'department') {
-                setMode('department')
+                setListMode('department')
                 setSearch('')
                 onSearchChange(false)
                 setPage(1)
@@ -97,17 +107,7 @@ export function RequestCatalog({
         </>
       ) : (
         <>
-          <BackButton
-            label={t('requests.createLive.catalog.backToApps')}
-            onPress={() => {
-              setMode(origin)
-              setPage(listPosition.current.page)
-              const { y } = listPosition.current
-              setTimeout(() => scrollTo(y, false), 60)
-            }}
-            variant='chip'
-          />
-          <Text accessibilityRole='header' style={styles.heading}>
+          <Text accessibilityRole='header' style={styles.pageHeading}>
             {t('requests.createLive.catalog.plansFor', { name: application?.name })}
           </Text>
         </>
@@ -327,6 +327,7 @@ const createStyles = (colors: MobileColors) =>
     row: { flexDirection: 'row', alignItems: 'center', gap: 12 },
     copy: { flex: 1, gap: 4 },
     heading: { color: colors.foreground, fontSize: 16, fontWeight: '700' },
+    pageHeading: { color: colors.foreground, fontSize: 22, fontWeight: '800', letterSpacing: -0.3 },
     muted: { color: colors.muted, fontSize: 13, lineHeight: 19 },
     error: { color: colors.danger, fontSize: 13, lineHeight: 19 },
     link: { color: colors.primaryInk, fontWeight: '700' },
