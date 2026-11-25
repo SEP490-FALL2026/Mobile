@@ -14,6 +14,7 @@ import { useSession } from '@/shared/api/session-context'
 import { useAccountProfile } from '@/shared/api/use-account-profile'
 import type { MobileColors } from '@/shared/theme/colors'
 import { useMobileTheme } from '@/shared/theme/theme-provider'
+import { IconBadge } from '@/shared/ui/icon-badge'
 
 import { useNotificationReadError } from '../components/notification-read-error-provider'
 import { useLiveInbox } from '../hooks/use-live-inbox'
@@ -78,7 +79,7 @@ export function LiveInboxScreen() {
   if (session.state === 'anonymous') return <Redirect href='/' />
 
   return (
-    <SafeAreaView style={styles.safe}>
+    <SafeAreaView edges={['top', 'left', 'right']} style={styles.safe}>
       <View style={styles.screen}>
         <ScrollView
           contentContainerStyle={styles.content}
@@ -205,15 +206,11 @@ export function LiveInboxScreen() {
                 style={[styles.card, !item.readAt && styles.unread]}
               >
                 <View style={styles.itemHeader}>
-                  <View style={styles.itemIcon}>
-                    <Feather
-                      accessibilityElementsHidden
-                      importantForAccessibility='no'
-                      name='bell'
-                      size={18}
-                      color={mobileColors.primaryInk}
-                    />
-                  </View>
+                  <IconBadge
+                    name={item.readAt ? 'bell' : 'bell-ringing'}
+                    size={40}
+                    tone={item.readAt ? 'blue' : 'pink'}
+                  />
                   <View style={styles.itemCopy}>
                     <Text style={styles.itemTitle}>{title}</Text>
                     {typeof item.message === 'string' && item.message.length > 0 ? (
@@ -317,15 +314,6 @@ const createStyles = (mobileColors: MobileColors) =>
     },
     unread: { borderColor: mobileColors.primary, backgroundColor: mobileColors.surfaceSubtle },
     itemHeader: { flexDirection: 'row', alignItems: 'center', gap: 12 },
-    itemIcon: {
-      width: 40,
-      height: 40,
-      borderCurve: 'continuous',
-      borderRadius: 14,
-      alignItems: 'center',
-      justifyContent: 'center',
-      backgroundColor: mobileColors.primarySoft
-    },
     itemCopy: { flex: 1, minWidth: 0, gap: 3 },
     readStatus: { flexDirection: 'row', alignItems: 'center', gap: 6 },
     unreadDot: {

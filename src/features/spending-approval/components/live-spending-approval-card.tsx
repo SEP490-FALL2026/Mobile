@@ -6,6 +6,7 @@ import { PressableFeedback } from '@/shared/ui/pressable-feedback'
 import type { ApprovalListResponseDtoDataItemsItem } from '@/shared/api/generated/contracts/spend-approvals'
 import type { MobileColors } from '@/shared/theme/colors'
 import { useMobileTheme } from '@/shared/theme/theme-provider'
+import { IconBadge } from '@/shared/ui/icon-badge'
 
 import { formatSpendDate, formatSpendMoney } from '../model/live-spending-approvals'
 
@@ -32,15 +33,7 @@ export function LiveSpendingApprovalCard({
       style={({ pressed }) => [styles.card, pressed && styles.pressed]}
     >
       <View style={styles.top}>
-        <View style={styles.icon}>
-          <Feather
-            accessibilityElementsHidden
-            color={colors.primaryInk}
-            importantForAccessibility='no'
-            name='credit-card'
-            size={19}
-          />
-        </View>
+        <IconBadge name='credit-card' size={40} tone='indigo' />
         <View style={styles.titleGroup}>
           <Text style={styles.appName}>{appName}</Text>
           {item.plan ? <Text style={styles.planName}>{item.plan.planName}</Text> : null}
@@ -123,15 +116,6 @@ const createStyles = (colors: MobileColors) =>
     },
     pressed: { opacity: 0.8 },
     top: { alignItems: 'center', flexDirection: 'row', gap: 11 },
-    icon: {
-      alignItems: 'center',
-      backgroundColor: colors.primarySoft,
-      borderCurve: 'continuous',
-      borderRadius: 13,
-      height: 42,
-      justifyContent: 'center',
-      width: 42
-    },
     titleGroup: { flex: 1, gap: 3 },
     appName: { color: colors.foreground, fontSize: 15, fontWeight: '700' },
     planName: { color: colors.muted, fontSize: 12 },

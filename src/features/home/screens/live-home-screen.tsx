@@ -12,6 +12,7 @@ import { useAccountProfile } from '@/shared/api/use-account-profile'
 import type { MobileColors } from '@/shared/theme/colors'
 import { useMobileTheme } from '@/shared/theme/theme-provider'
 import { Avatar } from '@/shared/ui/avatar'
+import { IconBadge } from '@/shared/ui/icon-badge'
 import { RefreshStatus, useRefreshFeedback } from '@/shared/ui/refresh-status'
 import { LoadingState } from '@/shared/ui/loading-state'
 import { SentryMascot } from '@/shared/ui/sentry-mascot'
@@ -40,7 +41,7 @@ export function LiveHomeScreen() {
   ]
 
   return (
-    <SafeAreaView style={styles.safe}>
+    <SafeAreaView edges={['top', 'left', 'right']} style={styles.safe}>
       <ScrollView
         contentContainerStyle={styles.content}
         refreshControl={
@@ -90,9 +91,7 @@ export function LiveHomeScreen() {
                 onPress={() => router.push('/live-need-approvals')}
                 style={styles.featured}
               >
-                <View style={[styles.cardIcon, styles.featuredIcon]}>
-                  <Feather name='check-square' size={22} color={colors.primaryInk} />
-                </View>
+                <IconBadge name='check-circle' size={48} tone='indigo' />
                 <View style={styles.cardCopy}>
                   <Text style={styles.cardTitle}>{t('manager.live.openQueue')}</Text>
                   <Text style={styles.cardDescription}>{t('home.live.approvalsDescription')}</Text>
@@ -112,9 +111,7 @@ export function LiveHomeScreen() {
                 onPress={() => router.push('/spending-approvals')}
                 style={styles.featured}
               >
-                <View style={[styles.cardIcon, styles.featuredIcon]}>
-                  <Feather name='credit-card' size={22} color={colors.primaryInk} />
-                </View>
+                <IconBadge name='credit-card' size={48} tone='indigo' />
                 <View style={styles.cardCopy}>
                   <Text style={styles.cardTitle}>{t('spending.live.openQueue')}</Text>
                   <Text style={styles.cardDescription}>{t('home.live.spendingDescription')}</Text>
@@ -128,51 +125,70 @@ export function LiveHomeScreen() {
             <View style={styles.grid}>
               <PressableFeedback
                 accessibilityRole='button'
+                accessibilityLabel={t('home.live.software')}
+                accessibilityHint={t('home.live.softwareDescription')}
                 onPress={() => router.push('/my-software')}
-                style={styles.card}
+                style={[styles.tile, { backgroundColor: colors.tones.blue.soft }]}
               >
-                <View style={styles.cardIcon}>
-                  <Feather name='grid' size={21} color={colors.primaryInk} />
-                </View>
-                <Text style={styles.cardTitle}>{t('home.live.software')}</Text>
-                <Text style={styles.cardDescription}>{t('home.live.softwareDescription')}</Text>
+                <IconBadge name='squares-four' tone='blue' />
+                <Text numberOfLines={2} style={styles.tileLabel}>
+                  {t('home.live.software')}
+                </Text>
               </PressableFeedback>
               {mayRequest ? (
                 <PressableFeedback
                   accessibilityRole='button'
+                  accessibilityLabel={t('navigation.createRequest')}
+                  accessibilityHint={t('home.live.createDescription')}
                   onPress={() => router.push('/live-request-create')}
-                  style={styles.card}
+                  style={[styles.tile, { backgroundColor: colors.tones.orange.soft }]}
                 >
-                  <View style={styles.cardIcon}>
-                    <Feather name='plus-circle' size={21} color={colors.primaryInk} />
-                  </View>
-                  <Text style={styles.cardTitle}>{t('navigation.createRequest')}</Text>
-                  <Text style={styles.cardDescription}>{t('home.live.createDescription')}</Text>
+                  <IconBadge name='plus-circle' tone='orange' />
+                  <Text numberOfLines={2} style={styles.tileLabel}>
+                    {t('navigation.createRequest')}
+                  </Text>
                 </PressableFeedback>
               ) : null}
               {role !== 'SPENDING_APPROVER' ? (
                 <PressableFeedback
                   accessibilityRole='button'
+                  accessibilityLabel={t('home.live.requests')}
+                  accessibilityHint={t('home.live.requestsDescription')}
                   onPress={() => router.push('/live-requests')}
-                  style={styles.card}
+                  style={[styles.tile, { backgroundColor: colors.tones.teal.soft }]}
                 >
-                  <View style={styles.cardIcon}>
-                    <Feather name='file-text' size={21} color={colors.primaryInk} />
-                  </View>
-                  <Text style={styles.cardTitle}>{t('home.live.requests')}</Text>
-                  <Text style={styles.cardDescription}>{t('home.live.requestsDescription')}</Text>
+                  <IconBadge name='file-text' tone='teal' />
+                  <Text numberOfLines={2} style={styles.tileLabel}>
+                    {t('home.live.requests')}
+                  </Text>
                 </PressableFeedback>
               ) : null}
               <PressableFeedback
                 accessibilityRole='button'
+                accessibilityLabel={t('navigation.inbox')}
+                accessibilityHint={
+                  count.data !== undefined
+                    ? t('home.live.unread', {
+                        count: count.data,
+                        formattedCount: new Intl.NumberFormat(i18n.language).format(count.data)
+                      })
+                    : undefined
+                }
                 onPress={() => router.push('/live-inbox')}
-                style={styles.card}
+                style={[styles.tile, { backgroundColor: colors.tones.pink.soft }]}
               >
-                <View style={styles.cardIcon}>
-                  <Feather name='bell' size={21} color={colors.primaryInk} />
+                <View>
+                  <IconBadge name='bell-ringing' tone='pink' />
+                  {count.data ? (
+                    <View style={styles.tileBadge}>
+                      <Text style={styles.tileBadgeText}>{count.data > 99 ? '99+' : count.data}</Text>
+                    </View>
+                  ) : null}
                 </View>
-                <Text style={styles.cardTitle}>{t('navigation.inbox')}</Text>
-                <Text style={styles.cardDescription}>
+                <Text numberOfLines={2} style={styles.tileLabel}>
+                  {t('navigation.inbox')}
+                </Text>
+                <Text numberOfLines={1} style={styles.tileMeta}>
                   {count.data !== undefined
                     ? t('home.live.unread', {
                         count: count.data,
@@ -181,6 +197,17 @@ export function LiveHomeScreen() {
                     : count.isError
                       ? t('home.live.countError')
                       : t('home.live.countLoading')}
+                </Text>
+              </PressableFeedback>
+              <PressableFeedback
+                accessibilityRole='button'
+                accessibilityLabel={t('navigation.tab.profile')}
+                onPress={() => router.push('/profile')}
+                style={[styles.tile, { backgroundColor: colors.tones.indigo.soft }]}
+              >
+                <IconBadge name='user-circle' tone='indigo' />
+                <Text numberOfLines={2} style={styles.tileLabel}>
+                  {t('navigation.tab.profile')}
                 </Text>
               </PressableFeedback>
             </View>
@@ -208,7 +235,6 @@ const createStyles = (colors: MobileColors) =>
     content: { padding: 20, gap: 18, paddingBottom: 36 },
     header: { flexDirection: 'row', alignItems: 'center', gap: 12 },
     profile: { flex: 1 },
-    hero: { paddingVertical: 12, gap: 7 },
     eyebrow: { color: colors.primaryInk, fontWeight: '700', fontSize: 12, letterSpacing: 1 },
     title: { color: colors.foreground, fontWeight: '700', fontSize: 27 },
     subtitle: { color: colors.muted, fontSize: 14, lineHeight: 21 },
@@ -224,28 +250,35 @@ const createStyles = (colors: MobileColors) =>
       minHeight: 84
     },
     grid: { flexDirection: 'row', flexWrap: 'wrap', gap: 12 },
-    card: {
-      flexGrow: 1,
-      flexBasis: '46%',
-      backgroundColor: colors.surface,
-      borderColor: colors.border,
-      borderWidth: 1,
-      borderCurve: 'continuous',
-      borderRadius: 18,
-      padding: 16,
-      gap: 9,
-      minHeight: 148
-    },
-    cardIcon: {
-      width: 42,
-      height: 42,
-      borderCurve: 'continuous',
-      borderRadius: 14,
-      backgroundColor: colors.primarySoft,
+    tile: {
       alignItems: 'center',
-      justifyContent: 'center'
+      borderCurve: 'continuous',
+      borderRadius: 22,
+      flexBasis: '30%',
+      flexGrow: 1,
+      gap: 10,
+      maxWidth: '32%',
+      minHeight: 124,
+      paddingHorizontal: 8,
+      paddingVertical: 16
     },
-    featuredIcon: { backgroundColor: colors.surface },
+    tileLabel: { color: colors.foreground, fontSize: 13, fontWeight: '700', lineHeight: 18, textAlign: 'center' },
+    tileMeta: { color: colors.muted, fontSize: 11, textAlign: 'center' },
+    tileBadge: {
+      alignItems: 'center',
+      backgroundColor: colors.danger,
+      borderColor: colors.surface,
+      borderRadius: 10,
+      borderWidth: 2,
+      height: 20,
+      justifyContent: 'center',
+      minWidth: 20,
+      paddingHorizontal: 4,
+      position: 'absolute',
+      right: -8,
+      top: -6
+    },
+    tileBadgeText: { color: colors.onDanger, fontSize: 10, fontWeight: '800' },
     cardCopy: { flex: 1, gap: 5 },
     cardTitle: { color: colors.foreground, fontSize: 15, fontWeight: '700' },
     cardDescription: { color: colors.muted, fontSize: 13, lineHeight: 19 },

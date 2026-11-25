@@ -1,4 +1,3 @@
-import { Feather } from '@expo/vector-icons'
 import { Redirect, useRouter } from 'expo-router'
 import { useTranslation } from 'react-i18next'
 import { ScrollView, Text, View } from 'react-native'
@@ -11,6 +10,7 @@ import { useMobileTheme } from '@/shared/theme/theme-provider'
 import { BackButton } from '@/shared/ui/back-button'
 import { LoadingState } from '@/shared/ui/loading-state'
 import { PressableFeedback } from '@/shared/ui/pressable-feedback'
+import { IconBadge } from '@/shared/ui/icon-badge'
 
 import { LiveSpendingBudgetSnapshot } from '../components/live-spending-budget-snapshot'
 import {
@@ -73,15 +73,7 @@ export function SpendingApprovalDetailScreen({ requestId }: { requestId: string 
         ) : (
           <>
             <View style={styles.reviewHeader}>
-              <View style={styles.reviewIcon}>
-                <Feather
-                  accessibilityElementsHidden
-                  color={colors.primaryInk}
-                  importantForAccessibility='no'
-                  name='credit-card'
-                  size={20}
-                />
-              </View>
+              <IconBadge name='credit-card' size={48} tone='indigo' />
               <View style={styles.flex}>
                 <Text accessibilityRole='header' style={styles.title}>
                   {appName}

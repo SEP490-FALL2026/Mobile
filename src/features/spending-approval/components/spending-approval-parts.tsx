@@ -461,15 +461,6 @@ export const createSpendingStyles = (colors: MobileColors) =>
     flex: { flex: 1, gap: 4 },
     section: { gap: 13 },
     reviewHeader: { alignItems: 'center', flexDirection: 'row', gap: 12 },
-    reviewIcon: {
-      alignItems: 'center',
-      backgroundColor: colors.primarySoft,
-      borderCurve: 'continuous',
-      borderRadius: 14,
-      height: 46,
-      justifyContent: 'center',
-      width: 46
-    },
     card: {
       backgroundColor: colors.surface,
       borderColor: colors.border,

@@ -58,7 +58,7 @@ export function AccountProfileScreen() {
     : []
 
   return (
-    <SafeAreaView style={styles.safe}>
+    <SafeAreaView edges={['top', 'left', 'right']} style={styles.safe}>
       <ScrollView contentContainerStyle={styles.content}>
         <Text accessibilityRole='header' style={styles.pageTitle}>
           {t('account.title')}

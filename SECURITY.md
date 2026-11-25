@@ -96,6 +96,11 @@ Reviewed assets:
 - `assets/mascot/sentry-mascot-sprite.webp` (2026-11-24): the Sentry mascot sprite from the web repository
   (`FE-dev/app/assets/mascot`), 1920x576, 10x3 frames of 192px. It was decoded to raw pixels with `sharp` 0.34
   and written again as a fresh lossless WebP (no metadata carried over), then inspected visually.
+- `src/shared/ui/saas-icons.generated.ts` (2026-11-25): the SaaS-Sentry icon set (36 Phosphor Icons, MIT,
+  duotone and fill). No SVG file is bundled or parsed at runtime: `scripts/import-icons.mjs` accepts only the
+  exact `<svg … viewBox="0 0 256 256" fill="currentColor">` wrapper with `<path d="…">` children whose data is
+  limited to path commands and numbers (optional `opacity="0.2"`), fails on anything else, and writes the
+  path strings to TypeScript. `react-native-svg` 15.12.1 (the Expo SDK 54 version) draws them.
 
 ## Patch removal and review workflow
 

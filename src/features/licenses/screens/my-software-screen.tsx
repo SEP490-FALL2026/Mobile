@@ -1,4 +1,3 @@
-import { Feather } from '@expo/vector-icons'
 import { Redirect, useRouter } from 'expo-router'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -13,6 +12,7 @@ import { SegmentedControl } from '@/shared/ui/segmented-control'
 import { useSession } from '@/shared/api/session-context'
 import type { MobileColors } from '@/shared/theme/colors'
 import { useMobileTheme } from '@/shared/theme/theme-provider'
+import { IconBadge } from '@/shared/ui/icon-badge'
 
 import { LiveSoftwareCard } from '../components/live-software-card'
 import { useMySoftware } from '../hooks/use-my-software'
@@ -43,7 +43,7 @@ export function MySoftwareScreen() {
   if (session.state === 'anonymous') return <Redirect href='/' />
 
   return (
-    <SafeAreaView style={styles.safeArea}>
+    <SafeAreaView edges={['top', 'left', 'right']} style={styles.safeArea}>
       <View style={styles.screen}>
         <ScrollView
           contentContainerStyle={styles.content}
@@ -76,15 +76,7 @@ export function MySoftwareScreen() {
 
           <View style={styles.summary}>
             <View style={[styles.summaryCard, styles.summaryPrimary]}>
-              <View style={styles.summaryIcon}>
-                <Feather
-                  accessibilityElementsHidden
-                  importantForAccessibility='no'
-                  name='grid'
-                  size={16}
-                  color={mobileColors.primaryInk}
-                />
-              </View>
+              <IconBadge name='squares-four' size={38} tone='blue' />
               <Text style={styles.summaryValue}>
                 {currentCount !== undefined
                   ? t('licenses.live.total', {
@@ -96,15 +88,7 @@ export function MySoftwareScreen() {
               <Text style={styles.summaryLabel}>{t('licenses.live.currentRights')}</Text>
             </View>
             <View style={[styles.summaryCard, styles.summaryWarning]}>
-              <View style={[styles.summaryIcon, styles.summaryIconWarning]}>
-                <Feather
-                  accessibilityElementsHidden
-                  importantForAccessibility='no'
-                  name='clock'
-                  size={16}
-                  color={mobileColors.warning}
-                />
-              </View>
+              <IconBadge name='clock-countdown' size={38} tone='orange' />
               <Text style={styles.summaryValue}>
                 {expiringCount !== undefined
                   ? t('licenses.live.expiringTotal', {
@@ -317,17 +301,6 @@ const createStyles = (mobileColors: MobileColors) =>
     },
     summaryPrimary: { backgroundColor: mobileColors.surfaceSubtle, borderColor: mobileColors.primarySoft },
     summaryWarning: { backgroundColor: mobileColors.warningBackground, borderColor: mobileColors.warningBackground },
-    summaryIcon: {
-      alignItems: 'center',
-      backgroundColor: mobileColors.primarySoft,
-      borderCurve: 'continuous',
-      borderRadius: 12,
-      height: 30,
-      justifyContent: 'center',
-      marginBottom: 2,
-      width: 34
-    },
-    summaryIconWarning: { backgroundColor: mobileColors.surface },
     summaryValue: { color: mobileColors.foreground, fontSize: 20, fontWeight: '700' },
     summaryLabel: { color: mobileColors.muted, fontSize: 12, lineHeight: 17, fontWeight: '500' },
     sectionHeading: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },

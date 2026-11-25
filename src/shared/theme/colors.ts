@@ -1,3 +1,8 @@
+export type IconTone = 'indigo' | 'orange' | 'teal' | 'pink' | 'blue' | 'green'
+
+// Accent pairs for icon tiles: a saturated badge colour and a soft tint for the tile behind it.
+export type ToneColors = Record<IconTone, { solid: string; soft: string }>
+
 export type MobileColors = {
   background: string
   border: string
@@ -19,6 +24,7 @@ export type MobileColors = {
   warning: string
   warningBackground: string
   white: string
+  tones: ToneColors
 }
 
 export const mobileColors: MobileColors = {
@@ -41,7 +47,15 @@ export const mobileColors: MobileColors = {
   surfaceSubtle: '#f5f6fb',
   warning: '#8a4b00',
   warningBackground: '#fdf0d8',
-  white: '#ffffff'
+  white: '#ffffff',
+  tones: {
+    indigo: { solid: '#6a5ae0', soft: '#eeecfd' },
+    orange: { solid: '#f07a2c', soft: '#fff1e6' },
+    teal: { solid: '#14a3a8', soft: '#e3f7f6' },
+    pink: { solid: '#e2557f', soft: '#fdebf1' },
+    blue: { solid: '#3f7fea', soft: '#e8f0fe' },
+    green: { solid: '#2f9e6a', soft: '#e4f5ec' }
+  }
 }
 
 export const darkMobileColors: MobileColors = {
@@ -64,5 +78,13 @@ export const darkMobileColors: MobileColors = {
   surfaceSubtle: '#102440',
   warning: '#f0a830',
   warningBackground: '#342711',
-  white: '#0d1c33'
+  white: '#0d1c33',
+  tones: {
+    indigo: { solid: '#7d6ff0', soft: '#1d1d4a' },
+    orange: { solid: '#f58a3d', soft: '#3a2414' },
+    teal: { solid: '#22b8bd', soft: '#0f3236' },
+    pink: { solid: '#ef6b93', soft: '#3a1a28' },
+    blue: { solid: '#4f8ff5', soft: '#12284a' },
+    green: { solid: '#3cb47b', soft: '#113526' }
+  }
 }

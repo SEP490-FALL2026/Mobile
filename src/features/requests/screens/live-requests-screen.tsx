@@ -36,7 +36,7 @@ export function LiveRequestsScreen() {
 
   if (session.state === 'anonymous') return <Redirect href='/' />
   return (
-    <SafeAreaView style={styles.safe}>
+    <SafeAreaView edges={['top', 'left', 'right']} style={styles.safe}>
       <View style={styles.screen}>
         <ScrollView
           contentContainerStyle={styles.content}
