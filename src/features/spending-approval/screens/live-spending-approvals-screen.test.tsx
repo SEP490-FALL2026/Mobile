@@ -260,7 +260,7 @@ beforeEach(async () => {
 
 test('renders work returned by the live queue with an accessible request action', async () => {
   const screen = await renderScreen()
-  await screen.findByRole('button', { name: 'Xem 01234567-89ab-cdef-0123-456789abcdef cho Live app' })
+  await screen.findByRole('button', { name: 'Xem Live app do Requester yêu cầu' })
 
   screen.getByText('Live app')
   screen.getByText('Người yêu cầu: Requester')

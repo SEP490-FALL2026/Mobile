@@ -27,7 +27,7 @@ export function LiveSpendingApprovalCard({
   return (
     <PressableFeedback
       accessibilityRole='button'
-      accessibilityLabel={t('spending.live.openRequest', { requestId: item.requestId, software: appName })}
+      accessibilityLabel={t('spending.live.openRequest', { software: appName, name: item.requester.fullName })}
       onPress={() => onPress(item.requestId)}
       style={({ pressed }) => [styles.card, pressed && styles.pressed]}
     >
@@ -54,7 +54,6 @@ export function LiveSpendingApprovalCard({
         />
       </View>
       <View style={styles.meta}>
-        <Text style={styles.requestId}>{t('spending.live.requestId', { requestId: item.requestId })}</Text>
         <Text style={styles.metaText}>{t('spending.live.requester', { name: item.requester.fullName })}</Text>
         {item.beneficiary ? (
           <Text style={styles.metaText}>{t('spending.live.beneficiary', { name: item.beneficiary.fullName })}</Text>
@@ -137,7 +136,6 @@ const createStyles = (colors: MobileColors) =>
     appName: { color: colors.foreground, fontSize: 15, fontWeight: '700' },
     planName: { color: colors.muted, fontSize: 12 },
     meta: { gap: 4, paddingLeft: 53 },
-    requestId: { color: colors.primaryInk, fontSize: 12, fontWeight: '700' },
     metaText: { color: colors.muted, fontSize: 12, lineHeight: 17 },
     primaryCode: { color: colors.primaryInk, fontSize: 12, fontWeight: '600', lineHeight: 16 },
     bottom: {

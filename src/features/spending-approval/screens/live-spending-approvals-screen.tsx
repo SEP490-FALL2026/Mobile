@@ -666,7 +666,6 @@ function ApprovalSummary({
     : onFormatUnavailable
   return (
     <InfoCard title={t('spending.live.requestSummary')}>
-      <InfoRow label={t('spending.live.requestIdLabel')} value={approval.requestId} />
       <InfoRow
         label={t('spending.live.requester', { name: request.requester.fullName })}
         value={request.requester.employeeCode}

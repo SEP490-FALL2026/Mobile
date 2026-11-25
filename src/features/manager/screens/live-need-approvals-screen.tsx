@@ -492,7 +492,6 @@ export function LiveNeedApprovalsScreen({
                   {request.plan ? (
                     <Text style={styles.muted}>{t('licenses.live.plan', { plan: request.plan.planName })}</Text>
                   ) : null}
-                  <Text style={styles.muted}>{t('requests.live.reference', { id: request.id })}</Text>
                   <Text style={styles.label}>{t('requests.live.requester')}</Text>
                   <Text style={styles.value}>{request.requester.fullName}</Text>
                   {request.beneficiary ? (

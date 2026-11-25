@@ -96,7 +96,6 @@ export function LiveRequestDetailsScreen({ requestId }: { requestId: string }) {
                   })}
                 </Text>
               ) : null}
-              <Text style={styles.muted}>{t('requests.live.reference', { id: request.id })}</Text>
             </View>
             <View style={styles.card}>
               <Text accessibilityRole='header' style={styles.sectionTitle}>
@@ -182,7 +181,6 @@ export function LiveRequestDetailsScreen({ requestId }: { requestId: string }) {
         {draft ? (
           <View style={styles.card}>
             <Text style={styles.name}>{t('requests.live.draft')}</Text>
-            <Text style={styles.muted}>{t('requests.live.reference', { id: draft.id })}</Text>
             <Text style={styles.muted}>{t('requests.live.draftNote')}</Text>
           </View>
         ) : null}

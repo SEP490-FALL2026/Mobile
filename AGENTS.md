@@ -112,6 +112,34 @@ public `index.ts`, never another feature's private component/hook. The root-leve
 template folders `components/`, `hooks/`, and `constants/` are not architecture;
 new authored code must not be placed there. See `ARCHITECTURE.md` for full examples.
 
+## Mobile UX rules (mandatory)
+
+This is a native mobile app, not a responsive web page shown on a phone. Design every
+screen for one-handed phone use and native navigation. Do not port a web page layout
+(long single page, sidebars, in-page tabs replacing navigation, dense tables) to mobile.
+
+- **Navigation shape.** The bottom tab bar holds only the role's main sections. Each
+  main section is a list or hub; work happens on screens pushed on top of it
+  (list -> detail -> action). Every pushed screen is its own route in the Expo Router
+  stack, not a view toggled by `useState` inside the list screen.
+- **One back button.** A pushed screen has exactly one back control, top-left, and it
+  goes to the screen underneath (detail -> list, action -> detail). Android system
+  back does the same. Tab root screens have no back button. Never show two back
+  controls on one screen, and never use a second "back to step" chip next to it; if a
+  flow has steps, each step is a screen.
+- **Little content per screen.** One screen has one job. Show a summary first and move
+  secondary content (history, checklists, similar seats, long policy text, form steps)
+  to its own screen reached by a clearly labelled row or button. Prefer a short screen
+  with a few rows over a long scroll mixing information and actions.
+- **One primary action** per screen, placed where the thumb reaches (bottom of the
+  content or a sticky footer). Destructive actions ask in a native-style confirmation.
+- **No technical identifiers.** Never show UUIDs, step IDs, policy version IDs or other
+  internal keys to the user, in text or accessibility labels. Identify items by
+  software, plan, person and date. The only exception is the support reference shown
+  with an error (`ErrorReference`).
+- **Keep it calm.** Group related facts into a few cards, avoid repeated headings and
+  explanatory paragraphs, and keep tap targets at least 44 pt.
+
 ## Data and API rules
 
 - Remote state belongs in TanStack Query. Do not fetch remote data from ad-hoc
